@@ -32,7 +32,7 @@ enum RegisterType {
 struct Register {
     RegisterType type __attribute__ ((aligned (4)));
     union {
-      uint32_t intData;
+      uint32_t uintData;
       Register *ref;
       const Register *constref;
       void *pData;
@@ -53,18 +53,18 @@ inline uint32_t Register_uint32Value(const Register *r) {
     assert(Register_isUint32(r));
     if (Register_isRef(r)) {
         assert(r->constref->type == RT_uint32 || r->constref->type == (RT_uint32 | RT_const));
-        return r->constref->intData;
+        return r->constref->uintData;
     }
-    return r->intData;
+    return r->uintData;
 }
 
 inline uint32_t Register_stringLength(const Register *r) {
     assert(Register_isString(r));
     if (Register_isRef(r)) {
         assert(r->constref->type == RT_string || r->constref->type == (RT_string | RT_const));
-        return r->constref->intData;
+        return r->constref->uintData;
     }
-    return r->intData;
+    return r->uintData;
 }
 
 inline const char *Register_stringData(const Register *r) {
