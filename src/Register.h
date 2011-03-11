@@ -35,6 +35,7 @@ struct Register {
       uint32_t intData;
       Register *ref;
       const Register *constref;
+      void *pData;
     } __attribute__ ((aligned (4)));
     void *data[0] __attribute__ ((aligned (4)));
 };
