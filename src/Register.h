@@ -12,15 +12,17 @@ extern "C" {
 #endif
 
 enum RegisterType {
-    RT_const = 0x1,
-    RT_ref   = 0x2,
-      RT_constref = 0x3,
+    RT_const           = 0x01,
+    RT_ref             = 0x02,
+      RT_constref      = RT_const | RT_ref,
       RT_attributemask = 0xff,
 
-    RT_bool   = 0x100,
-    RT_string = 0x200,
-    RT_uint32 = 0x400,
-      RT_typemask = 0xff00
+    RT_bool       = 0x00000100,
+    RT_string     = 0x00000200,
+    RT_uint32     = 0x00000400,
+    RT_user       = 0x01000000, /* Minimum value for an user-defined type. */
+      RT_typemask = 0xffffff00,
+      RT_usermask = 0xff000000
 };
 
 /*******************************************************************************
