@@ -33,18 +33,16 @@ typedef void* Inst;
 #define VM_SEQ_RGSI (r)(g)(s)(i)
 #define VM_SEQ_RGS  (r)(g)(s)
 
-#define VM_P_i(i) (&(i))
-#define VM_P_r(i) (m_register[(i)])
-#define VM_P_g(i) (m_global[(i)])
-#define VM_P_s(i) (m_stack[(i)])
-
-#define VM_R_uintValue(r) (r)->uintData
+#define VM_R_uint32_i(i) (i)
+#define VM_R_uint32_r(i) (m_registers[(i)]->uintData)
+#define VM_R_uint32_g(i) (m_globals[(i)]->uintData)
+#define VM_R_uint32_s(i) (m_stack[(i)]->uintData)
 
 #define VM_UINT32_IMOP_DECLARE_BINARY(unused,product) \
     (( \
       VM_CAT5(VM_2T0(VM_S0(product)), _, VM_S1(product), _, VM_S2(product)), \
-      VM_R_uintValue(VM_CAT(VM_P_,VM_S1(product))(*((uint32_t *) ip))) \
-        VM_CAT(VM_2T1(VM_S0(product)), =) VM_R_uintValue(VM_CAT(VM_P_,VM_S2(product))(*(((uint32_t *) ip) + 1))); \
+      VM_CAT(VM_R_uint32_,VM_S1(product))(*((uint32_t *) ip)) \
+        VM_CAT(VM_2T1(VM_S0(product)), =) VM_CAT(VM_R_uint32_,VM_S2(product))(*(((uint32_t *) ip) + 1)); \
       ip = (Inst*) (((uint32_t *) ip) + 2);, \
       VM_2T0(VM_S0(product)) \
     ))
@@ -52,9 +50,9 @@ typedef void* Inst;
 #define VM_UINT32_IMOP_DECLARE_TRINARY(unused,product) \
     (( \
       VM_CAT7(VM_S0(product), _, VM_2T0(VM_S1(product)), _, VM_S2(product), _, VM_S3(product)), \
-      VM_R_uintValue(VM_CAT(VM_P_,VM_S0(product))(*((uint32_t *) ip))) \
-        = VM_R_uintValue(VM_CAT(VM_P_,VM_S2(product))(*(((uint32_t *) ip) + 1))) \
-        VM_2T1(VM_S1(product)) VM_R_uintValue(VM_CAT(VM_P_,VM_S3(product))(*(((uint32_t *) ip) + 2))); \
+      VM_CAT(VM_R_uint32_,VM_S0(product))(*((uint32_t *) ip)) \
+        = VM_CAT(VM_R_uint32_,VM_S2(product))(*(((uint32_t *) ip) + 1)) \
+        VM_2T1(VM_S1(product)) VM_CAT(VM_R_uint32_,VM_S3(product))(*(((uint32_t *) ip) + 2)); \
       ip = (Inst*) (((uint32_t *) ip) + 3);, \
       VM_2T0(VM_S0(product)) \
     ))
@@ -97,6 +95,10 @@ private: /* Fields: */
     const uint8_t *m_codeStart;
     const uint8_t *m_codeEnd;
     const uint8_t *m_ip;
+
+    Register *m_registers[];
+    Register *m_globals[];
+    Register *m_stack[];
 
 };
 
