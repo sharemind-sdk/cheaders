@@ -17,4 +17,12 @@
 #define SVM_T(c,i,t) BOOST_PP_TUPLE_ELEM(c,i,t)
 #define SVM_S(i,s)   BOOST_PP_SEQ_ELEM(i, s)
 
+
+#define SVM_MAKE_UINT16(b0,b1) \
+     (((uint16_t)(b0) <<  8) | (uint16_t)(b1))
+#define SVM_MAKE_UINT32(b0,b1,b2,b3) \
+    ((((uint32_t) SVM_MAKE_UINT16(b0,b1)) << 16) | ((uint32_t) SVM_MAKE_UINT16(b2,b3)))
+#define SVM_MAKE_UINT64(b0,b1,b2,b3,b4,b5,b6,b7) \
+    ((((uint64_t) SVM_MAKE_UINT32(b0,b1,b2,b3)) << 32) | ((uint64_t) SVM_MAKE_UINT32(b4,b5,b6,b7)))
+
 #endif /* PP_H */
