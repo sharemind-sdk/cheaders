@@ -1,6 +1,9 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include "likely.h"
+
+
 /**
   \todo Allow for more fine-grained declarations and definitions (e.g. to
         specify linking constraints etc).
@@ -26,7 +29,7 @@
     } \
     struct name * name ## _new () { \
         struct name * s = malloc(sizeof(struct name)); \
-        if (s) \
+        if (likely(s)) \
             s->d = NULL; \
         return s; \
     } \
@@ -48,7 +51,7 @@
     datatype * name ## _push (struct name * s) { \
         assert(s); \
         struct name ## _item * n = malloc(sizeof(struct name ## _item)); \
-        if (!n) \
+        if (unlikely(!n)) \
             return NULL; \
         n->prev = s->d; \
         s->d = n; \

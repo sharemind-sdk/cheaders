@@ -1,6 +1,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "likely.h"
+
 /**
   \todo Allow for more fine-grained declarations and definitions (e.g. to
         specify linking constraints etc).
@@ -23,7 +25,7 @@
     } \
     struct name * name ## _name () { \
         struct name * const r = malloc(sizeof(struct name)); \
-        if (r) { \
+        if (likely(r)) { \
             r->size = 0; \
             r->data = NULL; \
         } \
@@ -31,14 +33,14 @@
     } \
     struct name * name ## _new2(size_t size) { \
         size_t realSize = size * sizeof(datatype); \
-        if (realSize / sizeof(datatype) != size) \
+        if (unlikely(realSize / sizeof(datatype) != size)) \
             return NULL; \
         struct name * const r = malloc(sizeof(struct name)); \
-        if (!r) \
+        if (unlikely(!r)) \
             goto name ## _new2_fail_1; \
-        if (size > 0) { \
+        if (likely(size > 0)) { \
             r->data = malloc(realSize); \
-            if (!r->data) \
+            if (unlikely(!r->data)) \
                 goto name ## _new2_fail_2; \
             r->size = size; \
         } else { \
@@ -60,13 +62,13 @@
     int name ## _resize(struct name * const r, const size_t newSize) { \
         assert(r); \
         size_t realSize = newSize * sizeof(datatype); \
-        if (realSize / sizeof(datatype) != newSize) \
+        if (unlikely(realSize / sizeof(datatype) != newSize)) \
             return 0; \
-        if (r->size == newSize) \
+        if (unlikely(r->size == newSize)) \
             return 1; \
         /** \todo check size_t overflow. */ \
         datatype * const d = realloc(r->data, realSize); \
-        if (!d) \
+        if (unlikely(!d)) \
             return 0; \
         r->data = d; \
         r->size = newSize; \
