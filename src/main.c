@@ -13,7 +13,7 @@ int main() {
         SVM_MAKE_UINT64(0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff)  // return code (255)
     };
 
-    struct SVM_Program * p = SVM_Program_new(1);
+    struct SVM_Program * p = SVM_Program_new();
     if (unlikely(!p)) {
         fputs("Failed to allocate program!\n", stderr);
         goto main_fail_1;

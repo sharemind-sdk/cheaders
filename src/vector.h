@@ -3,6 +3,7 @@
 
 #include "likely.h"
 
+
 /**
   \todo Allow for more fine-grained declarations and definitions (e.g. to
         specify linking constraints etc).
@@ -20,13 +21,13 @@
 
 #define SVM_VECTOR_DEFINE(name,datatype) \
     void name ## _init(struct name * const r) { \
-        r->size = 0; \
+        r->size = 0u; \
         r->data = NULL; \
     } \
     struct name * name ## _name () { \
         struct name * const r = malloc(sizeof(struct name)); \
         if (likely(r)) { \
-            r->size = 0; \
+            r->size = 0u; \
             r->data = NULL; \
         } \
         return r; \
@@ -38,14 +39,14 @@
         struct name * const r = malloc(sizeof(struct name)); \
         if (unlikely(!r)) \
             goto name ## _new2_fail_1; \
-        if (likely(size > 0)) { \
+        if (likely(size > 0u)) { \
             r->data = malloc(realSize); \
             if (unlikely(!r->data)) \
                 goto name ## _new2_fail_2; \
             r->size = size; \
         } else { \
             r->data = NULL; \
-            r->size = 0; \
+            r->size = 0u; \
         } \
     /* SUCCESS: */ \
         return r; \
@@ -54,9 +55,12 @@
     name ## _new2_fail_1: \
         return NULL; \
     } \
-    void name ## _free(struct name * const r) { \
+    void name ## _destroy(struct name * const r) { \
         assert(r); \
         free(r->data); \
+    } \
+    void name ## _free(struct name * const r) { \
+        name ## _destroy (r); \
         free(r); \
     } \
     int name ## _resize(struct name * const r, const size_t newSize) { \
@@ -73,6 +77,10 @@
         r->data = d; \
         r->size = newSize; \
         return 1; \
+    } \
+    void name ## _foreach(struct name * const r, void (*f)(datatype *)) { \
+        for (size_t i = 0u; i < r->size; i++) \
+            (*f)(&r->data[i]); \
     }
 
 #endif /* VECTOR_H */

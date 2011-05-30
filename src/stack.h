@@ -33,7 +33,7 @@
             s->d = NULL; \
         return s; \
     } \
-    void name ## _free (struct name * s) { \
+    void name ## _destroy (struct name * s) { \
         assert(s); \
         struct name ## _item * d = s->d; \
         if (d) { \
@@ -46,6 +46,9 @@
                 prev = d->prev; \
             } \
         } \
+    } \
+    void name ## _free (struct name * s) { \
+        name ## _destroy (s); \
         free(s); \
     } \
     datatype * name ## _push (struct name * s) { \
