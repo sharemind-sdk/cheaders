@@ -84,6 +84,11 @@
         r->size = newSize; \
         return 1; \
     } \
+    datatype * name ## _push(struct name * const r) { \
+        if (unlikely(!name ## _resize(r, r->size + 1))) \
+            return NULL; \
+        return &r->data[r->size - 1]; \
+    } \
     void name ## _foreach(struct name * const r, void (*f)(datatype *)) { \
         for (size_t i = 0u; i < r->size; i++) \
             (*f)(&r->data[i]); \
