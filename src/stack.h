@@ -66,6 +66,12 @@
         assert(d); \
         s->d = d->prev; \
         free(d); \
+    } \
+    datatype * name ## _top (struct name * s) { \
+        assert(s); \
+        struct name ## _item * d = s->d; \
+        assert(d); \
+        return &d->value; \
     }
 
 #endif /* STACK_H */
