@@ -9,6 +9,8 @@
 int main() {
     const uint64_t program[] = {
         SVM_MAKE_UINT64(0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00), // NOP
+        SVM_MAKE_UINT64(0x00,0x02,0x08,0x00,0x00,0x00,0x00,0x00), // COMMON.PROC.RESIZESTACK
+        SVM_MAKE_UINT64(0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff), // too much stack
         SVM_MAKE_UINT64(0x00,0xff,0x00,0x00,0x00,0x00,0x00,0x00), // HALT
         SVM_MAKE_UINT64(0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff)  // return code (255)
     };
@@ -19,7 +21,7 @@ int main() {
         goto main_fail_1;
     }
 
-    enum SVM_Error e = SVM_Program_addCodeSection(p, program, 3);
+    enum SVM_Error e = SVM_Program_addCodeSection(p, program, 5);
     if (unlikely(e != SVM_OK)) {
         fputs("Failed to add code section!\n", stderr);
         goto main_print_e_and_fail_2;
@@ -46,6 +48,9 @@ int main() {
 
 main_print_e_and_fail_2:
     fprintf(stderr, "Error code: %s\n", SVM_Error_toString(e));
+    if (e == SVM_RUNTIME_EXCEPTION) {
+        fprintf(stderr, "Exception %s\n", SVM_Exception_toString(p->exceptionValue));
+    }
 
 /* main_fail_2: */
     SVM_Program_free(p);

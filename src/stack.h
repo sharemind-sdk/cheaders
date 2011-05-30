@@ -72,6 +72,14 @@
         struct name ## _item * d = s->d; \
         assert(d); \
         return &d->value; \
+    } \
+    void name ## _foreach (struct name * s, void (*f)(datatype *)) { \
+        assert(s); \
+        struct name ## _item * d = s->d; \
+        while (d) { \
+            (*f)(&d->value); \
+            d = d->prev; \
+        } \
     }
 
 #endif /* STACK_H */
