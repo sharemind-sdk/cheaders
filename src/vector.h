@@ -1,6 +1,11 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+/**
+  \todo Allow for more fine-grained declarations and definitions (e.g. to
+        specify linking constraints etc).
+*/
+
 #define SVM_VECTOR_DECLARE(name,datatype,sizetype) \
     struct name { \
         sizetype size; \
