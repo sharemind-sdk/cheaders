@@ -17,6 +17,10 @@
     int name ## _resize(struct name * const r, const sizetype newSize);
 
 #define SVM_VECTOR_DEFINE(name,datatype,sizetype) \
+    void name ## _init(struct name * const r) { \
+        r->size = 0; \
+        r->data = NULL; \
+    } \
     struct name * name ## _name () { \
         struct name * const r = malloc(sizeof(struct name)); \
         if (r) { \

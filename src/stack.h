@@ -21,6 +21,9 @@
         datatype value; \
         struct name ## _item * prev; \
     }; \
+    void name ## _init (struct name * s) { \
+        s->d = NULL; \
+    } \
     struct name * name ## _new () { \
         struct name * s = malloc(sizeof(struct name)); \
         if (s) \
