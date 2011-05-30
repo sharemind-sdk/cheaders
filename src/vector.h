@@ -59,6 +59,12 @@
         assert(r); \
         free(r->data); \
     } \
+    void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)) { \
+        assert(r); \
+        for (size_t i = 0u; i < r->size; i++) \
+            (*destroyer)(&r->data[i]); \
+        free(r->data); \
+    } \
     void name ## _free(struct name * const r) { \
         name ## _destroy (r); \
         free(r); \

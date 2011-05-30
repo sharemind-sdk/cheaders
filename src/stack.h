@@ -47,6 +47,21 @@
             } \
         } \
     } \
+    void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)) { \
+        assert(s); \
+        struct name ## _item * d = s->d; \
+        if (d) { \
+            struct name ## _item * prev = d->prev; \
+            for (;;) { \
+                (*destroyer)(&d->value); \
+                free(d); \
+                if (!prev) \
+                    break; \
+                d = prev; \
+                prev = d->prev; \
+            } \
+        } \
+    } \
     void name ## _free (struct name * s) { \
         name ## _destroy (s); \
         free(s); \
