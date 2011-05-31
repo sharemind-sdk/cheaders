@@ -11,12 +11,15 @@ void printCodeSection(const uint64_t * code, size_t size, const char * linePrefi
     for (size_t i = 0u; i < size; i++) {
         printf("%s", linePrefix);
         uint8_t * b = (uint8_t *) &code[i];
-        for (size_t byte = 0u; byte < 8u; byte++)
-            printf("%02x", b[byte]);
+        printf("%02x%02x %02x%02x %02x%02x %02x%02x",
+               b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]);
 
         if (!skip) {
-            skip = SVM_Instruction_args(code[i]);
-            printf(" %s", SVM_Instruction_name(code[i]));
+            const char * name = SVM_Instruction_name(code[i]);
+            printf("  %s", name ? name : "!!! UNKNOWN INSTRUCTION OR DATA !!!");
+
+            if (name)
+                skip = SVM_Instruction_args(code[i]);
         } else {
             skip--;
         }
@@ -39,7 +42,7 @@ int main() {
 
     /* Print code section: */
     printf("Code section 0:\n");
-    printCodeSection(program, sizeof(program) / sizeof(uint64_t), "    ");
+    printCodeSection(program, sizeof(program) / sizeof(uint64_t), "  ");
     printf("\n");
 
     struct SVM_Program * p = SVM_Program_new();
