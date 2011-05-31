@@ -6,6 +6,24 @@
 #include "preprocessor.h"
 #include "vm.h"
 
+void printCodeSection(const uint64_t * code, size_t size, const char * linePrefix) {
+    size_t skip = 0;
+    for (size_t i = 0u; i < size; i++) {
+        printf("%s", linePrefix);
+        uint8_t * b = (uint8_t *) &code[i];
+        for (size_t byte = 0u; byte < 8u; byte++)
+            printf("%02x", b[byte]);
+
+        if (!skip) {
+            skip = SVM_Instruction_args(code[i]);
+            printf(" %s", SVM_Instruction_name(code[i]));
+        } else {
+            skip--;
+        }
+
+        printf("\n");
+    }
+}
 
 int main() {
 
@@ -21,14 +39,7 @@ int main() {
 
     /* Print code section: */
     printf("Code section 0:\n");
-    for (size_t i = 0u; i < sizeof(program) / sizeof(uint64_t); i++) {
-        printf("    ");
-        uint8_t * b = (uint8_t *) &program[i];
-        for (size_t byte = 0u; byte < 8u; byte++)
-            printf("%02x", b[byte]);
-
-        printf("\n");
-    }
+    printCodeSection(program, sizeof(program) / sizeof(uint64_t), "    ");
     printf("\n");
 
     struct SVM_Program * p = SVM_Program_new();
