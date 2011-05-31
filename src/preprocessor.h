@@ -25,12 +25,25 @@
 #define SVM_2S(t)    BOOST_PP_STRINGIZE(t) 
 
 
-#define SVM_MAKE_UINT16(b0,b1) \
+/*
+ * Make little-endian representations of big-endian input.
+ */
+#define SVM_MAKE_UINT16_LE(b0,b1) \
      (((uint16_t)(b0) <<  8) | (uint16_t)(b1))
-#define SVM_MAKE_UINT32(b0,b1,b2,b3) \
-    ((((uint32_t) SVM_MAKE_UINT16(b0,b1)) << 16) | ((uint32_t) SVM_MAKE_UINT16(b2,b3)))
-#define SVM_MAKE_UINT64(b0,b1,b2,b3,b4,b5,b6,b7) \
-    ((((uint64_t) SVM_MAKE_UINT32(b0,b1,b2,b3)) << 32) | ((uint64_t) SVM_MAKE_UINT32(b4,b5,b6,b7)))
+#define SVM_MAKE_UINT32_LE(b0,b1,b2,b3) \
+    ((((uint32_t) SVM_MAKE_UINT16_LE(b0,b1)) << 16) | ((uint32_t) SVM_MAKE_UINT16_LE(b2,b3)))
+#define SVM_MAKE_UINT64_LE(b0,b1,b2,b3,b4,b5,b6,b7) \
+    ((((uint64_t) SVM_MAKE_UINT32_LE(b0,b1,b2,b3)) << 32) | ((uint64_t) SVM_MAKE_UINT32_LE(b4,b5,b6,b7)))
+
+/*
+ * Make big-endian representations of big-endian input.
+ */
+#define SVM_MAKE_UINT16_BE(b0,b1) \
+     (((uint16_t)(b1) <<  8) | (uint16_t)(b0))
+#define SVM_MAKE_UINT32_BE(b0,b1,b2,b3) \
+    ((((uint32_t) SVM_MAKE_UINT16_BE(b3,b2)) << 16) | ((uint32_t) SVM_MAKE_UINT16_BE(b1,b0)))
+#define SVM_MAKE_UINT64_BE(b0,b1,b2,b3,b4,b5,b6,b7) \
+    ((((uint64_t) SVM_MAKE_UINT32_BE(b5,b4,b7,b6)) << 32) | ((uint64_t) SVM_MAKE_UINT32_BE(b1,b0,b3,b2)))
 
 /**
  * \brief Defines a simple enum.
