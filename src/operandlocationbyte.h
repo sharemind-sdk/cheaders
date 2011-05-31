@@ -1,6 +1,9 @@
 #ifndef OPERANDLOCATIONBYTE_H
 #define OPERANDLOCATIONBYTE_H
 
+#include "preprocessor.h"
+
+
 // (name, code, number of 64-bit blocks needed)
 #define SVM_OLB_imm     (imm,     0x01, 1)
 #define SVM_OLB_reg     (reg,     0x02, 1)
@@ -23,5 +26,9 @@
 #define SVM_OLB_ref_sr  (ref_sr,  0x13, 2)
 #define SVM_OLB_ref_ss  (ref_ss,  0x14, 2)
 #define SVM_OLB_ref_si  (ref_si,  0x15, 2)
+
+#define SVM_OLB_name(t) SVM_T(3,0,t)
+#define SVM_OLB_code(t) SVM_T(3,1,t)
+#define SVM_OLB_args(t) SVM_T(3,2,t)
 
 #endif /* OPERANDLOCATIONBYTE_H */
