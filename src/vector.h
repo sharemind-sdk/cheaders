@@ -90,6 +90,12 @@
             return NULL; \
         return &r->data[r->size - 1]; \
     } \
+    datatype * name ## _get_pointer(struct name * const r, size_t i) { \
+        assert(r); \
+        if (unlikely(i >= r->size)) \
+            return NULL; \
+        return &r->data[i]; \
+    } \
     void name ## _foreach(struct name * const r, void (*f)(datatype *)) { \
         for (size_t i = 0u; i < r->size; i++) \
             (*f)(&r->data[i]); \
