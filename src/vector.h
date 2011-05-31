@@ -85,6 +85,7 @@
         return 1; \
     } \
     datatype * name ## _push(struct name * const r) { \
+        assert(r); \
         if (unlikely(!name ## _resize(r, r->size + 1))) \
             return NULL; \
         return &r->data[r->size - 1]; \
