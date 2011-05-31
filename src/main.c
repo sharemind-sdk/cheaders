@@ -42,7 +42,7 @@ int main() {
     }
 
     assert(sizeof(long long int) == sizeof(int64_t));
-    printf("Program returned status: %lld\n", p->returnValue);
+    printf("Program returned status: %ld\n", p->returnValue);
     SVM_Program_free(p);
 
 /* SUCCESS: */
