@@ -19,7 +19,7 @@
     datatype * name ## _push (struct name * s); \
     void name ## _pop (struct name * s);
 
-#define SVM_STACK_DEFINE(name,datatype) \
+#define SVM_STACK_DEFINE(name,datatype,mymalloc,myfree) \
     struct name ## _item { \
         datatype value; \
         struct name ## _item * prev; \
@@ -28,7 +28,7 @@
         s->d = NULL; \
     } \
     struct name * name ## _new () { \
-        struct name * s = malloc(sizeof(struct name)); \
+        struct name * s = mymalloc(sizeof(struct name)); \
         if (likely(s)) \
             s->d = NULL; \
         return s; \
@@ -39,7 +39,7 @@
         if (d) { \
             struct name ## _item * prev = d->prev; \
             for (;;) { \
-                free(d); \
+                myfree(d); \
                 if (!prev) \
                     break; \
                 d = prev; \
@@ -54,7 +54,7 @@
             struct name ## _item * prev = d->prev; \
             for (;;) { \
                 (*destroyer)(&d->value); \
-                free(d); \
+                myfree(d); \
                 if (!prev) \
                     break; \
                 d = prev; \
@@ -64,11 +64,11 @@
     } \
     void name ## _free (struct name * s) { \
         name ## _destroy (s); \
-        free(s); \
+        myfree(s); \
     } \
     datatype * name ## _push (struct name * s) { \
         assert(s); \
-        struct name ## _item * n = malloc(sizeof(struct name ## _item)); \
+        struct name ## _item * n = mymalloc(sizeof(struct name ## _item)); \
         if (unlikely(!n)) \
             return NULL; \
         n->prev = s->d; \
@@ -80,7 +80,7 @@
         struct name ## _item * d = s->d; \
         assert(d); \
         s->d = d->prev; \
-        free(d); \
+        myfree(d); \
     } \
     datatype * name ## _top (struct name * s) { \
         assert(s); \
