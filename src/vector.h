@@ -24,7 +24,7 @@
         r->size = 0u; \
         r->data = NULL; \
     } \
-    struct name * name ## _name () { \
+    struct name * name ## _new () { \
         struct name * const r = mymalloc(sizeof(struct name)); \
         if (likely(r)) { \
             r->size = 0u; \
