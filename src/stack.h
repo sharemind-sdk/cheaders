@@ -88,6 +88,10 @@
         assert(d); \
         return &d->value; \
     } \
+    int name ## _empty (struct name * s) { \
+        assert(s); \
+        return s->d == NULL; \
+    } \
     void name ## _foreach (struct name * s, void (*f)(datatype *)) { \
         assert(s); \
         struct name ## _item * d = s->d; \
