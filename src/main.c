@@ -9,7 +9,7 @@
 void printCodeSection(const uint64_t * code, size_t size, const char * linePrefix) {
     size_t skip = 0;
     for (size_t i = 0u; i < size; i++) {
-        printf("%s", linePrefix);
+        printf("%s %08lx ", linePrefix, i);
         uint8_t * b = (uint8_t *) &code[i];
         printf("%02x%02x %02x%02x %02x%02x %02x%02x",
                b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]);
