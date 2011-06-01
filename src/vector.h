@@ -9,10 +9,11 @@
         specify linking constraints etc).
 */
 
-#define SVM_VECTOR_DECLARE(name,datatype) \
+#define SVM_VECTOR_DECLARE(name,datatype,extradata) \
     struct name { \
         size_t size; \
         datatype * data; \
+        extradata; \
     }; \
     void name ## _init(struct name * const r); \
     struct name * name ## _new () __attribute__ ((warn_unused_result)); \

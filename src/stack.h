@@ -9,10 +9,11 @@
         specify linking constraints etc).
 */
 
-#define SVM_STACK_DECLARE(name,datatype) \
+#define SVM_STACK_DECLARE(name,datatype,extradata) \
     struct name ## _item; \
     struct name { \
         struct name ## _item * d; \
+        extradata \
     }; \
     void name ## _init (struct name * s); \
     struct name * name ## _new () __attribute__ ((warn_unused_result)); \
