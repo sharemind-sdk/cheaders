@@ -93,6 +93,7 @@ main_print_e_and_fail_2:
     if (e == SVM_RUNTIME_EXCEPTION) {
         fprintf(stderr, "Exception %s\n", SVM_Exception_toString(p->exceptionValue));
     }
+    fprintf(stderr, "At section %lu, block 0x%lx.\n", p->currentCodeSection, p->currentIp);
 
 /* main_fail_2: */
     SVM_Program_free(p);
