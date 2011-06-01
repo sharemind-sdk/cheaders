@@ -13,7 +13,7 @@
     struct name { \
         size_t size; \
         datatype * data; \
-        extradata; \
+        extradata \
     }; \
     void name ## _init(struct name * const r); \
     struct name * name ## _new () __attribute__ ((warn_unused_result)); \
