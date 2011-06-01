@@ -14,10 +14,16 @@
     struct name { \
         struct name ## _item * d; \
     }; \
-    struct name * name ## _new (); \
+    void name ## _init (struct name * s); \
+    struct name * name ## _new () __attribute__ ((warn_unused_result)); \
+    void name ## _destroy (struct name * s); \
+    void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)); \
     void name ## _free (struct name * s); \
     datatype * name ## _push (struct name * s); \
-    void name ## _pop (struct name * s);
+    void name ## _pop (struct name * s); \
+    datatype * name ## _top (struct name * s) __attribute__ ((warn_unused_result)); \
+    int name ## _empty (struct name * s) __attribute__ ((warn_unused_result)); \
+    void name ## _foreach (struct name * s, void (*f)(datatype *));
 
 #define SVM_STACK_DEFINE(name,datatype,mymalloc,myfree) \
     struct name ## _item { \

@@ -14,10 +14,16 @@
         size_t size; \
         datatype * data; \
     }; \
-    struct name * name ## _new (); \
-    struct name * name ## _new2 (size_t size); \
+    void name ## _init(struct name * const r); \
+    struct name * name ## _new () __attribute__ ((warn_unused_result)); \
+    struct name * name ## _new2 (size_t size) __attribute__ ((warn_unused_result)); \
+    void name ## _destroy(struct name * const r); \
+    void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)); \
     void name ## _free(struct name * const r); \
-    int name ## _resize(struct name * const r, const size_t newSize);
+    int name ## _resize(struct name * const r, const size_t newSize); \
+    datatype * name ## _push(struct name * const r); \
+    datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((warn_unused_result)); \
+    void name ## _foreach(struct name * const r, void (*f)(datatype *));
 
 #define SVM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \
     void name ## _init(struct name * const r) { \
