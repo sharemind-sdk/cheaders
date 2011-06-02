@@ -16,11 +16,8 @@
         extradata \
     }; \
     void name ## _init(struct name * const r); \
-    struct name * name ## _new () __attribute__ ((warn_unused_result)); \
-    struct name * name ## _new2 (size_t size) __attribute__ ((warn_unused_result)); \
     void name ## _destroy(struct name * const r); \
     void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)); \
-    void name ## _free(struct name * const r); \
     int name ## _resize(struct name * const r, const size_t newSize); \
     datatype * name ## _push(struct name * const r); \
     datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((warn_unused_result)); \
@@ -31,37 +28,6 @@
         r->size = 0u; \
         r->data = NULL; \
     } \
-    struct name * name ## _new () { \
-        struct name * const r = mymalloc(sizeof(struct name)); \
-        if (likely(r)) { \
-            r->size = 0u; \
-            r->data = NULL; \
-        } \
-        return r; \
-    } \
-    struct name * name ## _new2(size_t size) { \
-        size_t realSize = size * sizeof(datatype); \
-        if (unlikely(realSize / sizeof(datatype) != size)) \
-            return NULL; \
-        struct name * const r = mymalloc(sizeof(struct name)); \
-        if (unlikely(!r)) \
-            goto name ## _new2_fail_1; \
-        if (likely(size > 0u)) { \
-            r->data = mymalloc(realSize); \
-            if (unlikely(!r->data)) \
-                goto name ## _new2_fail_2; \
-            r->size = size; \
-        } else { \
-            r->data = NULL; \
-            r->size = 0u; \
-        } \
-    /* SUCCESS: */ \
-        return r; \
-    name ## _new2_fail_2: \
-        myfree(r); \
-    name ## _new2_fail_1: \
-        return NULL; \
-    } \
     void name ## _destroy(struct name * const r) { \
         assert(r); \
         myfree(r->data); \
@@ -71,10 +37,6 @@
         for (size_t i = 0u; i < r->size; i++) \
             (*destroyer)(&r->data[i]); \
         myfree(r->data); \
-    } \
-    void name ## _free(struct name * const r) { \
-        name ## _destroy (r); \
-        myfree(r); \
     } \
     int name ## _resize(struct name * const r, const size_t newSize) { \
         assert(r); \

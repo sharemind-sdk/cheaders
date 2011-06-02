@@ -16,10 +16,8 @@
         extradata \
     }; \
     void name ## _init (struct name * s); \
-    struct name * name ## _new () __attribute__ ((warn_unused_result)); \
     void name ## _destroy (struct name * s); \
     void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)); \
-    void name ## _free (struct name * s); \
     datatype * name ## _push (struct name * s); \
     void name ## _pop (struct name * s); \
     datatype * name ## _top (struct name * s) __attribute__ ((warn_unused_result)); \
@@ -33,12 +31,6 @@
     }; \
     void name ## _init (struct name * s) { \
         s->d = NULL; \
-    } \
-    struct name * name ## _new () { \
-        struct name * s = mymalloc(sizeof(struct name)); \
-        if (likely(s)) \
-            s->d = NULL; \
-        return s; \
     } \
     void name ## _destroy (struct name * s) { \
         assert(s); \
@@ -68,10 +60,6 @@
                 prev = d->prev; \
             } \
         } \
-    } \
-    void name ## _free (struct name * s) { \
-        name ## _destroy (s); \
-        myfree(s); \
     } \
     datatype * name ## _push (struct name * s) { \
         assert(s); \
