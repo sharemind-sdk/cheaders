@@ -9,7 +9,16 @@
         specify linking constraints etc).
 */
 
+#ifdef __cplusplus
+#define SVM_VECTOR_EXTERN_C_BEGIN extern "C" {
+#define SVM_VECTOR_EXTERN_C_END   }
+#else
+#define SVM_VECTOR_EXTERN_C_BEGIN
+#define SVM_VECTOR_EXTERN_C_END
+#endif
+
 #define SVM_VECTOR_DECLARE(name,datatype,extradata) \
+    SVM_VECTOR_EXTERN_C_BEGIN \
     struct name { \
         size_t size; \
         datatype * data; \
@@ -21,9 +30,11 @@
     int name ## _resize(struct name * const r, const size_t newSize); \
     datatype * name ## _push(struct name * const r); \
     datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((warn_unused_result)); \
-    void name ## _foreach(struct name * const r, void (*f)(datatype *));
+    void name ## _foreach(struct name * const r, void (*f)(datatype *)); \
+    SVM_VECTOR_EXTERN_C_END
 
 #define SVM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \
+    SVM_VECTOR_EXTERN_C_BEGIN \
     void name ## _init(struct name * const r) { \
         r->size = 0u; \
         r->data = NULL; \
@@ -68,6 +79,7 @@
     void name ## _foreach(struct name * const r, void (*f)(datatype *)) { \
         for (size_t i = 0u; i < r->size; i++) \
             (*f)(&r->data[i]); \
-    }
+    } \
+    SVM_VECTOR_EXTERN_C_END
 
 #endif /* VECTOR_H */

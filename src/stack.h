@@ -9,7 +9,16 @@
         specify linking constraints etc).
 */
 
+#ifdef __cplusplus
+#define SVM_STACK_EXTERN_C_BEGIN extern "C" {
+#define SVM_STACK_EXTERN_C_END   }
+#else
+#define SVM_STACK_EXTERN_C_BEGIN
+#define SVM_STACK_EXTERN_C_END
+#endif
+
 #define SVM_STACK_DECLARE(name,datatype,extradata) \
+    SVM_STACK_EXTERN_C_BEGIN \
     struct name ## _item; \
     struct name { \
         struct name ## _item * d; \
@@ -22,9 +31,11 @@
     void name ## _pop (struct name * s); \
     datatype * name ## _top (struct name * s) __attribute__ ((warn_unused_result)); \
     int name ## _empty (struct name * s) __attribute__ ((warn_unused_result)); \
-    void name ## _foreach (struct name * s, void (*f)(datatype *));
+    void name ## _foreach (struct name * s, void (*f)(datatype *)); \
+    SVM_STACK_EXTERN_C_END
 
 #define SVM_STACK_DEFINE(name,datatype,mymalloc,myfree) \
+    SVM_STACK_EXTERN_C_BEGIN \
     struct name ## _item { \
         datatype value; \
         struct name ## _item * prev; \
@@ -94,6 +105,7 @@
             (*f)(&d->value); \
             d = d->prev; \
         } \
-    }
+    } \
+    SVM_STACK_EXTERN_C_END
 
 #endif /* STACK_H */
