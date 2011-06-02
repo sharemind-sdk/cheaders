@@ -82,7 +82,7 @@ int main() {
     }
 
     assert(sizeof(long long int) == sizeof(int64_t));
-    printf("Program returned status: %ld\n", p->returnValue);
+    printf("Program returned status: %ld\n", SVM_Program_get_return_value(p));
     SVM_Program_free(p);
 
 /* SUCCESS: */
@@ -91,9 +91,12 @@ int main() {
 main_print_e_and_fail_2:
     fprintf(stderr, "Error code: %s\n", SVM_Error_toString(e));
     if (e == SVM_RUNTIME_EXCEPTION) {
-        fprintf(stderr, "Exception %s\n", SVM_Exception_toString(p->exceptionValue));
+        fprintf(stderr, "Exception %s\n",
+                SVM_Exception_toString(SVM_Program_get_exception_value(p)));
     }
-    fprintf(stderr, "At section %lu, block 0x%lx.\n", p->currentCodeSection, p->currentIp);
+    fprintf(stderr, "At section %lu, block 0x%lx.\n",
+            SVM_Program_get_current_codesection(p),
+            SVM_Program_get_current_ip(p));
 
 /* main_fail_2: */
     SVM_Program_free(p);
