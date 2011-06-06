@@ -4,7 +4,7 @@
 #include "preprocessor.h"
 
 
-// (name, code, number of 64-bit blocks needed)
+/* (name, code, number of 64-bit blocks needed) */
 #define SVM_OLB_imm     (imm,     0x01, 1)
 #define SVM_OLB_reg     (reg,     0x02, 1)
 #define SVM_OLB_stack   (stack,   0x03, 1)
@@ -27,8 +27,13 @@
 #define SVM_OLB_ref_ss  (ref_ss,  0x14, 2)
 #define SVM_OLB_ref_si  (ref_si,  0x15, 2)
 
+#define SVM_OLB(n) SVM_C(SVM_OLB_,n)
+
 #define SVM_OLB_name(t) SVM_T(3,0,t)
 #define SVM_OLB_code(t) SVM_T(3,1,t)
 #define SVM_OLB_args(t) SVM_T(3,2,t)
+
+#define SVM_OLB_FOREACH_MACRO(_,m,i) m(SVM_OLB(i))
+#define SVM_OLB_FOREACH(m,s) BOOST_PP_SEQ_FOR_EACH(SVM_OLB_FOREACH_MACRO,m,s)
 
 #endif /* OPERANDLOCATIONBYTE_H */
