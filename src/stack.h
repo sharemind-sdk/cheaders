@@ -24,14 +24,14 @@
         struct name ## _item * d; \
         extradata \
     }; \
-    void name ## _init (struct name * s); \
-    void name ## _destroy (struct name * s); \
-    void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)); \
-    datatype * name ## _push (struct name * s); \
-    void name ## _pop (struct name * s); \
-    datatype * name ## _top (struct name * s) __attribute__ ((warn_unused_result)); \
-    int name ## _empty (struct name * s) __attribute__ ((warn_unused_result)); \
-    void name ## _foreach (struct name * s, void (*f)(datatype *)); \
+    void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
+    void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
+    void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    datatype * name ## _push (struct name * s) __attribute__ ((nonnull(1))); \
+    void name ## _pop (struct name * s) __attribute__ ((nonnull(1))); \
+    datatype * name ## _top (struct name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
+    int name ## _empty (struct name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
+    void name ## _foreach (struct name * s, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SVM_STACK_EXTERN_C_END
 
 #define SVM_STACK_DEFINE(name,datatype,mymalloc,myfree) \

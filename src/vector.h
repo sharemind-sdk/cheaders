@@ -24,13 +24,13 @@
         datatype * data; \
         extradata \
     }; \
-    void name ## _init(struct name * const r); \
-    void name ## _destroy(struct name * const r); \
-    void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)); \
-    int name ## _resize(struct name * const r, const size_t newSize); \
-    datatype * name ## _push(struct name * const r); \
-    datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((warn_unused_result)); \
-    void name ## _foreach(struct name * const r, void (*f)(datatype *)); \
+    void name ## _init(struct name * const r) __attribute__ ((nonnull(1))); \
+    void name ## _destroy(struct name * const r) __attribute__ ((nonnull(1))); \
+    void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    int name ## _resize(struct name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
+    datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
+    datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
+    void name ## _foreach(struct name * const r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SVM_VECTOR_EXTERN_C_END
 
 #define SVM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \

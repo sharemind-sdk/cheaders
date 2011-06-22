@@ -23,10 +23,10 @@
     struct name { \
         struct name ## _item * d[65536]; \
     }; \
-    void name ## _init (struct name * s); \
-    void name ## _destroy (struct name * s); \
-    int name ## _insert (struct name * s, size_t value); \
-    int name ## _contains (const struct name * s, size_t value) __attribute__ ((warn_unused_result)); \
+    void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
+    void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
+    int name ## _insert (struct name * s, size_t value) __attribute__ ((nonnull(1))); \
+    int name ## _contains (const struct name * s, size_t value) __attribute__ ((nonnull(1), warn_unused_result)); \
     SVM_INSTRSET_EXTERN_C_END
 
 #define SVM_INSTRSET_DEFINE(name,mymalloc,myfree) \
