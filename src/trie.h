@@ -56,7 +56,7 @@
             myfree(t->children[i]); \
         } \
     } \
-    datatype * name ## _insert(struct name * t, const char * key) { \
+    datatype * name ## _get_or_insert(struct name * t, const char * key) { \
         assert(t); \
         assert(key); \
         struct name ** next; \
