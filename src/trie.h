@@ -28,8 +28,10 @@
     void name ## _init(struct name * const t) __attribute__ ((nonnull(1))); \
     void name ## _destroy(struct name * const t) __attribute__ ((nonnull(1))); \
     void name ## _destroy_with(struct name * const t, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    datatype * name ## _insert(struct name * const t, const char * key) __attribute__ ((nonnull(1, 2))); \
-    const datatype * name ## _find(const struct name * const t, const char * key) __attribute__ ((nonnull(1, 2))); \
+    datatype * name ## _get_or_insert(struct name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
+    datatype * name ## _find(struct name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
+    int name ## _foreach(struct name * const t, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    int name ## _foreach_with_data(struct name * const t, int (*f)(datatype *, void *), void * d) __attribute__ ((nonnull(1, 2))); \
     SVM_TRIE_EXTERN_C_END
 
 #define SVM_TRIE_DEFINE(name,datatype,mymalloc,myfree) \
@@ -52,7 +54,8 @@
     void name ## _destroy_with(struct name * const t, void (*destroyer)(datatype *)) { \
         assert(t); \
         assert(destroyer); \
-        (*destroyer)(&t->data); \
+        if (t->hasData) \
+            (*destroyer)(&t->data); \
         for (size_t i = 0; i < 255; i++) { \
             if (t->children[i]) { \
                 name ## _destroy(t->children[i]); \
@@ -65,8 +68,10 @@
         assert(key); \
         struct name ** next; \
         for (;; (t = *next), key++) { \
-            if (*key == '\0') \
+            if (*key == '\0') { \
+                t->hasData = 1u; \
                 return &t->data; \
+            } \
             next = &t->children[*((unsigned char *) key)]; \
             if (!*next) \
                 break; \
@@ -77,20 +82,46 @@
                 return NULL; \
             name ## _init(*next); \
             key++; \
-            if (*key == '\0') \
+            if (*key == '\0') { \
+                (*next)->hasData = 1u; \
                 return &(*next)->data; \
+            } \
         } \
     } \
-    const datatype * name ## _find(const struct name * t, const char * key) { \
+    datatype * name ## _find(struct name * t, const char * key) { \
         assert(t); \
         assert(key); \
         for (;; key++) { \
             if (*key == '\0') \
-                return &t->data; \
-            t = t->children[*((unsigned char *) key)]; \
+                return t->hasData ? &t->data : NULL; \
+            t = t->children[*((const unsigned char *) key)]; \
             if (!t) \
                 return NULL; \
         } \
+    } \
+    int name ## _foreach(struct name * const t, int (*f)(datatype *)) { \
+        assert(t); \
+        assert(f); \
+        if (t->hasData) \
+            if (!((*f)(&t->data))) \
+                return 0; \
+        for (size_t i = 0; i < 255; i++) \
+            if (t->children[i]) \
+                if (!name ## _foreach(t->children[i], f)) \
+                    return 0; \
+        return 1; \
+    } \
+    int name ## _foreach_with_data(struct name * const t, int (*f)(datatype *, void *), void * d) { \
+        assert(t); \
+        assert(f); \
+        if (t->hasData) \
+            if (!((*f)(&t->data, d))) \
+                return 0; \
+        for (size_t i = 0; i < 255; i++) \
+            if (t->children[i]) \
+                if (!name ## _foreach_with_data(t->children[i], f, d)) \
+                    return 0; \
+        return 1; \
     } \
     SVM_TRIE_EXTERN_C_END
 
