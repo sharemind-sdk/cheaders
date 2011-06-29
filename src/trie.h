@@ -43,8 +43,10 @@
     void name ## _destroy(struct name * const t) { \
         assert(t); \
         for (size_t i = 0; i < 255; i++) { \
-            name ## _destroy(t->children[i]); \
-            myfree(t->children[i]); \
+            if (t->children[i]) { \
+                name ## _destroy(t->children[i]); \
+                myfree(t->children[i]); \
+            } \
         } \
     } \
     void name ## _destroy_with(struct name * const t, void (*destroyer)(datatype *)) { \
@@ -52,8 +54,10 @@
         assert(destroyer); \
         (*destroyer)(&t->data); \
         for (size_t i = 0; i < 255; i++) { \
-            name ## _destroy(t->children[i]); \
-            myfree(t->children[i]); \
+            if (t->children[i]) { \
+                name ## _destroy(t->children[i]); \
+                myfree(t->children[i]); \
+            } \
         } \
     } \
     datatype * name ## _get_or_insert(struct name * t, const char * key) { \
