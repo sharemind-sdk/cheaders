@@ -28,7 +28,7 @@
     void name ## _init(struct name * const t) __attribute__ ((nonnull(1))); \
     void name ## _destroy(struct name * const t) __attribute__ ((nonnull(1))); \
     void name ## _destroy_with(struct name * const t, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    datatype * name ## _get_or_insert(struct name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
+    datatype * name ## _get_or_insert(struct name * t, const char * key, int * newValue) __attribute__ ((nonnull(1, 2))); \
     datatype * name ## _find(struct name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
     int name ## _foreach(struct name * const t, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     int name ## _foreach_with_data(struct name * const t, int (*f)(datatype *, void *), void * d) __attribute__ ((nonnull(1, 2))); \
@@ -63,12 +63,14 @@
             } \
         } \
     } \
-    datatype * name ## _get_or_insert(struct name * t, const char * key) { \
+    datatype * name ## _get_or_insert(struct name * t, const char * key, int * newValue) { \
         assert(t); \
         assert(key); \
         struct name ** next; \
         for (;; (t = *next), key++) { \
             if (*key == '\0') { \
+                if (newValue) \
+                    *newValue = (t->hasData == 0u); \
                 t->hasData = 1u; \
                 return &t->data; \
             } \
@@ -84,6 +86,8 @@
             key++; \
             if (*key == '\0') { \
                 (*next)->hasData = 1u; \
+                if (newValue) \
+                    *newValue = 1; \
                 return &(*next)->data; \
             } \
         } \
