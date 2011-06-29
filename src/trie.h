@@ -58,7 +58,7 @@
             (*destroyer)(&t->data); \
         for (size_t i = 0; i < 255; i++) { \
             if (t->children[i]) { \
-                name ## _destroy(t->children[i]); \
+                name ## _destroy_with(t->children[i], destroyer); \
                 myfree(t->children[i]); \
             } \
         } \
