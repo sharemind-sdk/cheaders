@@ -30,7 +30,8 @@
     int name ## _resize(struct name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
     datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
     datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
-    void name ## _foreach(struct name * const r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    int name ## _foreach_with_data(struct name * r, int (*f)(datatype *, void *), void * d) __attribute__ ((nonnull(1, 2))); \
     SVM_VECTOR_EXTERN_C_END
 
 #define SVM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \
@@ -79,9 +80,21 @@
             return NULL; \
         return &r->data[i]; \
     } \
-    void name ## _foreach(struct name * const r, void (*f)(datatype *)) { \
+    int name ## _foreach(struct name * r, int (*f)(datatype *)) { \
+        assert(r); \
+        assert(f); \
         for (size_t i = 0u; i < r->size; i++) \
-            (*f)(&r->data[i]); \
+            if (!((*f)(&r->data[i]))) \
+                return 0; \
+        return 1; \
+    } \
+    int name ## _foreach_with_data(struct name * r, int (*f)(datatype *, void *), void * d) { \
+        assert(r); \
+        assert(f); \
+        for (size_t i = 0u; i < r->size; i++) \
+            if (!((*f)(&r->data[i], d))) \
+                return 0; \
+        return 1; \
     } \
     SVM_VECTOR_EXTERN_C_END
 
