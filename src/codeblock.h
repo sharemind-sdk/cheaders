@@ -5,6 +5,10 @@
 #include <stdint.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 union SVM_IBlock {
     uint64_t uint64[1];
     uint32_t uint32[2];
@@ -19,5 +23,9 @@ union SVM_IBlock {
     size_t sizet[1];
     void * p[1];
 };
+
+#ifdef __cplusplus
+} /* extern "C" { */
+#endif
 
 #endif /* CODEBLOCK_H */
