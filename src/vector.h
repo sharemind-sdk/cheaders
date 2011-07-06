@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <assert.h>
 #include "likely.h"
 
 
@@ -31,7 +32,11 @@
     datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
     datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    int name ## _foreach_with_data(struct name * r, int (*f)(datatype *, void *), void * d) __attribute__ ((nonnull(1, 2))); \
+    SVM_VECTOR_EXTERN_C_END
+
+#define SVM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params) \
+    SVM_VECTOR_EXTERN_C_BEGIN \
+    int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
     SVM_VECTOR_EXTERN_C_END
 
 #define SVM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \
@@ -88,11 +93,15 @@
                 return 0; \
         return 1; \
     } \
-    int name ## _foreach_with_data(struct name * r, int (*f)(datatype *, void *), void * d) { \
+    SVM_VECTOR_EXTERN_C_END
+
+#define SVM_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args) \
+    SVM_VECTOR_EXTERN_C_BEGIN \
+    int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) { \
         assert(r); \
         assert(f); \
         for (size_t i = 0u; i < r->size; i++) \
-            if (!((*f)(&r->data[i], d))) \
+            if (!((*f)(&r->data[i], args))) \
                 return 0; \
         return 1; \
     } \
