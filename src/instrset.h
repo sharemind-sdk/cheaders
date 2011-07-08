@@ -19,15 +19,15 @@
 */
 
 #ifdef __cplusplus
-#define SVM_INSTRSET_EXTERN_C_BEGIN extern "C" {
-#define SVM_INSTRSET_EXTERN_C_END   }
+#define SM_INSTRSET_EXTERN_C_BEGIN extern "C" {
+#define SM_INSTRSET_EXTERN_C_END   }
 #else
-#define SVM_INSTRSET_EXTERN_C_BEGIN
-#define SVM_INSTRSET_EXTERN_C_END
+#define SM_INSTRSET_EXTERN_C_BEGIN
+#define SM_INSTRSET_EXTERN_C_END
 #endif
 
-#define SVM_INSTRSET_DECLARE(name) \
-    SVM_INSTRSET_EXTERN_C_BEGIN \
+#define SM_INSTRSET_DECLARE(name) \
+    SM_INSTRSET_EXTERN_C_BEGIN \
     struct name ## _item; \
     struct name { \
         struct name ## _item * d[65536]; \
@@ -36,10 +36,10 @@
     void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
     int name ## _insert (struct name * s, size_t value) __attribute__ ((nonnull(1))); \
     int name ## _contains (const struct name * s, size_t value) __attribute__ ((nonnull(1), warn_unused_result)); \
-    SVM_INSTRSET_EXTERN_C_END
+    SM_INSTRSET_EXTERN_C_END
 
-#define SVM_INSTRSET_DEFINE(name,mymalloc,myfree) \
-    SVM_INSTRSET_EXTERN_C_BEGIN \
+#define SM_INSTRSET_DEFINE(name,mymalloc,myfree) \
+    SM_INSTRSET_EXTERN_C_BEGIN \
     struct name ## _item { \
         size_t value; \
         struct name ## _item * next; \
@@ -98,6 +98,6 @@
         } \
         return 0; \
     } \
-    SVM_INSTRSET_EXTERN_C_END
+    SM_INSTRSET_EXTERN_C_END
 
 #endif /* INSTRSET_H */

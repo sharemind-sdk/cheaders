@@ -20,15 +20,15 @@
 */
 
 #ifdef __cplusplus
-#define SVM_VECTOR_EXTERN_C_BEGIN extern "C" {
-#define SVM_VECTOR_EXTERN_C_END   }
+#define SM_VECTOR_EXTERN_C_BEGIN extern "C" {
+#define SM_VECTOR_EXTERN_C_END   }
 #else
-#define SVM_VECTOR_EXTERN_C_BEGIN
-#define SVM_VECTOR_EXTERN_C_END
+#define SM_VECTOR_EXTERN_C_BEGIN
+#define SM_VECTOR_EXTERN_C_END
 #endif
 
-#define SVM_VECTOR_DECLARE(name,datatype,extradata) \
-    SVM_VECTOR_EXTERN_C_BEGIN \
+#define SM_VECTOR_DECLARE(name,datatype,extradata) \
+    SM_VECTOR_EXTERN_C_BEGIN \
     struct name { \
         size_t size; \
         datatype * data; \
@@ -41,15 +41,15 @@
     datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
     datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SVM_VECTOR_EXTERN_C_END
+    SM_VECTOR_EXTERN_C_END
 
-#define SVM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params) \
-    SVM_VECTOR_EXTERN_C_BEGIN \
+#define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params) \
+    SM_VECTOR_EXTERN_C_BEGIN \
     int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
-    SVM_VECTOR_EXTERN_C_END
+    SM_VECTOR_EXTERN_C_END
 
-#define SVM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \
-    SVM_VECTOR_EXTERN_C_BEGIN \
+#define SM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \
+    SM_VECTOR_EXTERN_C_BEGIN \
     void name ## _init(struct name * const r) { \
         assert(r); \
         r->size = 0u; \
@@ -102,10 +102,10 @@
                 return 0; \
         return 1; \
     } \
-    SVM_VECTOR_EXTERN_C_END
+    SM_VECTOR_EXTERN_C_END
 
-#define SVM_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args) \
-    SVM_VECTOR_EXTERN_C_BEGIN \
+#define SM_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args) \
+    SM_VECTOR_EXTERN_C_BEGIN \
     int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) { \
         assert(r); \
         assert(f); \
@@ -114,6 +114,6 @@
                 return 0; \
         return 1; \
     } \
-    SVM_VECTOR_EXTERN_C_END
+    SM_VECTOR_EXTERN_C_END
 
 #endif /* VECTOR_H */

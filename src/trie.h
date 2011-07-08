@@ -20,15 +20,15 @@
 */
 
 #ifdef __cplusplus
-#define SVM_TRIE_EXTERN_C_BEGIN extern "C" {
-#define SVM_TRIE_EXTERN_C_END   }
+#define SM_TRIE_EXTERN_C_BEGIN extern "C" {
+#define SM_TRIE_EXTERN_C_END   }
 #else
-#define SVM_TRIE_EXTERN_C_BEGIN
-#define SVM_TRIE_EXTERN_C_END
+#define SM_TRIE_EXTERN_C_BEGIN
+#define SM_TRIE_EXTERN_C_END
 #endif
 
-#define SVM_TRIE_DECLARE(name,datatype) \
-    SVM_TRIE_EXTERN_C_BEGIN \
+#define SM_TRIE_DECLARE(name,datatype) \
+    SM_TRIE_EXTERN_C_BEGIN \
     struct name { \
         struct name * children[255]; \
         unsigned char hasData; \
@@ -40,15 +40,15 @@
     datatype * name ## _get_or_insert(struct name * t, const char * key, int * newValue) __attribute__ ((nonnull(1, 2))); \
     datatype * name ## _find(struct name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
     int name ## _foreach(struct name * const t, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SVM_TRIE_EXTERN_C_END
+    SM_TRIE_EXTERN_C_END
 
-#define SVM_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params) \
-    SVM_VECTOR_EXTERN_C_BEGIN \
+#define SM_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params) \
+    SM_VECTOR_EXTERN_C_BEGIN \
     int name ## _foreach_with_ ## withname (struct name * t, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
-    SVM_VECTOR_EXTERN_C_END
+    SM_VECTOR_EXTERN_C_END
 
-#define SVM_TRIE_DEFINE(name,datatype,mymalloc,myfree) \
-    SVM_TRIE_EXTERN_C_BEGIN \
+#define SM_TRIE_DEFINE(name,datatype,mymalloc,myfree) \
+    SM_TRIE_EXTERN_C_BEGIN \
     void name ## _init(struct name * const t) { \
         assert(t); \
         for (size_t i = 0u; i < 255u; i++) \
@@ -128,10 +128,10 @@
                     return 0; \
         return 1; \
     } \
-    SVM_TRIE_EXTERN_C_END
+    SM_TRIE_EXTERN_C_END
 
-#define SVM_TRIE_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args) \
-    SVM_TRIE_EXTERN_C_BEGIN \
+#define SM_TRIE_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args) \
+    SM_TRIE_EXTERN_C_BEGIN \
     int name ## _foreach_with_ ## withname (struct name * t, int (*f)(datatype *, types), params) { \
         assert(t); \
         assert(f); \
@@ -144,6 +144,6 @@
                     return 0; \
         return 1; \
     } \
-    SVM_TRIE_EXTERN_C_END
+    SM_TRIE_EXTERN_C_END
 
 #endif /* TRIE_H */

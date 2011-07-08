@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-union SVM_IBlock {
+union SM_CodeBlock {
     uint64_t uint64[1];
     uint32_t uint32[2];
     uint16_t uint16[4];
