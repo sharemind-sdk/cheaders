@@ -88,7 +88,7 @@
         switch (v) { \
             BOOST_PP_SEQ_FOR_EACH(SM_ENUM_DEFINE_TOSTRING_ELEM,_,elems) \
             default: \
-                return "UNKNOWN"; \
+                return NULL; \
         } \
     }
 #define SM_ENUM_DEFINE_TOSTRING_ELEM(unused,unused2,e) \
@@ -106,7 +106,7 @@
         switch (v) { \
             BOOST_PP_SEQ_FOR_EACH(SM_ENUM_CUSTOM_DEFINE_TOSTRING_ELEM,_,elems) \
             default: \
-                return "UNKNOWN"; \
+                return NULL; \
         } \
     }
 #define SM_ENUM_CUSTOM_DEFINE_TOSTRING_ELEM(unused,unused2,e) \
