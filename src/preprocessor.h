@@ -75,7 +75,7 @@
  * \param[in] name The name of the enum. The name is also used as a prefix to
  *                 the function name.
  */
-#define SM_ENUM_DECLARE_TOSTRING(name) const char * name ## _toString(enum name v)
+#define SM_ENUM_DECLARE_TOSTRING(name) const char * name ## _toString(enum name v) __attribute__ ((warn_unused_result))
 
 /**
  * \brief Defines a _toString method for an enum.
