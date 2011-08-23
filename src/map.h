@@ -34,6 +34,7 @@
     }; \
     void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
     void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
+    int name ## _foreach (struct name * s, int (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
     valuetype * name ## _insert (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
     int name ## _remove (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
     valuetype * name ## _get (struct name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
@@ -60,6 +61,20 @@
                 s->d[i] = next; \
             } \
         } \
+    } \
+    int name ## _foreach (struct name * s, int (*f)(valuetype *)) { \
+        assert(s); \
+        assert(f); \
+        for (size_t i = 0; i < 65536; i++) { \
+            struct name ## _item * item = s->d[i]; \
+            while (item) { \
+                struct name ## _item * next = item->next; \
+                if (!((*f)(&item->value))) \
+                    return 0; \
+                item = next; \
+            } \
+        } \
+        return 1; \
     } \
     valuetype * name ## _insert (struct name * s, keytype key) { \
         assert(s); \
