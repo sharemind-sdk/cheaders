@@ -39,6 +39,7 @@
     void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     int name ## _resize(struct name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
     datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
+    void name ## _pop(struct name * const r) __attribute__ ((nonnull(1))); \
     datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SM_VECTOR_EXTERN_C_END
@@ -91,6 +92,11 @@
         if (unlikely(!name ## _resize(r, newSize))) \
             return NULL; \
         return &r->data[oldSize]; \
+    } \
+    void name ## _pop(struct name * const r) { \
+        assert(r); \
+        assert(r->size > 0u); \
+        name ## _resize(r, r->size - 1u); \
     } \
     datatype * name ## _get_pointer(struct name * const r, size_t i) { \
         assert(r); \
