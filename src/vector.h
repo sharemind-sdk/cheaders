@@ -76,7 +76,7 @@
         /** \todo check size_t overflow. */ \
         datatype * const d = myrealloc(r->data, realSize); \
         if (unlikely(!d)) \
-            if (unlikely(realSize != 0)) \
+            if (unlikely(realSize != 0u)) \
                 return 0; \
         r->data = d; \
         r->size = newSize; \
@@ -84,9 +84,13 @@
     } \
     datatype * name ## _push(struct name * const r) { \
         assert(r); \
-        if (unlikely(!name ## _resize(r, r->size + 1))) \
+        size_t oldSize = r->size; \
+        size_t newSize = oldSize + 1u; \
+        if (unlikely(newSize == 0u)) \
             return NULL; \
-        return &r->data[r->size - 1]; \
+        if (unlikely(!name ## _resize(r, newSize))) \
+            return NULL; \
+        return &r->data[oldSize]; \
     } \
     datatype * name ## _get_pointer(struct name * const r, size_t i) { \
         assert(r); \
