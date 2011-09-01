@@ -26,33 +26,33 @@
 #define SM_MAP_EXTERN_C_END
 #endif
 
-#define SM_MAP_DECLARE(name,keytype,valuetype) \
+#define SM_MAP_DECLARE(name,keytype,valuetype,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
     struct name ## _item; \
     struct name { \
         struct name ## _item * d[65536]; \
     }; \
-    void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
-    void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
-    int name ## _foreach (struct name * s, int (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
-    valuetype * name ## _insert (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
-    int name ## _remove (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
-    valuetype * name ## _get (struct name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _foreach (struct name * s, int (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps valuetype * name ## _insert (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _remove (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps valuetype * name ## _get (struct name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
     SM_MAP_EXTERN_C_END
 
-#define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,mymalloc,myfree) \
+#define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,mymalloc,myfree,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
     struct name ## _item { \
         keytype key; \
         valuetype value; \
         struct name ## _item * next; \
     }; \
-    void name ## _init (struct name * s) { \
+    inlinePerhaps void name ## _init (struct name * s) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) \
             s->d[i] = NULL; \
     } \
-    void name ## _destroy (struct name * s) { \
+    inlinePerhaps void name ## _destroy (struct name * s) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) { \
             while (s->d[i]) { \
@@ -62,7 +62,7 @@
             } \
         } \
     } \
-    int name ## _foreach (struct name * s, int (*f)(valuetype *)) { \
+    inlinePerhaps int name ## _foreach (struct name * s, int (*f)(valuetype *)) { \
         assert(s); \
         assert(f); \
         for (size_t i = 0; i < 65536; i++) { \
@@ -76,7 +76,7 @@
         } \
         return 1; \
     } \
-    valuetype * name ## _insert (struct name * s, keytype key) { \
+    inlinePerhaps valuetype * name ## _insert (struct name * s, keytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item ** l = &s->d[hash]; \
@@ -102,7 +102,7 @@
         (*l)->next = p; \
         return &(*l)->value; \
     } \
-    int name ## _remove (struct name * s, keytype key) { \
+    inlinePerhaps int name ## _remove (struct name * s, keytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item ** prevPtr = &s->d[hash]; \
@@ -120,7 +120,7 @@
         } \
         return 0; \
     } \
-    valuetype * name ## _get (struct name * s, keytype key) { \
+    inlinePerhaps valuetype * name ## _get (struct name * s, keytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item * l = s->d[hash]; \

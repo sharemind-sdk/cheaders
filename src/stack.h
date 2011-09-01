@@ -26,34 +26,34 @@
 #define SM_STACK_EXTERN_C_END
 #endif
 
-#define SM_STACK_DECLARE(name,datatype,extradata) \
+#define SM_STACK_DECLARE(name,datatype,extradata,inlinePerhaps) \
     SM_STACK_EXTERN_C_BEGIN \
     struct name ## _item; \
     struct name { \
         struct name ## _item * d; \
         extradata \
     }; \
-    void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
-    void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
-    void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    datatype * name ## _push (struct name * s) __attribute__ ((nonnull(1))); \
-    void name ## _pop (struct name * s) __attribute__ ((nonnull(1))); \
-    datatype * name ## _top (struct name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
-    int name ## _empty (struct name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
-    void name ## _foreach (struct name * s, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps datatype * name ## _push (struct name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _pop (struct name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps datatype * name ## _top (struct name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps int name ## _empty (struct name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps void name ## _foreach (struct name * s, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SM_STACK_EXTERN_C_END
 
-#define SM_STACK_DEFINE(name,datatype,mymalloc,myfree) \
+#define SM_STACK_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
     SM_STACK_EXTERN_C_BEGIN \
     struct name ## _item { \
         datatype value; \
         struct name ## _item * prev; \
     }; \
-    void name ## _init (struct name * s) { \
+    inlinePerhaps void name ## _init (struct name * s) { \
         assert(s); \
         s->d = NULL; \
     } \
-    void name ## _destroy (struct name * s) { \
+    inlinePerhaps void name ## _destroy (struct name * s) { \
         assert(s); \
         struct name ## _item * d = s->d; \
         if (d) { \
@@ -67,7 +67,7 @@
             } \
         } \
     } \
-    void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)) { \
+    inlinePerhaps void name ## _destroy_with(struct name * const s, void (*destroyer)(datatype *)) { \
         assert(s); \
         assert(destroyer); \
         struct name ## _item * d = s->d; \
@@ -83,7 +83,7 @@
             } \
         } \
     } \
-    datatype * name ## _push (struct name * s) { \
+    inlinePerhaps datatype * name ## _push (struct name * s) { \
         assert(s); \
         struct name ## _item * n = mymalloc(sizeof(struct name ## _item)); \
         if (unlikely(!n)) \
@@ -92,24 +92,24 @@
         s->d = n; \
         return &n->value; \
     } \
-    void name ## _pop (struct name * s) { \
+    inlinePerhaps void name ## _pop (struct name * s) { \
         assert(s); \
         struct name ## _item * d = s->d; \
         assert(d); \
         s->d = d->prev; \
         myfree(d); \
     } \
-    datatype * name ## _top (struct name * s) { \
+    inlinePerhaps datatype * name ## _top (struct name * s) { \
         assert(s); \
         struct name ## _item * d = s->d; \
         assert(d); \
         return &d->value; \
     } \
-    int name ## _empty (struct name * s) { \
+    inlinePerhaps int name ## _empty (struct name * s) { \
         assert(s); \
         return s->d == NULL; \
     } \
-    void name ## _foreach (struct name * s, void (*f)(datatype *)) { \
+    inlinePerhaps void name ## _foreach (struct name * s, void (*f)(datatype *)) { \
         assert(s); \
         struct name ## _item * d = s->d; \
         while (d) { \

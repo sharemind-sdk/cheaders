@@ -27,47 +27,47 @@
 #define SM_VECTOR_EXTERN_C_END
 #endif
 
-#define SM_VECTOR_DECLARE(name,datatype,extradata) \
+#define SM_VECTOR_DECLARE(name,datatype,extradata,inlinePerhaps) \
     SM_VECTOR_EXTERN_C_BEGIN \
     struct name { \
         size_t size; \
         datatype * data; \
         extradata \
     }; \
-    void name ## _init(struct name * const r) __attribute__ ((nonnull(1))); \
-    void name ## _destroy(struct name * const r) __attribute__ ((nonnull(1))); \
-    void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    int name ## _resize(struct name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
-    datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
-    void name ## _pop(struct name * const r) __attribute__ ((nonnull(1))); \
-    datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
-    int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _init(struct name * const r) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy(struct name * const r) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps int name ## _resize(struct name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
+    inlinePerhaps datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _pop(struct name * const r) __attribute__ ((nonnull(1))); \
+    inlinePerhaps datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps SM_VECTOR_EXTERN_C_END
+
+#define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
+    SM_VECTOR_EXTERN_C_BEGIN \
+    inlinePerhaps int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
     SM_VECTOR_EXTERN_C_END
 
-#define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params) \
+#define SM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc,inlinePerhaps) \
     SM_VECTOR_EXTERN_C_BEGIN \
-    int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
-    SM_VECTOR_EXTERN_C_END
-
-#define SM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc) \
-    SM_VECTOR_EXTERN_C_BEGIN \
-    void name ## _init(struct name * const r) { \
+    inlinePerhaps void name ## _init(struct name * const r) { \
         assert(r); \
         r->size = 0u; \
         r->data = NULL; \
     } \
-    void name ## _destroy(struct name * const r) { \
+    inlinePerhaps void name ## _destroy(struct name * const r) { \
         assert(r); \
         myfree(r->data); \
     } \
-    void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)) { \
+    inlinePerhaps void name ## _destroy_with(struct name * const r, void (*destroyer)(datatype *)) { \
         assert(r); \
         assert(destroyer); \
         for (size_t i = 0u; i < r->size; i++) \
             (*destroyer)(&r->data[i]); \
         myfree(r->data); \
     } \
-    int name ## _resize(struct name * const r, const size_t newSize) { \
+    inlinePerhaps int name ## _resize(struct name * const r, const size_t newSize) { \
         assert(r); \
         size_t realSize = newSize * sizeof(datatype); \
         if (unlikely(realSize / sizeof(datatype) != newSize)) \
@@ -83,7 +83,7 @@
         r->size = newSize; \
         return 1; \
     } \
-    datatype * name ## _push(struct name * const r) { \
+    inlinePerhaps datatype * name ## _push(struct name * const r) { \
         assert(r); \
         size_t oldSize = r->size; \
         size_t newSize = oldSize + 1u; \
@@ -93,18 +93,18 @@
             return NULL; \
         return &r->data[oldSize]; \
     } \
-    void name ## _pop(struct name * const r) { \
+    inlinePerhaps void name ## _pop(struct name * const r) { \
         assert(r); \
         assert(r->size > 0u); \
         name ## _resize(r, r->size - 1u); \
     } \
-    datatype * name ## _get_pointer(struct name * const r, size_t i) { \
+    inlinePerhaps datatype * name ## _get_pointer(struct name * const r, size_t i) { \
         assert(r); \
         if (unlikely(i >= r->size)) \
             return NULL; \
         return &r->data[i]; \
     } \
-    int name ## _foreach(struct name * r, int (*f)(datatype *)) { \
+    inlinePerhaps int name ## _foreach(struct name * r, int (*f)(datatype *)) { \
         assert(r); \
         assert(f); \
         for (size_t i = 0u; i < r->size; i++) \
@@ -114,9 +114,9 @@
     } \
     SM_VECTOR_EXTERN_C_END
 
-#define SM_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args) \
+#define SM_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
     SM_VECTOR_EXTERN_C_BEGIN \
-    int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) { \
+    inlinePerhaps int name ## _foreach_with_ ## withname (struct name * r, int (*f)(datatype *, types), params) { \
         assert(r); \
         assert(f); \
         for (size_t i = 0u; i < r->size; i++) \
