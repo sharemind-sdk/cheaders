@@ -31,7 +31,7 @@
 
 #define SM_T(c,i,t) BOOST_PP_TUPLE_ELEM(c,i,t)
 #define SM_S(i,s)   BOOST_PP_SEQ_ELEM(i, s)
-#define SM_2S(t)    BOOST_PP_STRINGIZE(t) 
+#define SM_2S(t)    BOOST_PP_STRINGIZE(t)
 
 
 /*
