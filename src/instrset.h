@@ -10,7 +10,7 @@
 #ifndef INSTRSET_H
 #define INSTRSET_H
 
-#include "../likely.h"
+#include "likely.h"
 
 
 /**
