@@ -41,6 +41,7 @@
     inlinePerhaps datatype * name ## _push(struct name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _pop(struct name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps const datatype * name ## _get_const_pointer(const struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps SM_VECTOR_EXTERN_C_END
 
@@ -99,6 +100,12 @@
         name ## _resize(r, r->size - 1u); \
     } \
     inlinePerhaps datatype * name ## _get_pointer(struct name * const r, size_t i) { \
+        assert(r); \
+        if (unlikely(i >= r->size)) \
+            return NULL; \
+        return &r->data[i]; \
+    } \
+    inlinePerhaps const datatype * name ## _get_const_pointer(const struct name * const r, size_t i) { \
         assert(r); \
         if (unlikely(i >= r->size)) \
             return NULL; \
