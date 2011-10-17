@@ -43,6 +43,7 @@
     inlinePerhaps datatype * name ## _get_pointer(struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps const datatype * name ## _get_const_pointer(const struct name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps int name ## _foreach(struct name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _foreach_void(struct name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps SM_VECTOR_EXTERN_C_END
 
 #define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
@@ -118,6 +119,12 @@
             if (!((*f)(&r->data[i]))) \
                 return 0; \
         return 1; \
+    } \
+    inlinePerhaps void name ## _foreach_void(struct name * r, void (*f)(datatype *)) { \
+        assert(r); \
+        assert(f); \
+        for (size_t i = 0u; i < r->size; i++) \
+            (*f)(&r->data[i]); \
     } \
     SM_VECTOR_EXTERN_C_END
 
