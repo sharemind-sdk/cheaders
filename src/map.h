@@ -35,6 +35,7 @@
     inlinePerhaps void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _foreach (struct name * s, int (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _foreach_void (struct name * s, void (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps valuetype * name ## _insert (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _remove (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
     inlinePerhaps valuetype * name ## _get (struct name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
@@ -75,6 +76,18 @@
             } \
         } \
         return 1; \
+    } \
+    inlinePerhaps void name ## _foreach_void (struct name * s, void (*f)(valuetype *)) { \
+        assert(s); \
+        assert(f); \
+        for (size_t i = 0; i < 65536; i++) { \
+            struct name ## _item * item = s->d[i]; \
+            while (item) { \
+                struct name ## _item * next = item->next; \
+                (*f)(&item->value); \
+                item = next; \
+            } \
+        } \
     } \
     inlinePerhaps valuetype * name ## _insert (struct name * s, keytype key) { \
         assert(s); \
