@@ -87,12 +87,12 @@
                 t->hasData = 1u; \
                 return &t->data; \
             } \
-            next = &t->children[*((unsigned char *) key)]; \
+            next = &t->children[*((const unsigned char *) key)]; \
             if (!*next) \
                 break; \
         } \
-        for (;; next = &(*next)->children[*((unsigned char *) key)]) { \
-            (*next) = mymalloc(sizeof(struct name)); \
+        for (;; next = &(*next)->children[*((const unsigned char *) key)]) { \
+            (*next) = (struct name *) mymalloc(sizeof(struct name)); \
             if (!*next) \
                 return NULL; \
             name ## _init(*next); \
