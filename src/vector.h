@@ -77,7 +77,7 @@
         if (unlikely(r->size == newSize)) \
             return 1; \
         /** \todo check size_t overflow. */ \
-        datatype * const d = myrealloc(r->data, realSize); \
+        datatype * const d = (datatype *) myrealloc(r->data, realSize); \
         if (unlikely(!d)) \
             if (unlikely(realSize != 0u)) \
                 return 0; \
