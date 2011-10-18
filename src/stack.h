@@ -85,7 +85,7 @@
     } \
     inlinePerhaps datatype * name ## _push (struct name * s) { \
         assert(s); \
-        struct name ## _item * n = mymalloc(sizeof(struct name ## _item)); \
+        struct name ## _item * n = (struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
         if (unlikely(!n)) \
             return NULL; \
         n->prev = s->d; \

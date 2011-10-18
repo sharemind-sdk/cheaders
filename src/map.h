@@ -106,7 +106,7 @@
         } else { \
             p = NULL; \
         } \
-        *l = mymalloc(sizeof(struct name ## _item)); \
+        *l = (struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
         if (!(*l)) { \
             *l = p; \
             return NULL; \
