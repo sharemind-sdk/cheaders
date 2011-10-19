@@ -10,6 +10,8 @@
 #ifndef INSTRSET_H
 #define INSTRSET_H
 
+#include <stddef.h>
+#include <stdint.h>
 #include "likely.h"
 
 
@@ -34,14 +36,14 @@
     }; \
     inlinePerhaps void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps int name ## _insert (struct name * s, size_t value) __attribute__ ((nonnull(1))); \
-    inlinePerhaps int name ## _contains (const struct name * s, size_t value) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps int name ## _insert (struct name * s, uintptr_t value) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _contains (const struct name * s, uintptr_t value) __attribute__ ((nonnull(1), warn_unused_result)); \
     SM_INSTRSET_EXTERN_C_END
 
 #define SM_INSTRSET_DEFINE(name,mymalloc,myfree,inlinePerhaps) \
     SM_INSTRSET_EXTERN_C_BEGIN \
     struct name ## _item { \
-        size_t value; \
+        uintptr_t value; \
         struct name ## _item * next; \
     }; \
     inlinePerhaps void name ## _init (struct name * s) { \
@@ -59,7 +61,7 @@
             } \
         } \
     } \
-    inlinePerhaps int name ## _insert (struct name * s, size_t v) { \
+    inlinePerhaps int name ## _insert (struct name * s, uintptr_t v) { \
         assert(s); \
         uint16_t hash = (uint16_t) v; \
         struct name ## _item ** l = &s->d[hash]; \
@@ -85,7 +87,7 @@
         (*l)->next = p; \
         return 1; \
     } \
-    inlinePerhaps int name ## _contains (const struct name * s, size_t v) { \
+    inlinePerhaps int name ## _contains (const struct name * s, uintptr_t v) { \
         assert(s); \
         uint16_t hash = (uint16_t) v; \
         struct name ## _item * l = s->d[hash]; \
