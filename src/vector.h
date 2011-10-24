@@ -71,15 +71,13 @@
     } \
     inlinePerhaps int name ## _resize(struct name * const r, const size_t newSize) { \
         assert(r); \
-        size_t realSize = newSize * sizeof(datatype); \
-        if (unlikely(realSize / sizeof(datatype) != newSize)) \
-            return 0; \
         if (unlikely(r->size == newSize)) \
             return 1; \
-        /** \todo check size_t overflow. */ \
-        datatype * const d = (datatype *) myrealloc(r->data, realSize); \
+        if (unlikely(newSize > SIZE_MAX / sizeof(datatype))) \
+            return 0; \
+        datatype * const d = (datatype *) myrealloc(r->data, newSize * sizeof(datatype)); \
         if (unlikely(!d)) \
-            if (unlikely(realSize != 0u)) \
+            if (unlikely(newSize != 0u)) \
                 return 0; \
         r->data = d; \
         r->size = newSize; \
