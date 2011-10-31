@@ -31,13 +31,13 @@
 #define SM_INSTRSET_DECLARE(name,inlinePerhaps) \
     SM_INSTRSET_EXTERN_C_BEGIN \
     struct name ## _item; \
-    struct name { \
+    typedef struct { \
         struct name ## _item * d[65536]; \
-    }; \
-    inlinePerhaps void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps int name ## _insert (struct name * s, uintptr_t value) __attribute__ ((nonnull(1))); \
-    inlinePerhaps int name ## _contains (const struct name * s, uintptr_t value) __attribute__ ((nonnull(1), warn_unused_result)); \
+    } name; \
+    inlinePerhaps void name ## _init (name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy (name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _insert (name * s, uintptr_t value) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _contains (const name * s, uintptr_t value) __attribute__ ((nonnull(1), warn_unused_result)); \
     SM_INSTRSET_EXTERN_C_END
 
 #define SM_INSTRSET_DEFINE(name,mymalloc,myfree,inlinePerhaps) \
@@ -46,12 +46,12 @@
         uintptr_t value; \
         struct name ## _item * next; \
     }; \
-    inlinePerhaps void name ## _init (struct name * s) { \
+    inlinePerhaps void name ## _init (name * s) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) \
             s->d[i] = NULL; \
     } \
-    inlinePerhaps void name ## _destroy (struct name * s) { \
+    inlinePerhaps void name ## _destroy (name * s) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) { \
             while (s->d[i]) { \
@@ -61,7 +61,7 @@
             } \
         } \
     } \
-    inlinePerhaps int name ## _insert (struct name * s, uintptr_t v) { \
+    inlinePerhaps int name ## _insert (name * s, uintptr_t v) { \
         assert(s); \
         uint16_t hash = (uint16_t) v; \
         struct name ## _item ** l = &s->d[hash]; \
@@ -87,7 +87,7 @@
         (*l)->next = p; \
         return 1; \
     } \
-    inlinePerhaps int name ## _contains (const struct name * s, uintptr_t v) { \
+    inlinePerhaps int name ## _contains (const name * s, uintptr_t v) { \
         assert(s); \
         uint16_t hash = (uint16_t) v; \
         struct name ## _item * l = s->d[hash]; \

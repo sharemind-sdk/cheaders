@@ -29,33 +29,34 @@
 
 #define SM_TRIE_DECLARE(name,datatype,inlinePerhaps) \
     SM_TRIE_EXTERN_C_BEGIN \
-    struct name { \
-        struct name * children[255]; \
+    struct _ ## name { \
+        struct _ ## name * children[255]; \
         unsigned char hasData; \
         datatype data; \
     }; \
-    inlinePerhaps void name ## _init(struct name * const t) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy(struct name * const t) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy_with(struct name * const t, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps datatype * name ## _get_or_insert(struct name * t, const char * key, int * newValue) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps datatype * name ## _find(struct name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps int name ## _foreach(struct name * const t, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    typedef struct _ ## name name; \
+    inlinePerhaps void name ## _init(name * const t) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy(name * const t) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy_with(name * const t, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, int * newValue) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps datatype * name ## _find(name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps int name ## _foreach(name * const t, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SM_TRIE_EXTERN_C_END
 
 #define SM_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
     SM_VECTOR_EXTERN_C_BEGIN \
-    inlinePerhaps int name ## _foreach_with_ ## withname (struct name * t, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps int name ## _foreach_with_ ## withname (name * t, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
     SM_VECTOR_EXTERN_C_END
 
 #define SM_TRIE_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
     SM_TRIE_EXTERN_C_BEGIN \
-    inlinePerhaps void name ## _init(struct name * const t) { \
+    inlinePerhaps void name ## _init(name * const t) { \
         assert(t); \
         for (size_t i = 0u; i < 255u; i++) \
             t->children[i] = NULL; \
         t->hasData = 0u; \
     } \
-    inlinePerhaps void name ## _destroy(struct name * const t) { \
+    inlinePerhaps void name ## _destroy(name * const t) { \
         assert(t); \
         for (size_t i = 0; i < 255; i++) { \
             if (t->children[i]) { \
@@ -64,7 +65,7 @@
             } \
         } \
     } \
-    inlinePerhaps void name ## _destroy_with(struct name * const t, void (*destroyer)(datatype *)) { \
+    inlinePerhaps void name ## _destroy_with(name * const t, void (*destroyer)(datatype *)) { \
         assert(t); \
         assert(destroyer); \
         if (t->hasData) \
@@ -76,10 +77,10 @@
             } \
         } \
     } \
-    inlinePerhaps datatype * name ## _get_or_insert(struct name * t, const char * key, int * newValue) { \
+    inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, int * newValue) { \
         assert(t); \
         assert(key); \
-        struct name ** next; \
+        name ** next; \
         for (;; (t = *next), key++) { \
             if (*key == '\0') { \
                 if (newValue) \
@@ -92,7 +93,7 @@
                 break; \
         } \
         for (;; next = &(*next)->children[*((const unsigned char *) key)]) { \
-            (*next) = (struct name *) mymalloc(sizeof(struct name)); \
+            (*next) = (name *) mymalloc(sizeof(name)); \
             if (!*next) \
                 return NULL; \
             name ## _init(*next); \
@@ -105,7 +106,7 @@
             } \
         } \
     } \
-    inlinePerhaps datatype * name ## _find(struct name * t, const char * key) { \
+    inlinePerhaps datatype * name ## _find(name * t, const char * key) { \
         assert(t); \
         assert(key); \
         for (;; key++) { \
@@ -116,7 +117,7 @@
                 return NULL; \
         } \
     } \
-    inlinePerhaps int name ## _foreach(struct name * const t, int (*f)(datatype *)) { \
+    inlinePerhaps int name ## _foreach(name * const t, int (*f)(datatype *)) { \
         assert(t); \
         assert(f); \
         if (t->hasData) \
@@ -132,7 +133,7 @@
 
 #define SM_TRIE_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
     SM_TRIE_EXTERN_C_BEGIN \
-    inlinePerhaps int name ## _foreach_with_ ## withname (struct name * t, int (*f)(datatype *, types), params) { \
+    inlinePerhaps int name ## _foreach_with_ ## withname (name * t, int (*f)(datatype *, types), params) { \
         assert(t); \
         assert(f); \
         if (t->hasData) \

@@ -25,7 +25,7 @@ typedef float smvm_float32;
 extern "C" {
 #endif
 
-union SM_CodeBlock {
+typedef union {
     uint64_t uint64[1];
     uint32_t uint32[2];
     uint16_t uint16[4];
@@ -38,7 +38,7 @@ union SM_CodeBlock {
     smvm_float32 float32[2];
     size_t sizet[1];
     void * p[1];
-};
+} SMVM_CodeBlock;
 
 #ifdef __cplusplus
 } /* extern "C" { */

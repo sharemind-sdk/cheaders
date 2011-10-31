@@ -59,7 +59,7 @@
  * \param[in] name name of enum.
  * \param[in] elems (a)(sequence)(of)(enum)(keys)
  */
-#define SM_ENUM_DEFINE(name,elems) enum name { BOOST_PP_SEQ_FOR_EACH_I(SM_ENUM_DEFINE_ELEM,_,elems) }
+#define SM_ENUM_DEFINE(name,elems) typedef enum { BOOST_PP_SEQ_FOR_EACH_I(SM_ENUM_DEFINE_ELEM,_,elems) } name
 #define SM_ENUM_DEFINE_ELEM(unused,unused2,i,e) BOOST_PP_COMMA_IF(i) e
 
 /**
@@ -67,7 +67,7 @@
  * \param[in] name name of enum.
  * \param[in] elems ((a sequence of tuples with,))((keys and, = optional values))
  */
-#define SM_ENUM_CUSTOM_DEFINE(name,elems) enum name { BOOST_PP_SEQ_FOR_EACH_I(SM_ENUM_CUSTOM_DEFINE_ELEM,_,elems) }
+#define SM_ENUM_CUSTOM_DEFINE(name,elems) typedef enum { BOOST_PP_SEQ_FOR_EACH_I(SM_ENUM_CUSTOM_DEFINE_ELEM,_,elems) } name
 #define SM_ENUM_CUSTOM_DEFINE_ELEM(unused,unused2,i,e) BOOST_PP_COMMA_IF(i) SM_T(2,0,e) SM_T(2,1,e)
 
 /**
@@ -75,7 +75,7 @@
  * \param[in] name The name of the enum. The name is also used as a prefix to
  *                 the function name.
  */
-#define SM_ENUM_DECLARE_TOSTRING(name) const char * name ## _toString(enum name v) __attribute__ ((warn_unused_result))
+#define SM_ENUM_DECLARE_TOSTRING(name) const char * name ## _toString(name v) __attribute__ ((warn_unused_result))
 
 /**
  * \brief Defines a _toString method for an enum.
@@ -84,7 +84,7 @@
  * \param[in] elems (a)(sequence)(of)(enum)(keys)
  */
 #define SM_ENUM_DEFINE_TOSTRING(name,elems) \
-    const char * name ## _toString(enum name v) { \
+    const char * name ## _toString(name v) { \
         switch (v) { \
             BOOST_PP_SEQ_FOR_EACH(SM_ENUM_DEFINE_TOSTRING_ELEM,_,elems) \
             default: \
@@ -102,7 +102,7 @@
  * \param[in] elems ((a sequence of tuples with,))((keys and, = optional values))
  */
 #define SM_ENUM_CUSTOM_DEFINE_TOSTRING(name,elems) \
-    const char * name ## _toString(enum name v) { \
+    const char * name ## _toString(name v) { \
         switch (v) { \
             BOOST_PP_SEQ_FOR_EACH(SM_ENUM_CUSTOM_DEFINE_TOSTRING_ELEM,_,elems) \
             default: \

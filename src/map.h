@@ -29,16 +29,16 @@
 #define SM_MAP_DECLARE(name,keytype,valuetype,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
     struct name ## _item; \
-    struct name { \
+    typedef struct { \
         struct name ## _item * d[65536]; \
-    }; \
-    inlinePerhaps void name ## _init (struct name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy (struct name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps int name ## _foreach (struct name * s, int (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps void name ## _foreach_void (struct name * s, void (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps valuetype * name ## _insert (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps int name ## _remove (struct name * s, keytype key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps valuetype * name ## _get (struct name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
+    } name; \
+    inlinePerhaps void name ## _init (name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void name ## _destroy (name * s) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _foreach (name * s, int (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _foreach_void (name * s, void (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps valuetype * name ## _insert (name * s, keytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _remove (name * s, keytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps valuetype * name ## _get (name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
     SM_MAP_EXTERN_C_END
 
 #define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,mymalloc,myfree,inlinePerhaps) \
@@ -48,12 +48,12 @@
         valuetype value; \
         struct name ## _item * next; \
     }; \
-    inlinePerhaps void name ## _init (struct name * s) { \
+    inlinePerhaps void name ## _init (name * s) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) \
             s->d[i] = NULL; \
     } \
-    inlinePerhaps void name ## _destroy (struct name * s) { \
+    inlinePerhaps void name ## _destroy (name * s) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) { \
             while (s->d[i]) { \
@@ -63,7 +63,7 @@
             } \
         } \
     } \
-    inlinePerhaps int name ## _foreach (struct name * s, int (*f)(valuetype *)) { \
+    inlinePerhaps int name ## _foreach (name * s, int (*f)(valuetype *)) { \
         assert(s); \
         assert(f); \
         for (size_t i = 0; i < 65536; i++) { \
@@ -77,7 +77,7 @@
         } \
         return 1; \
     } \
-    inlinePerhaps void name ## _foreach_void (struct name * s, void (*f)(valuetype *)) { \
+    inlinePerhaps void name ## _foreach_void (name * s, void (*f)(valuetype *)) { \
         assert(s); \
         assert(f); \
         for (size_t i = 0; i < 65536; i++) { \
@@ -89,7 +89,7 @@
             } \
         } \
     } \
-    inlinePerhaps valuetype * name ## _insert (struct name * s, keytype key) { \
+    inlinePerhaps valuetype * name ## _insert (name * s, keytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item ** l = &s->d[hash]; \
@@ -115,7 +115,7 @@
         (*l)->next = p; \
         return &(*l)->value; \
     } \
-    inlinePerhaps int name ## _remove (struct name * s, keytype key) { \
+    inlinePerhaps int name ## _remove (name * s, keytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item ** prevPtr = &s->d[hash]; \
@@ -133,7 +133,7 @@
         } \
         return 0; \
     } \
-    inlinePerhaps valuetype * name ## _get (struct name * s, keytype key) { \
+    inlinePerhaps valuetype * name ## _get (name * s, keytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item * l = s->d[hash]; \
