@@ -44,7 +44,7 @@
     inlinePerhaps const datatype * name ## _get_const_pointer(const name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps int name ## _foreach(name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps SM_VECTOR_EXTERN_C_END
+    SM_VECTOR_EXTERN_C_END
 
 #define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
     SM_VECTOR_EXTERN_C_BEGIN \
