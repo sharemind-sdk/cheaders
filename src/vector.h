@@ -11,6 +11,8 @@
 #define VECTOR_H
 
 #include <assert.h>
+#include <stddef.h>
+#include <stdint.h>
 #include "likely.h"
 
 
@@ -41,10 +43,10 @@
     inlinePerhaps datatype * name ## _push(name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _pop(name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps datatype * name ## _get_pointer(name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps const datatype * name ## _get_const_pointer(const name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps datatype const * name ## _get_const_pointer(const name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps int name ## _foreach(name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps SM_VECTOR_EXTERN_C_END
+    SM_VECTOR_EXTERN_C_END
 
 #define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
     SM_VECTOR_EXTERN_C_BEGIN \
@@ -104,7 +106,7 @@
             return NULL; \
         return &r->data[i]; \
     } \
-    inlinePerhaps const datatype * name ## _get_const_pointer(const name * const r, size_t i) { \
+    inlinePerhaps datatype const * name ## _get_const_pointer(const name * const r, size_t i) { \
         assert(r); \
         if (unlikely(i >= r->size)) \
             return NULL; \
