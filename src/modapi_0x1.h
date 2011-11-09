@@ -10,6 +10,7 @@
 #define SHAREMIND_MODAPI_0x1_H
 
 #include "libsmvm/syscall.h"
+#include "modapi.h"
 
 
 #ifdef __cplusplus

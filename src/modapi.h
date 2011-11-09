@@ -10,10 +10,9 @@
 #ifndef SHAREMIND_MODAPI_H
 #define SHAREMIND_MODAPI_H
 
+
 #define SHAREMIND_MOD_API_VERSIONS(v) const uint32_t SMVM_MOD_api_versions[] = { v, 0x0 }
 #define SHAREMIND_MOD_NAME(n) const char * const SMVM_MOD_name = (n)
 #define SHAREMIND_MOD_VERSION(v) const uint32_t SMVM_MOD_version = (v)
-
-#include "modapi_0x1.h"
 
 #endif /* SHAREMIND_MODAPI_H */
