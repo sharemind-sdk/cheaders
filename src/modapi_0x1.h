@@ -16,6 +16,11 @@
 extern "C" {
 #endif
 
+typedef enum {
+    SMVM_MODAPI_0x1_OK = 0,
+    SMVM_MODAPI_0x1_OUT_OF_MEMORY,
+    SMVM_MODAPI_0x1_ERROR
+} SMVM_MODAPI_0x1_Code;
 
 /** Environment passed to a Sharemind module: */
 struct _SMVM_MODAPI_0x1_Module_Context;
@@ -36,7 +41,7 @@ struct _SMVM_MODAPI_0x1_Module_Context {
 };
 
 /** Module initializer signature: */
-typedef int (*SMVM_MODAPI_0x1_Module_Initializer)(SMVM_MODAPI_0x1_Module_Context * c);
+typedef SMVM_MODAPI_0x1_Code (*SMVM_MODAPI_0x1_Module_Initializer)(SMVM_MODAPI_0x1_Module_Context * c);
 
 /** Module deinitializer signature: */
 typedef void (*SMVM_MODAPI_0x1_Module_Deinitializer)(SMVM_MODAPI_0x1_Module_Context * c);
