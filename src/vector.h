@@ -48,9 +48,9 @@
     inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SM_VECTOR_EXTERN_C_END
 
-#define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
+#define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,inlinePerhaps) \
     SM_VECTOR_EXTERN_C_BEGIN \
-    inlinePerhaps int name ## _foreach_with_ ## withname (name * r, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps int name ## _foreach_with_ ## withname (name * r, int (*f)(datatype *, types), types) __attribute__ ((nonnull(1, 2))); \
     SM_VECTOR_EXTERN_C_END
 
 #define SM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc,inlinePerhaps) \
