@@ -28,7 +28,8 @@
 #define SM_MAP_EXTERN_C_END
 #endif
 
-#define SM_MAP_KEYCOPY_REGULAR(pDest,src) (*(pDest)) = (src)
+#define SM_MAP_KEYFREE_REGULAR(unused)
+#define SM_MAP_KEYCOPY_REGULAR(pDest,src) ((*(pDest)) = (src), 1)
 
 #define SM_MAP_KEY_EQUALS_DEFINE(name,keytype) \
     inline int name(keytype const k1, keytype const k2) { return k1 == k2; }
@@ -93,7 +94,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     inlinePerhaps valuetype * name ## _get (name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
     SM_MAP_EXTERN_C_END
 
-#define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,mymalloc,myfree,inlinePerhaps) \
+#define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
     struct name ## _item { \
         keytype key; \
@@ -110,6 +111,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
         for (size_t i = 0; i < 65536; i++) { \
             while (s->d[i]) { \
                 struct name ## _item * next = s->d[i]->next; \
+                keyfree(s->d[i]->key); \
                 myfree(s->d[i]); \
                 s->d[i] = next; \
             } \
@@ -150,8 +152,11 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
             do { \
                 if (keylessthan(key, (*l)->key)) \
                     break; \
-                if (keyequals(key, (*l)->key)) \
+                if (keyequals(key, (*l)->key)) { \
+                    keyfree((*l)->key); \
+                    keycopy(&(*l)->key, key); \
                     return &(*l)->value; \
+                } \
                 l = &(*l)->next; \
             } while (*l); \
             p = *l; \
@@ -163,7 +168,11 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
             *l = p; \
             return NULL; \
         } \
-        keycopy(&(*l)->key, key); \
+        if (!keycopy(&(*l)->key, key)) { \
+            myfree(*l); \
+            *l = p; \
+            return NULL; \
+        } \
         (*l)->next = p; \
         return &(*l)->value; \
     } \
@@ -175,6 +184,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
         while (l) { \
             if (keyequals(key, l->key)) { \
                 *prevPtr = l->next; \
+                keyfree(l->key); \
                 myfree(l); \
                 return 1; \
             } \
