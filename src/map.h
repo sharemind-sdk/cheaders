@@ -79,22 +79,22 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least16_t)
 SM_MAP_KEY_COMPARATORS_DEFINE(uint_least32_t)
 SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
 
-#define SM_MAP_DECLARE(name,keytype,valuetype,inlinePerhaps) \
+#define SM_MAP_DECLARE(name,keytype,constkeytype,valuetype,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
     struct name ## _item; \
-    typedef struct { \
+    typedef struct _ ## name { \
         struct name ## _item * d[65536]; \
     } name; \
     inlinePerhaps void name ## _init (name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy (name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _foreach (name * s, int (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void (name * s, void (*f)(valuetype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps valuetype * name ## _insert (name * s, keytype key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps int name ## _remove (name * s, keytype key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps valuetype * name ## _get (name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps valuetype * name ## _insert (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps int name ## _remove (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps valuetype * name ## _get (name * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
     SM_MAP_EXTERN_C_END
 
-#define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
+#define SM_MAP_DEFINE(name,keytype,constkeytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
     struct name ## _item { \
         keytype key; \
@@ -143,7 +143,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
             } \
         } \
     } \
-    inlinePerhaps valuetype * name ## _insert (name * s, keytype key) { \
+    inlinePerhaps valuetype * name ## _insert (name * s, constkeytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item ** l = &s->d[hash]; \
@@ -176,7 +176,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
         (*l)->next = p; \
         return &(*l)->value; \
     } \
-    inlinePerhaps int name ## _remove (name * s, keytype key) { \
+    inlinePerhaps int name ## _remove (name * s, constkeytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item ** prevPtr = &s->d[hash]; \
@@ -195,7 +195,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
         } \
         return 0; \
     } \
-    inlinePerhaps valuetype * name ## _get (name * s, keytype key) { \
+    inlinePerhaps valuetype * name ## _get (name * s, constkeytype key) { \
         assert(s); \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item * l = s->d[hash]; \
