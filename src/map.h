@@ -28,6 +28,8 @@
 #define SM_MAP_EXTERN_C_END
 #endif
 
+#define SM_MAP_KEYCOPY_REGULAR(pDest,src) (*(pDest)) = (src)
+
 #define SM_MAP_KEY_EQUALS_DEFINE(name,keytype) \
     inline int name(keytype const k1, keytype const k2) { return k1 == k2; }
 
@@ -91,7 +93,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     inlinePerhaps valuetype * name ## _get (name * s, keytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
     SM_MAP_EXTERN_C_END
 
-#define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,keyequals,keylessthan,mymalloc,myfree,inlinePerhaps) \
+#define SM_MAP_DEFINE(name,keytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,mymalloc,myfree,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
     struct name ## _item { \
         keytype key; \
@@ -161,7 +163,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
             *l = p; \
             return NULL; \
         } \
-        (*l)->key = key; \
+        keycopy(&(*l)->key, key); \
         (*l)->next = p; \
         return &(*l)->value; \
     } \
