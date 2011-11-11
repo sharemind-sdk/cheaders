@@ -216,7 +216,7 @@ typedef int (* SMVM_MODAPI_0x1_PD_Process_Startup)(SMVM_MODAPI_0x1_PD_Process_Wr
 /** Protection domain process deinitialization function signature */
 typedef void (* SMVM_MODAPI_0x1_PD_Process_Shutdown)(SMVM_MODAPI_0x1_PD_Process_Wrapper *);
 
-/** Protection domain kind list item:*/
+/** Protection domain kind list item: */
 typedef const struct {
 
     /** Unique name of the protection domain kind: */
@@ -236,7 +236,7 @@ typedef const struct {
 
 } SMVM_MODAPI_0x1_PDK_Definition;
 
-/** Protection domain kind list:*/
+/** Protection domain kind list: */
 typedef SMVM_MODAPI_0x1_PDK_Definition SMVM_MODAPI_0x1_PDK_Definitions[];
 
 
