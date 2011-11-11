@@ -12,17 +12,20 @@
 
 #include <stddef.h>
 #include <stdint.h>
-
 #ifdef SMVM_SOFT_FLOAT
 #include "3rdparty/softfloat/softfloat.h"
-typedef sf_float32 smvm_float32;
-#else
-typedef float smvm_float32;
 #endif
 
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+
+#ifdef SMVM_SOFT_FLOAT
+typedef sf_float32 smvm_float32;
+#else
+typedef float smvm_float32;
 #endif
 
 typedef union {
@@ -39,6 +42,7 @@ typedef union {
     size_t sizet[1];
     void * p[1];
 } SMVM_CodeBlock;
+
 
 #ifdef __cplusplus
 } /* extern "C" { */

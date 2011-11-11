@@ -19,20 +19,63 @@
 extern "C" {
 #endif
 
+
+/*******************************************************************************
+  OVERALL MODULE LEVEL
+*******************************************************************************/
+
+/** Possible return codes returned by the Sharemind module initializer */
+typedef enum {
+    SMVM_MODAPI_0x1_IC_OK = 0,
+    SMVM_MODAPI_0x1_IC_OUT_OF_MEMORY,
+    SMVM_MODAPI_0x1_IC_ERROR
+} SMVM_MODAPI_0x1_Initializer_Code;
+
+/** Environment passed to a Sharemind module initializer and deinitializer: */
+typedef struct {
+
+    /**
+      A handle for module instance data. Inside SMVM_syscall_context and others,
+      this handle is also passed to facilities provided by this module.
+    */
+    void * moduleHandle;
+
+    /* OTHER STUFF, for example something like: */
+    /* void (*log)(
+        SMVM_MODAPI_0x1_Module_Context * context,
+        const char * message); */
+
+} SMVM_MODAPI_0x1_Module_Context;
+
+/** Module initializer function signature: */
+typedef SMVM_MODAPI_0x1_Initializer_Code (*SMVM_MODAPI_0x1_Module_Initializer)(SMVM_MODAPI_0x1_Module_Context * c);
+
+/** Module deinitializer function signature: */
+typedef void (*SMVM_MODAPI_0x1_Module_Deinitializer)(SMVM_MODAPI_0x1_Module_Context * c);
+
+
+/*******************************************************************************
+  SYSTEM CALLS
+*******************************************************************************/
+
+/** Mutable references */
 typedef struct {
     void * pData;
     size_t size;
 } SMVM_MODAPI_0x1_Reference;
+
+/** Constant references */
 typedef struct {
     const void * pData;
     size_t size;
 } SMVM_MODAPI_0x1_CReference;
 
+/** Possible return codes returned by system calls */
 typedef enum {
-    SMVM_MODAPI_0x1_E_NONE = 0x00,
-    SMVM_MODAPI_0x1_E_OUT_OF_MEMORY = 0x01,
-    SMVM_MODAPI_0x1_E_INVALID_CALL = 0x02
-} SMVM_MODAPI_0x1_Syscall_Exception;
+    SMVM_MODAPI_0x1_SC_OK = 0x00,
+    SMVM_MODAPI_0x1_SC_OUT_OF_MEMORY = 0x01,
+    SMVM_MODAPI_0x1_SC_INVALID_CALL = 0x02
+} SMVM_MODAPI_0x1_Syscall_Code;
 
 /** Additional context provided for system calls: */
 struct _SMVM_MODAPI_0x1_Syscall_Context;
@@ -40,7 +83,8 @@ typedef struct _SMVM_MODAPI_0x1_Syscall_Context SMVM_MODAPI_0x1_Syscall_Context;
 struct _SMVM_MODAPI_0x1_Syscall_Context {
     /**
       A handle to the private data of the module instance. This is the same
-      handle as provided to SMVM_module_context on module initialization.
+      handle as provided to SMVM_MODAPI_0x1_Module_Context on module
+      initialization.
     */
     void * const moduleHandle;
 
@@ -64,7 +108,8 @@ struct _SMVM_MODAPI_0x1_Syscall_Context {
     /* OTHER STUFF */
 };
 
-typedef SMVM_MODAPI_0x1_Syscall_Exception (* SMVM_MODAPI_0x1_Syscall)(
+/** System call function signature: */
+typedef SMVM_MODAPI_0x1_Syscall_Code (* SMVM_MODAPI_0x1_Syscall)(
     /** Arguments passed to syscall: */
     SMVM_CodeBlock * args,
     size_t num_args,
@@ -83,44 +128,116 @@ typedef SMVM_MODAPI_0x1_Syscall_Exception (* SMVM_MODAPI_0x1_Syscall)(
     */
     SMVM_CodeBlock * returnValue,
 
+    /** Additional context: */
     SMVM_MODAPI_0x1_Syscall_Context * c
 );
 
-typedef enum {
-    SMVM_MODAPI_0x1_OK = 0,
-    SMVM_MODAPI_0x1_OUT_OF_MEMORY,
-    SMVM_MODAPI_0x1_ERROR
-} SMVM_MODAPI_0x1_Code;
-
-/** Environment passed to a Sharemind module: */
-struct _SMVM_MODAPI_0x1_Module_Context;
-typedef struct _SMVM_MODAPI_0x1_Module_Context SMVM_MODAPI_0x1_Module_Context;
-struct _SMVM_MODAPI_0x1_Module_Context {
-
-    /**
-      A handle for module instance data. Inside SMVM_syscall_context and others,
-      this handle is also passed to facilities provided by this module.
-    */
-    void * moduleHandle;
-
-    /* OTHER STUFF, for example something like: */
-    /* void (*log)(
-        SMVM_MODAPI_0x1_Module_Context * context,
-        const char * message); */
-
-};
-
-/** Module initializer signature: */
-typedef SMVM_MODAPI_0x1_Code (*SMVM_MODAPI_0x1_Module_Initializer)(SMVM_MODAPI_0x1_Module_Context * c);
-
-/** Module deinitializer signature: */
-typedef void (*SMVM_MODAPI_0x1_Module_Deinitializer)(SMVM_MODAPI_0x1_Module_Context * c);
-
 /** System call list item:*/
 typedef const struct {
+
+    /** Unique name of the system call: */
     const char * const name;
-    const SMVM_MODAPI_0x1_Syscall function_handle;
+
+    /** Pointer to the system call implementation: */
+    const SMVM_MODAPI_0x1_Syscall syscall_f;
+
 } SMVM_MODAPI_0x1_Syscall_Definition;
+
+/** System call list: */
+typedef SMVM_MODAPI_0x1_Syscall_Definition SMVM_MODAPI_0x1_Syscall_Definitions[];
+
+
+/*******************************************************************************
+  PROTECTION DOMAINS
+*******************************************************************************/
+
+/** Protection domain configuration */
+typedef struct {
+
+    /** \todo */
+
+} SMVM_MODAPI_0x1_PD_Conf;
+
+/** Protection-domain instance specific data wrapper. */
+typedef struct {
+
+    /** A handle for protection domain data. */
+    void * pdHandle;
+
+    /**
+      A handle to the private data of the module instance. This is the same
+      handle as provided to SMVM_MODAPI_0x1_Module_Context on module
+      initialization.
+    */
+    void * const moduleHandle;
+
+    /** A handle to the configuration of the protection domain. */
+    const SMVM_MODAPI_0x1_PD_Conf * const conf;
+
+    /* OTHER STUFF */
+
+} SMVM_MODAPI_0x1_PD_Wrapper;
+
+/** Protection-domain instance process instance specific data wrapper. */
+typedef struct {
+
+    /** A handle for protection domain per-process data. */
+    void * pdProcessHandle;
+
+    /**
+      A handle for protection domain instance data. This is the same handle as
+      provided to SMVM_MODAPI_0x1_PD_Wrapper on protection domain initialization.
+    */
+    void * const pdHandle;
+
+    /**
+      A handle to the private data of the module instance. This is the same
+      handle as provided to SMVM_MODAPI_0x1_Module_Context on module
+      initialization.
+    */
+    void * const moduleHandle;
+
+    /** A handle to the configuration of the protection domain. */
+    const SMVM_MODAPI_0x1_PD_Conf * const conf;
+
+    /* OTHER STUFF */
+
+} SMVM_MODAPI_0x1_PD_Process_Wrapper;
+
+/** Protection domain initialization function signature */
+typedef int (* SMVM_MODAPI_0x1_PD_Startup)(SMVM_MODAPI_0x1_PD_Wrapper *);
+
+/** Protection domain deinitialization function signature */
+typedef void (* SMVM_MODAPI_0x1_PD_Shutdown)(SMVM_MODAPI_0x1_PD_Wrapper *);
+
+/** Protection domain process initialization function signature */
+typedef int (* SMVM_MODAPI_0x1_PD_Process_Startup)(SMVM_MODAPI_0x1_PD_Process_Wrapper *);
+
+/** Protection domain process deinitialization function signature */
+typedef void (* SMVM_MODAPI_0x1_PD_Process_Shutdown)(SMVM_MODAPI_0x1_PD_Process_Wrapper *);
+
+/** Protection domain kind list item:*/
+typedef const struct {
+
+    /** Unique name of the protection domain kind: */
+    const char * const name;
+
+    /** Pointer to the protection domain initialization implementation: */
+    const SMVM_MODAPI_0x1_PD_Startup pd_startup_f;
+
+    /** Pointer to the protection domain deinitialization implementation: */
+    const SMVM_MODAPI_0x1_PD_Shutdown pd_shutdown_f;
+
+    /** Pointer to the protection domain process initialization implementation: */
+    const SMVM_MODAPI_0x1_PD_Process_Startup pd_process_startup_f;
+
+    /** Pointer to the protection domain process deinitialization implementation: */
+    const SMVM_MODAPI_0x1_PD_Process_Shutdown pd_process_shutdown_f;
+
+} SMVM_MODAPI_0x1_PDK_Definition;
+
+/** Protection domain kind list:*/
+typedef SMVM_MODAPI_0x1_PDK_Definition SMVM_MODAPI_0x1_PDK_Definitions[];
 
 
 #ifdef __cplusplus
