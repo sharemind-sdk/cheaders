@@ -45,6 +45,9 @@ typedef struct {
         SMVM_MODAPI_0x1_Module_Context * context,
         const char * message); */
 
+    /** Internal pointer, do not use! */
+    void * internal;
+
 } SMVM_MODAPI_0x1_Module_Context;
 
 /** Module initializer function signature: */
@@ -60,14 +63,30 @@ typedef void (*SMVM_MODAPI_0x1_Module_Deinitializer)(SMVM_MODAPI_0x1_Module_Cont
 
 /** Mutable references */
 typedef struct {
+
+    /** Pointer to referenced data. */
     void * pData;
+
+    /** Size of referenced data. */
     size_t size;
+
+    /** Internal pointer, do not use! */
+    void * internal;
+
 } SMVM_MODAPI_0x1_Reference;
 
 /** Constant references */
 typedef struct {
+
+    /** Pointer to referenced data. */
     const void * pData;
+
+    /** Size of referenced data. */
     size_t size;
+
+    /** Internal pointer, do not use! */
+    void * internal;
+
 } SMVM_MODAPI_0x1_CReference;
 
 /** Possible return codes returned by system calls */
@@ -81,31 +100,36 @@ typedef enum {
 struct _SMVM_MODAPI_0x1_Syscall_Context;
 typedef struct _SMVM_MODAPI_0x1_Syscall_Context SMVM_MODAPI_0x1_Syscall_Context;
 struct _SMVM_MODAPI_0x1_Syscall_Context {
+
     /**
       A handle to the private data of the module instance. This is the same
       handle as provided to SMVM_MODAPI_0x1_Module_Context on module
       initialization.
     */
-    void * const moduleHandle;
+    void * moduleHandle;
 
     /** Access to public dynamic memory inside the VM process: */
-    uint64_t (* const publicAlloc)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
-    int (* const publicFree)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
-    size_t (* const publicMemPtrSize)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
-    void * (* const publicMemPtrData)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    uint64_t (* publicAlloc)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
+    int (* publicFree)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    size_t (* publicMemPtrSize)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    void * (* publicMemPtrData)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
 
     /** Access to dynamic memory not exposed to VM instructions: */
-    void * (* const allocPrivate)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
-    int (* const freePrivate)(void * ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    void * (* allocPrivate)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
+    int (* freePrivate)(void * ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
 
     /**
       Used to get access to internal data of protection domain per-process data
       (see below for pdProcessHandle):
     */
-    void * (* const get_pd_process_handle)(uint64_t pd_index,
-                                           SMVM_MODAPI_0x1_Syscall_Context * p);
+    void * (* get_pd_process_handle)(uint64_t pd_index,
+                                     SMVM_MODAPI_0x1_Syscall_Context * p);
 
     /* OTHER STUFF */
+
+    /** Internal pointer, do not use! */
+    void * internal;
+
 };
 
 /** System call function signature: */
@@ -176,6 +200,9 @@ typedef struct {
 
     /* OTHER STUFF */
 
+    /** Internal pointer, do not use! */
+    void * internal;
+
 } SMVM_MODAPI_0x1_PD_Wrapper;
 
 /** Protection-domain instance process instance specific data wrapper. */
@@ -201,6 +228,9 @@ typedef struct {
     const SMVM_MODAPI_0x1_PD_Conf * const conf;
 
     /* OTHER STUFF */
+
+    /** Internal pointer, do not use! */
+    void * internal;
 
 } SMVM_MODAPI_0x1_PD_Process_Wrapper;
 
