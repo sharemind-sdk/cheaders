@@ -178,6 +178,9 @@ typedef SMVM_MODAPI_0x1_Syscall_Definition SMVM_MODAPI_0x1_Syscall_Definitions[]
 /** Protection domain configuration */
 typedef struct {
 
+    /** The unique name of the protection domain. */
+    const char * pd_name;
+
     /** \todo */
 
 } SMVM_MODAPI_0x1_PD_Conf;
