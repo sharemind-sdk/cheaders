@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef INSTRSET_H
-#define INSTRSET_H
+#ifndef SHAREMIND_INSTRSET_H
+#define SHAREMIND_INSTRSET_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -102,4 +102,4 @@
     } \
     SM_INSTRSET_EXTERN_C_END
 
-#endif /* INSTRSET_H */
+#endif /* SHAREMIND_INSTRSET_H */

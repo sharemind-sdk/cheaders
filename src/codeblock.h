@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef CODEBLOCK_H
-#define CODEBLOCK_H
+#ifndef SHAREMIND_CODEBLOCK_H
+#define SHAREMIND_CODEBLOCK_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -48,4 +48,4 @@ typedef union {
 } /* extern "C" { */
 #endif
 
-#endif /* CODEBLOCK_H */
+#endif /* SHAREMIND_CODEBLOCK_H */

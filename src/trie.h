@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef TRIE_H
-#define TRIE_H
+#ifndef SHAREMIND_TRIE_H
+#define SHAREMIND_TRIE_H
 
 #include <assert.h>
 #include "likely.h"
@@ -147,4 +147,4 @@
     } \
     SM_TRIE_EXTERN_C_END
 
-#endif /* TRIE_H */
+#endif /* SHAREMIND_TRIE_H */

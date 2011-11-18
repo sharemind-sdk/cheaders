@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef SHAREMIND_MAP_H
+#define SHAREMIND_MAP_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -268,4 +268,4 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     } \
     SM_MAP_EXTERN_C_END
 
-#endif /* MAP_H */
+#endif /* SHAREMIND_MAP_H */

@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef STACK_H
-#define STACK_H
+#ifndef SHAREMIND_STACK_H
+#define SHAREMIND_STACK_H
 
 #include "likely.h"
 
@@ -119,4 +119,4 @@
     } \
     SM_STACK_EXTERN_C_END
 
-#endif /* STACK_H */
+#endif /* SHAREMIND_STACK_H */

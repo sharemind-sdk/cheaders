@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef PREPROCESSOR_H
-#define PREPROCESSOR_H
+#ifndef SHAREMIND_PREPROCESSOR_H
+#define SHAREMIND_PREPROCESSOR_H
 
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/control/if.hpp>
@@ -114,4 +114,4 @@
         return SM_2S(SM_T(2,0,e));
 
 
-#endif /* PREPROCESSOR_H */
+#endif /* SHAREMIND_PREPROCESSOR_H */

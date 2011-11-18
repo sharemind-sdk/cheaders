@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef SHAREMIND_VECTOR_H
+#define SHAREMIND_VECTOR_H
 
 #include <assert.h>
 #include <stddef.h>
@@ -140,4 +140,4 @@
     } \
     SM_VECTOR_EXTERN_C_END
 
-#endif /* VECTOR_H */
+#endif /* SHAREMIND_VECTOR_H */

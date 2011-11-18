@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef __GLOBAL_H__
-#define __GLOBAL_H__
+#ifndef SHAREMIND_LIKELY_H
+#define SHAREMIND_LIKELY_H
 
 #ifdef __GNUC__
 #define likely(c)   __builtin_expect(!!(c), 1)
@@ -18,5 +18,5 @@
 #define unlikely(c) !!(c)
 #endif
 
-#endif /* __GLOBAL_H__ */
+#endif /* SHAREMIND_LIKELY_H */
 
