@@ -19,6 +19,12 @@
 extern "C" {
 #endif
 
+#ifdef _SHAREMIND_INTERNAL
+#define ICONST
+#else
+#define ICONST const
+#endif
+
 
 /*******************************************************************************
   OVERALL MODULE LEVEL
@@ -46,7 +52,7 @@ typedef struct {
         const char * message); */
 
     /** Internal pointer, do not use! */
-    void * internal;
+    ICONST void * ICONST internal;
 
 } SMVM_MODAPI_0x1_Module_Context;
 
@@ -65,13 +71,13 @@ typedef void (*SMVM_MODAPI_0x1_Module_Deinitializer)(SMVM_MODAPI_0x1_Module_Cont
 typedef struct {
 
     /** Pointer to referenced data. */
-    void * pData;
+    void * ICONST pData;
 
     /** Size of referenced data. */
-    size_t size;
+    ICONST size_t size;
 
     /** Internal pointer, do not use! */
-    void * internal;
+    ICONST void * ICONST internal;
 
 } SMVM_MODAPI_0x1_Reference;
 
@@ -79,13 +85,13 @@ typedef struct {
 typedef struct {
 
     /** Pointer to referenced data. */
-    const void * pData;
+    const void * ICONST pData;
 
     /** Size of referenced data. */
-    size_t size;
+    ICONST size_t size;
 
     /** Internal pointer, do not use! */
-    void * internal;
+    ICONST void * ICONST internal;
 
 } SMVM_MODAPI_0x1_CReference;
 
@@ -109,26 +115,25 @@ struct _SMVM_MODAPI_0x1_Syscall_Context {
     void * moduleHandle;
 
     /** Access to public dynamic memory inside the VM process: */
-    uint64_t (* publicAlloc)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
-    int (* publicFree)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
-    size_t (* publicMemPtrSize)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
-    void * (* publicMemPtrData)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    uint64_t (* ICONST publicAlloc)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
+    int (* ICONST publicFree)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    size_t (* ICONST publicMemPtrSize)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    void * (* ICONST publicMemPtrData)(uint64_t ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
 
     /** Access to dynamic memory not exposed to VM instructions: */
-    void * (* allocPrivate)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
-    int (* freePrivate)(void * ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
+    void * (* ICONST allocPrivate)(size_t nBytes, SMVM_MODAPI_0x1_Syscall_Context * c);
+    int (* ICONST freePrivate)(void * ptr, SMVM_MODAPI_0x1_Syscall_Context * c);
 
     /**
       Used to get access to internal data of protection domain per-process data
       (see below for pdProcessHandle):
     */
-    void * (* get_pd_process_handle)(uint64_t pd_index,
-                                     SMVM_MODAPI_0x1_Syscall_Context * p);
+    void * (* ICONST get_pd_process_handle)(uint64_t pd_index, SMVM_MODAPI_0x1_Syscall_Context * p);
 
     /* OTHER STUFF */
 
     /** Internal pointer, do not use! */
-    void * internal;
+    ICONST void * ICONST internal;
 
 };
 
@@ -179,9 +184,13 @@ typedef SMVM_MODAPI_0x1_Syscall_Definition SMVM_MODAPI_0x1_Syscall_Definitions[]
 typedef struct {
 
     /** The unique name of the protection domain. */
-    const char * pd_name;
+    const char * ICONST pd_name;
 
-    /** \todo */
+    /** The name of the protection domain kind. */
+    const char * ICONST pd_kind;
+
+    /** The protection domain configuration string. */
+    const char * ICONST pd_conf_string;
 
 } SMVM_MODAPI_0x1_PD_Conf;
 
@@ -196,15 +205,15 @@ typedef struct {
       handle as provided to SMVM_MODAPI_0x1_Module_Context on module
       initialization.
     */
-    void * const moduleHandle;
+    void * ICONST moduleHandle;
 
     /** A handle to the configuration of the protection domain. */
-    const SMVM_MODAPI_0x1_PD_Conf * const conf;
+    const SMVM_MODAPI_0x1_PD_Conf * ICONST conf;
 
     /* OTHER STUFF */
 
     /** Internal pointer, do not use! */
-    void * internal;
+    ICONST void * ICONST internal;
 
 } SMVM_MODAPI_0x1_PD_Wrapper;
 
@@ -218,22 +227,22 @@ typedef struct {
       A handle for protection domain instance data. This is the same handle as
       provided to SMVM_MODAPI_0x1_PD_Wrapper on protection domain initialization.
     */
-    void * const pdHandle;
+    void * ICONST pdHandle;
 
     /**
       A handle to the private data of the module instance. This is the same
       handle as provided to SMVM_MODAPI_0x1_Module_Context on module
       initialization.
     */
-    void * const moduleHandle;
+    void * ICONST moduleHandle;
 
     /** A handle to the configuration of the protection domain. */
-    const SMVM_MODAPI_0x1_PD_Conf * const conf;
+    const SMVM_MODAPI_0x1_PD_Conf * ICONST conf;
 
     /* OTHER STUFF */
 
     /** Internal pointer, do not use! */
-    void * internal;
+    ICONST void * ICONST internal;
 
 } SMVM_MODAPI_0x1_PD_Process_Wrapper;
 
