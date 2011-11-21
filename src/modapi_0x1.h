@@ -133,7 +133,7 @@ struct _SMVM_MODAPI_0x1_Syscall_Context {
     /* OTHER STUFF */
 
     /** Internal pointer, do not use! */
-    ICONST void * ICONST internal;
+    const void * ICONST internal;
 
 };
 
