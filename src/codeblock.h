@@ -41,6 +41,7 @@ typedef union {
     smvm_float32 float32[2];
     size_t sizet[1];
     void * p[1];
+    const void * cp[1];
 } SMVM_CodeBlock;
 
 
