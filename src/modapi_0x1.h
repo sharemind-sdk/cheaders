@@ -197,7 +197,7 @@ typedef struct {
 /** Protection-domain instance specific data wrapper. */
 typedef struct {
 
-    /** A handle for protection domain data. */
+    /** A handle for protection domain runtime data. */
     void * pdHandle;
 
     /**
