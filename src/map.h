@@ -197,6 +197,8 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     } \
     inlinePerhaps valuetype * name ## _insert (name * s, constkeytype key) { \
         assert(s); \
+        if (s->size == SIZE_MAX) \
+            return NULL; \
         uint16_t hash = keyhashfunction(key); \
         struct name ## _item ** l = &s->d[hash]; \
         struct name ## _item * p; \
