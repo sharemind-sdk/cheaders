@@ -78,6 +78,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least8_t)
 SM_MAP_KEY_COMPARATORS_DEFINE(uint_least16_t)
 SM_MAP_KEY_COMPARATORS_DEFINE(uint_least32_t)
 SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
+_SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
 
 #define SM_MAP_DECLARE(name,keytype,constkeytype,valuetype,inlinePerhaps) \
     SM_MAP_EXTERN_C_BEGIN \
@@ -215,7 +216,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
         assert(s); \
         if (s->size == SIZE_MAX) \
             return NULL; \
-        uint16_t hash = keyhashfunction(key); \
+        uint16_t hash = (uint16_t) (keyhashfunction); \
         struct name ## _item ** l = &s->d[hash]; \
         struct name ## _item * p; \
         if (*l) { \
@@ -249,7 +250,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     } \
     inlinePerhaps int name ## _remove (name * s, constkeytype key) { \
         assert(s); \
-        uint16_t hash = keyhashfunction(key); \
+        uint16_t hash = (uint16_t) (keyhashfunction); \
         struct name ## _item ** prevPtr = &s->d[hash]; \
         struct name ## _item * l = *prevPtr; \
         while (l) { \
@@ -269,7 +270,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     } \
     inlinePerhaps int name ## _remove_with (name * s, constkeytype key, void (*destroyer)(valuetype *)) { \
         assert(s); \
-        uint16_t hash = keyhashfunction(key); \
+        uint16_t hash = (uint16_t) (keyhashfunction); \
         struct name ## _item ** prevPtr = &s->d[hash]; \
         struct name ## _item * l = *prevPtr; \
         while (l) { \
@@ -290,7 +291,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     } \
     inlinePerhaps valuetype * name ## _get (name * s, constkeytype key) { \
         assert(s); \
-        uint16_t hash = keyhashfunction(key); \
+        uint16_t hash = (uint16_t) (keyhashfunction); \
         struct name ## _item * l = s->d[hash]; \
         while (l) { \
             if (keyequals(key, l->key)) \
@@ -303,7 +304,7 @@ SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
     } \
     inlinePerhaps const valuetype * name ## _get_const (const name * s, constkeytype key) { \
         assert(s); \
-        uint16_t hash = keyhashfunction(key); \
+        uint16_t hash = (uint16_t) (keyhashfunction); \
         struct name ## _item * l = s->d[hash]; \
         while (l) { \
             if (keyequals(key, l->key)) \
