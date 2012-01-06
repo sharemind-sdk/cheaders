@@ -95,7 +95,7 @@ _SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
     inlinePerhaps valuetype const * name ## _const_value_at (const name * s, size_t index) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _foreach (name * s, int (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void (name * s, void (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps valuetype * name ## _insert (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps valuetype * name ## _get_or_insert (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _remove (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _remove_with (name * s, constkeytype key, void (*destroyer)(valuetype *)) __attribute__ ((nonnull(1))); \
     inlinePerhaps valuetype * name ## _get (name * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
@@ -212,7 +212,7 @@ _SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
             } \
         } \
     } \
-    inlinePerhaps valuetype * name ## _insert (name * s, constkeytype key) { \
+    inlinePerhaps valuetype * name ## _get_or_insert (name * s, constkeytype key) { \
         assert(s); \
         if (s->size == SIZE_MAX) \
             return NULL; \
