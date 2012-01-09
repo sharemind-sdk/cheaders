@@ -172,7 +172,7 @@ _SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
         } \
         return NULL; \
     } \
-    inlinePerhaps const valuetype * name ## _const_value_at (const name * s, size_t index) { \
+    inlinePerhaps valuetype const * name ## _const_value_at (const name * s, size_t index) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) { \
             struct name ## _item * item = s->d[i]; \
@@ -302,7 +302,7 @@ _SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
         } \
         return NULL; \
     } \
-    inlinePerhaps const valuetype * name ## _get_const (const name * s, constkeytype key) { \
+    inlinePerhaps valuetype const * name ## _get_const (const name * s, constkeytype key) { \
         assert(s); \
         uint16_t hash = (uint16_t) (keyhashfunction); \
         struct name ## _item * l = s->d[hash]; \
