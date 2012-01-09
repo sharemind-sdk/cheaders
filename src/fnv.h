@@ -19,8 +19,19 @@
 
 #include <assert.h>
 #include <stddef.h>
+
+#ifdef __cplusplus
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+#endif /* __cplusplus */
+
 #include <stdint.h>
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
   \brief Generates a 64 bit Fowler/Noll/Vo FNV-1a hash for the given buffer.
@@ -105,5 +116,10 @@ inline uint16_t fnv_16a_str(register const char * str) {
     uint32_t hval = fnv_32a_str(str);
     return (uint16_t) (hval ^ (hval >> 16));
 }
+
+
+#ifdef __cplusplus
+} /* extern "C" { */
+#endif
 
 #endif /* SHAREMIND_FNV_H */
