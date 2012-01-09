@@ -38,6 +38,6 @@ SM_MAP_EXTERN_C_END
         return (*pDest) != NULL; \
     } \
     SM_MAP_EXTERN_C_END \
-    SM_MAP_DEFINE(name,char *,const char * const,valueType,fnv_16a_str(key),SMVM_StringMap_key_equals,SMVM_StringMap_key_less_than,name ## _key_copy,myfree,mymalloc,myfree,)
+    SM_MAP_DEFINE(name,char *,const char * const,valueType,fnv_16a_str(key),SMVM_StringMap_key_equals,SMVM_StringMap_key_less_than,name ## _key_copy,myfree,mymalloc,myfree,inlinePerhaps)
 
 #endif /* SHAREMIND_STRINGMAP_H */
