@@ -15,32 +15,37 @@
 #include <stddef.h>
 
 
-#define SMVM_REFS_DECLARE_FIELDS size_t refs;
+#define SMVM_NAMED_REFS_DECLARE_FIELDS(name) size_t name;
+#define SMVM_REFS_DECLARE_FIELDS SMVM_NAMED_REFS_DECLARE_FIELDS(refs)
 
-#define SMVM_REFS_INIT(object) \
+#define SMVM_NAMED_REFS_INIT(object,name) \
     if (1) { \
-        (object)->refs = 0u; \
+        ((object)->name) = 0u; \
     } (void) 0
+#define SMVM_REFS_INIT(object) SMVM_NAMED_REFS_INIT(object,refs)
 
-#define SMVM_REFS_ASSERT_IF_REFERENCED(object) \
+#define SMVM_NAMED_REFS_ASSERT_IF_REFERENCED(object,name) \
     if (1) { \
-        assert((object)->refs <= 0u); \
+        assert(((object)->name) <= 0u); \
     } (void) 0
+#define SMVM_REFS_ASSERT_IF_REFERENCED(object) SMVM_NAMED_REFS_ASSERT_IF_REFERENCED(object,refs)
 
-#define SMVM_REFS_DECLARE_FUNCTIONS(type) \
-    bool type ## _ref(type * object); \
-    void type ## _unref(type * object);
+#define SMVM_NAMED_REFS_DECLARE_FUNCTIONS(type,name) \
+    bool type ## _ ## name ## _ref(type * object); \
+    void type ## _ ## name ## _unref(type * object);
+#define SMVM_REFS_DECLARE_FUNCTIONS(type) SMVM_NAMED_REFS_DECLARE_FUNCTIONS(type,refs)
 
-#define SMVM_REFS_DEFINE_FUNCTIONS(type) \
-    bool type ## _ref(type * object) { \
-        if ((object)->refs >= SIZE_MAX) \
+#define SMVM_NAMED_REFS_DEFINE_FUNCTIONS(type,name) \
+    bool type ## _ ## name ## _ref(type * object) { \
+        if (((object)->name) >= SIZE_MAX) \
             return false; \
-        (object)->refs++; \
+        ((object)->name)++; \
         return true; \
     } \
-    void type ## _unref(type * object) { \
-        assert((object)->refs > 0u); \
-        (object)->refs--; \
+    void type ## _ ## name ## _unref(type * object) { \
+        assert(((object)->name) > 0u); \
+        ((object)->name)--; \
     }
+#define SMVM_REFS_DEFINE_FUNCTIONS(type) SMVM_NAMED_REFS_DEFINE_FUNCTIONS(type,refs)
 
 #endif
