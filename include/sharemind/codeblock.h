@@ -12,21 +12,13 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#ifdef SMVM_SOFT_FLOAT
-#include "3rdparty/softfloat/softfloat.h"
-#endif
+#include "static_assert.h"
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-#ifdef SMVM_SOFT_FLOAT
-typedef sf_float32 smvm_float32;
-#else
-typedef float smvm_float32;
-#endif
 
 typedef union {
     uint64_t uint64[1];
@@ -38,12 +30,19 @@ typedef union {
     int16_t int16[4];
     int8_t  int8[8];
     char chr[8];
-    smvm_float32 float32[2];
+    uint32_t float32[2];
+    uint64_t float64[1];
     size_t sizet[1];
+    ptrdiff_t ptrdiff[1];
     void * p[1];
     const void * cp[1];
 } SMVM_CodeBlock;
 
+SM_STATIC_ASSERT(sizeof(char) == sizeof(uint8_t));
+SM_STATIC_ASSERT(sizeof(size_t) <= sizeof(uint64_t));
+SM_STATIC_ASSERT(sizeof(ptrdiff_t) <= sizeof(uint64_t));
+SM_STATIC_ASSERT(sizeof(void *) <= sizeof(uint64_t));
+SM_STATIC_ASSERT(sizeof(SMVM_CodeBlock) == sizeof(uint64_t));
 
 #ifdef __cplusplus
 } /* extern "C" { */
