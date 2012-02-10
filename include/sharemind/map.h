@@ -21,67 +21,67 @@
 */
 
 #ifdef __cplusplus
-#define SM_MAP_EXTERN_C_BEGIN extern "C" {
-#define SM_MAP_EXTERN_C_END   }
+#define SHAREMIND_MAP_EXTERN_C_BEGIN extern "C" {
+#define SHAREMIND_MAP_EXTERN_C_END   }
 #else
-#define SM_MAP_EXTERN_C_BEGIN
-#define SM_MAP_EXTERN_C_END
+#define SHAREMIND_MAP_EXTERN_C_BEGIN
+#define SHAREMIND_MAP_EXTERN_C_END
 #endif
 
-#define SM_MAP_KEYFREE_REGULAR(unused)
-#define SM_MAP_KEYCOPY_REGULAR(pDest,src) ((*(pDest)) = (src), 1)
+#define SHAREMIND_MAP_KEYFREE_REGULAR(unused)
+#define SHAREMIND_MAP_KEYCOPY_REGULAR(pDest,src) ((*(pDest)) = (src), 1)
 
-#define SM_MAP_KEY_EQUALS_DEFINE(name,keytype) \
+#define SHAREMIND_MAP_KEY_EQUALS_DEFINE(name,keytype) \
     inline int name(keytype const k1, keytype const k2) { return k1 == k2; }
 
-#define SM_MAP_KEY_LESS_THAN_DEFINE(name,keytype) \
+#define SHAREMIND_MAP_KEY_LESS_THAN_DEFINE(name,keytype) \
     inline int name(keytype const k1, keytype const k2) { return k1 < k2; }
 
-#define _SM_MAP_KEY_COMPARATORS_DEFINE(keytype_str,keytype) \
-    SM_MAP_KEY_EQUALS_DEFINE(SM_MAP_KEY_EQUALS_ ## keytype_str, keytype) \
-    SM_MAP_KEY_LESS_THAN_DEFINE(SM_MAP_KEY_LESS_THAN_ ## keytype_str, keytype)
+#define _SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(keytype_str,keytype) \
+    SHAREMIND_MAP_KEY_EQUALS_DEFINE(SHAREMIND_MAP_KEY_EQUALS_ ## keytype_str, keytype) \
+    SHAREMIND_MAP_KEY_LESS_THAN_DEFINE(SHAREMIND_MAP_KEY_LESS_THAN_ ## keytype_str, keytype)
 
-#define SM_MAP_KEY_COMPARATORS_DEFINE(keytype) _SM_MAP_KEY_COMPARATORS_DEFINE(keytype,keytype)
+#define SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(keytype) _SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(keytype,keytype)
 
-SM_MAP_KEY_COMPARATORS_DEFINE(char)
-_SM_MAP_KEY_COMPARATORS_DEFINE(signed_char,signed char)
-_SM_MAP_KEY_COMPARATORS_DEFINE(unsigned_char,unsigned char)
-SM_MAP_KEY_COMPARATORS_DEFINE(short)
-_SM_MAP_KEY_COMPARATORS_DEFINE(unsigned_short,unsigned short)
-SM_MAP_KEY_COMPARATORS_DEFINE(int)
-SM_MAP_KEY_COMPARATORS_DEFINE(unsigned)
-_SM_MAP_KEY_COMPARATORS_DEFINE(unsigned_int,unsigned int)
-SM_MAP_KEY_COMPARATORS_DEFINE(long)
-_SM_MAP_KEY_COMPARATORS_DEFINE(unsigned_long,unsigned long)
-SM_MAP_KEY_COMPARATORS_DEFINE(size_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int8_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int16_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int32_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int64_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint8_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint16_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint32_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint64_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_fast8_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_fast16_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_fast32_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_fast64_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_fast8_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_fast16_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_fast32_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_fast64_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_least8_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_least16_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_least32_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(int_least64_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_least8_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_least16_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_least32_t)
-SM_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
-_SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(char)
+_SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(signed_char,signed char)
+_SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(unsigned_char,unsigned char)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(short)
+_SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(unsigned_short,unsigned short)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(unsigned)
+_SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(unsigned_int,unsigned int)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(long)
+_SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(unsigned_long,unsigned long)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(size_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int8_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int16_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int32_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int64_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint8_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint16_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint32_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint64_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_fast8_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_fast16_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_fast32_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_fast64_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_fast8_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_fast16_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_fast32_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_fast64_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_least8_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_least16_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_least32_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(int_least64_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_least8_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_least16_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_least32_t)
+SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(uint_least64_t)
+_SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
 
-#define SM_MAP_DECLARE(name,keytype,constkeytype,valuetype,inlinePerhaps) \
-    SM_MAP_EXTERN_C_BEGIN \
+#define SHAREMIND_MAP_DECLARE(name,keytype,constkeytype,valuetype,inlinePerhaps) \
+    SHAREMIND_MAP_EXTERN_C_BEGIN \
     struct name ## _item; \
     typedef struct _ ## name { \
         size_t size; \
@@ -100,15 +100,15 @@ _SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
     inlinePerhaps int name ## _remove_with (name * s, constkeytype key, void (*destroyer)(valuetype *)) __attribute__ ((nonnull(1))); \
     inlinePerhaps valuetype * name ## _get (name * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps valuetype const * name ## _get_const (const name * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
-    SM_MAP_EXTERN_C_END
+    SHAREMIND_MAP_EXTERN_C_END
 
-#define SM_MAP_DECLARE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,inlinePerhaps) \
-    SM_MAP_EXTERN_C_BEGIN \
+#define SHAREMIND_MAP_DECLARE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,inlinePerhaps) \
+    SHAREMIND_MAP_EXTERN_C_BEGIN \
     inlinePerhaps int name ## _foreach_with_ ## withname (name * s, int (*f)(constkeytype *, valuetype *, types), types) __attribute__ ((nonnull(1, 2))); \
-    SM_MAP_EXTERN_C_END
+    SHAREMIND_MAP_EXTERN_C_END
 
-#define SM_MAP_DEFINE(name,keytype,constkeytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
-    SM_MAP_EXTERN_C_BEGIN \
+#define SHAREMIND_MAP_DEFINE(name,keytype,constkeytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
+    SHAREMIND_MAP_EXTERN_C_BEGIN \
     struct name ## _item { \
         keytype key; \
         valuetype value; \
@@ -315,10 +315,10 @@ _SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
         } \
         return NULL; \
     } \
-    SM_MAP_EXTERN_C_END
+    SHAREMIND_MAP_EXTERN_C_END
 
-#define SM_MAP_DEFINE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,params,args,inlinePerhaps) \
-    SM_MAP_EXTERN_C_BEGIN \
+#define SHAREMIND_MAP_DEFINE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,params,args,inlinePerhaps) \
+    SHAREMIND_MAP_EXTERN_C_BEGIN \
     inlinePerhaps int name ## _foreach_with_ ## withname (name * s, int (*f)(constkeytype *, valuetype *, types), params) { \
         assert(s); \
         assert(f); \
@@ -333,6 +333,6 @@ _SM_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
         } \
         return 1; \
     } \
-    SM_MAP_EXTERN_C_END
+    SHAREMIND_MAP_EXTERN_C_END
 
 #endif /* SHAREMIND_MAP_H */

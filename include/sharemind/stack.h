@@ -19,15 +19,15 @@
 */
 
 #ifdef __cplusplus
-#define SM_STACK_EXTERN_C_BEGIN extern "C" {
-#define SM_STACK_EXTERN_C_END   }
+#define SHAREMIND_STACK_EXTERN_C_BEGIN extern "C" {
+#define SHAREMIND_STACK_EXTERN_C_END   }
 #else
-#define SM_STACK_EXTERN_C_BEGIN
-#define SM_STACK_EXTERN_C_END
+#define SHAREMIND_STACK_EXTERN_C_BEGIN
+#define SHAREMIND_STACK_EXTERN_C_END
 #endif
 
-#define SM_STACK_DECLARE(name,datatype,extradata,inlinePerhaps) \
-    SM_STACK_EXTERN_C_BEGIN \
+#define SHAREMIND_STACK_DECLARE(name,datatype,extradata,inlinePerhaps) \
+    SHAREMIND_STACK_EXTERN_C_BEGIN \
     struct name ## _item; \
     typedef struct { \
         struct name ## _item * d; \
@@ -41,10 +41,10 @@
     inlinePerhaps datatype * name ## _top (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps int name ## _empty (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps void name ## _foreach (name * s, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SM_STACK_EXTERN_C_END
+    SHAREMIND_STACK_EXTERN_C_END
 
-#define SM_STACK_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
-    SM_STACK_EXTERN_C_BEGIN \
+#define SHAREMIND_STACK_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
+    SHAREMIND_STACK_EXTERN_C_BEGIN \
     struct name ## _item { \
         datatype value; \
         struct name ## _item * prev; \
@@ -117,6 +117,6 @@
             d = d->prev; \
         } \
     } \
-    SM_STACK_EXTERN_C_END
+    SHAREMIND_STACK_EXTERN_C_END
 
 #endif /* SHAREMIND_STACK_H */

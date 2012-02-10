@@ -10,8 +10,8 @@
 #ifndef SHAREMIND_STATIC_ASSERT_H
 #define SHAREMIND_STATIC_ASSERT_H
 
-#define SM_STATIC_ASSERT_CAT2(a,b) a ## b
-#define SM_STATIC_ASSERT_CAT(a,b) SM_STATIC_ASSERT_CAT2(a,b)
-#define SM_STATIC_ASSERT(cond) typedef char SM_STATIC_ASSERT_CAT(static_assertion_,__COUNTER__)[(cond) ? 1 : -1]
+#define SHAREMIND_STATIC_ASSERT_CAT2(a,b) a ## b
+#define SHAREMIND_STATIC_ASSERT_CAT(a,b) SHAREMIND_STATIC_ASSERT_CAT2(a,b)
+#define SHAREMIND_STATIC_ASSERT(cond) typedef char SHAREMIND_STATIC_ASSERT_CAT(static_assertion_,__COUNTER__)[(cond) ? 1 : -1]
 
 #endif /* SHAREMIND_STATIC_ASSERT */

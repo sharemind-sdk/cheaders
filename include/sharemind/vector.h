@@ -22,15 +22,15 @@
 */
 
 #ifdef __cplusplus
-#define SM_VECTOR_EXTERN_C_BEGIN extern "C" {
-#define SM_VECTOR_EXTERN_C_END   }
+#define SHAREMIND_VECTOR_EXTERN_C_BEGIN extern "C" {
+#define SHAREMIND_VECTOR_EXTERN_C_END   }
 #else
-#define SM_VECTOR_EXTERN_C_BEGIN
-#define SM_VECTOR_EXTERN_C_END
+#define SHAREMIND_VECTOR_EXTERN_C_BEGIN
+#define SHAREMIND_VECTOR_EXTERN_C_END
 #endif
 
-#define SM_VECTOR_DECLARE(name,datatype,extradata,inlinePerhaps) \
-    SM_VECTOR_EXTERN_C_BEGIN \
+#define SHAREMIND_VECTOR_DECLARE(name,datatype,extradata,inlinePerhaps) \
+    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
     typedef struct { \
         size_t size; \
         datatype * data; \
@@ -46,15 +46,15 @@
     inlinePerhaps datatype const * name ## _get_const_pointer(const name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps int name ## _foreach(name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SM_VECTOR_EXTERN_C_END
+    SHAREMIND_VECTOR_EXTERN_C_END
 
-#define SM_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,inlinePerhaps) \
-    SM_VECTOR_EXTERN_C_BEGIN \
+#define SHAREMIND_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,inlinePerhaps) \
+    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
     inlinePerhaps int name ## _foreach_with_ ## withname (name * r, int (*f)(datatype *, types), types) __attribute__ ((nonnull(1, 2))); \
-    SM_VECTOR_EXTERN_C_END
+    SHAREMIND_VECTOR_EXTERN_C_END
 
-#define SM_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc,inlinePerhaps) \
-    SM_VECTOR_EXTERN_C_BEGIN \
+#define SHAREMIND_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc,inlinePerhaps) \
+    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const r) { \
         assert(r); \
         r->size = 0u; \
@@ -126,10 +126,10 @@
         for (size_t i = 0u; i < r->size; i++) \
             (*f)(&r->data[i]); \
     } \
-    SM_VECTOR_EXTERN_C_END
+    SHAREMIND_VECTOR_EXTERN_C_END
 
-#define SM_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
-    SM_VECTOR_EXTERN_C_BEGIN \
+#define SHAREMIND_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
+    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
     inlinePerhaps int name ## _foreach_with_ ## withname (name * r, int (*f)(datatype *, types), params) { \
         assert(r); \
         assert(f); \
@@ -138,6 +138,6 @@
                 return 0; \
         return 1; \
     } \
-    SM_VECTOR_EXTERN_C_END
+    SHAREMIND_VECTOR_EXTERN_C_END
 
 #endif /* SHAREMIND_VECTOR_H */

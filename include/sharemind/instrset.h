@@ -21,15 +21,15 @@
 */
 
 #ifdef __cplusplus
-#define SM_INSTRSET_EXTERN_C_BEGIN extern "C" {
-#define SM_INSTRSET_EXTERN_C_END   }
+#define SHAREMIND_INSTRSET_EXTERN_C_BEGIN extern "C" {
+#define SHAREMIND_INSTRSET_EXTERN_C_END   }
 #else
-#define SM_INSTRSET_EXTERN_C_BEGIN
-#define SM_INSTRSET_EXTERN_C_END
+#define SHAREMIND_INSTRSET_EXTERN_C_BEGIN
+#define SHAREMIND_INSTRSET_EXTERN_C_END
 #endif
 
-#define SM_INSTRSET_DECLARE(name,inlinePerhaps) \
-    SM_INSTRSET_EXTERN_C_BEGIN \
+#define SHAREMIND_INSTRSET_DECLARE(name,inlinePerhaps) \
+    SHAREMIND_INSTRSET_EXTERN_C_BEGIN \
     struct name ## _item; \
     typedef struct { \
         struct name ## _item * d[65536]; \
@@ -38,10 +38,10 @@
     inlinePerhaps void name ## _destroy (name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _insert (name * s, uintptr_t value) __attribute__ ((nonnull(1))); \
     inlinePerhaps int name ## _contains (const name * s, uintptr_t value) __attribute__ ((nonnull(1), warn_unused_result)); \
-    SM_INSTRSET_EXTERN_C_END
+    SHAREMIND_INSTRSET_EXTERN_C_END
 
-#define SM_INSTRSET_DEFINE(name,mymalloc,myfree,inlinePerhaps) \
-    SM_INSTRSET_EXTERN_C_BEGIN \
+#define SHAREMIND_INSTRSET_DEFINE(name,mymalloc,myfree,inlinePerhaps) \
+    SHAREMIND_INSTRSET_EXTERN_C_BEGIN \
     struct name ## _item { \
         uintptr_t value; \
         struct name ## _item * next; \
@@ -100,6 +100,6 @@
         } \
         return 0; \
     } \
-    SM_INSTRSET_EXTERN_C_END
+    SHAREMIND_INSTRSET_EXTERN_C_END
 
 #endif /* SHAREMIND_INSTRSET_H */

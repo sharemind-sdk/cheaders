@@ -20,15 +20,15 @@
 */
 
 #ifdef __cplusplus
-#define SM_TRIE_EXTERN_C_BEGIN extern "C" {
-#define SM_TRIE_EXTERN_C_END   }
+#define SHAREMIND_TRIE_EXTERN_C_BEGIN extern "C" {
+#define SHAREMIND_TRIE_EXTERN_C_END   }
 #else
-#define SM_TRIE_EXTERN_C_BEGIN
-#define SM_TRIE_EXTERN_C_END
+#define SHAREMIND_TRIE_EXTERN_C_BEGIN
+#define SHAREMIND_TRIE_EXTERN_C_END
 #endif
 
-#define SM_TRIE_DECLARE(name,datatype,inlinePerhaps) \
-    SM_TRIE_EXTERN_C_BEGIN \
+#define SHAREMIND_TRIE_DECLARE(name,datatype,inlinePerhaps) \
+    SHAREMIND_TRIE_EXTERN_C_BEGIN \
     struct _ ## name { \
         struct _ ## name * children[255]; \
         unsigned char hasData; \
@@ -41,15 +41,15 @@
     inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, int * newValue) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps datatype * name ## _find(name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps int name ## _foreach(name * const t, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SM_TRIE_EXTERN_C_END
+    SHAREMIND_TRIE_EXTERN_C_END
 
-#define SM_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
-    SM_VECTOR_EXTERN_C_BEGIN \
+#define SHAREMIND_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
+    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
     inlinePerhaps int name ## _foreach_with_ ## withname (name * t, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
-    SM_VECTOR_EXTERN_C_END
+    SHAREMIND_VECTOR_EXTERN_C_END
 
-#define SM_TRIE_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
-    SM_TRIE_EXTERN_C_BEGIN \
+#define SHAREMIND_TRIE_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
+    SHAREMIND_TRIE_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const t) { \
         assert(t); \
         for (size_t i = 0u; i < 255u; i++) \
@@ -129,10 +129,10 @@
                     return 0; \
         return 1; \
     } \
-    SM_TRIE_EXTERN_C_END
+    SHAREMIND_TRIE_EXTERN_C_END
 
-#define SM_TRIE_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
-    SM_TRIE_EXTERN_C_BEGIN \
+#define SHAREMIND_TRIE_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
+    SHAREMIND_TRIE_EXTERN_C_BEGIN \
     inlinePerhaps int name ## _foreach_with_ ## withname (name * t, int (*f)(datatype *, types), params) { \
         assert(t); \
         assert(f); \
@@ -145,6 +145,6 @@
                     return 0; \
         return 1; \
     } \
-    SM_TRIE_EXTERN_C_END
+    SHAREMIND_TRIE_EXTERN_C_END
 
 #endif /* SHAREMIND_TRIE_H */

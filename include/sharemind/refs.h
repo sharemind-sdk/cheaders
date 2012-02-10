@@ -15,27 +15,27 @@
 #include <stddef.h>
 
 
-#define SMVM_NAMED_REFS_DECLARE_FIELDS(name) size_t name;
-#define SMVM_REFS_DECLARE_FIELDS SMVM_NAMED_REFS_DECLARE_FIELDS(refs)
+#define SHAREMIND_NAMED_REFS_DECLARE_FIELDS(name) size_t name;
+#define SHAREMIND_REFS_DECLARE_FIELDS SHAREMIND_NAMED_REFS_DECLARE_FIELDS(refs)
 
-#define SMVM_NAMED_REFS_INIT(object,name) \
+#define SHAREMIND_NAMED_REFS_INIT(object,name) \
     if (1) { \
         ((object)->name) = 0u; \
     } (void) 0
-#define SMVM_REFS_INIT(object) SMVM_NAMED_REFS_INIT(object,refs)
+#define SHAREMIND_REFS_INIT(object) SHAREMIND_NAMED_REFS_INIT(object,refs)
 
-#define SMVM_NAMED_REFS_ASSERT_IF_REFERENCED(object,name) \
+#define SHAREMIND_NAMED_REFS_ASSERT_IF_REFERENCED(object,name) \
     if (1) { \
         assert(((object)->name) <= 0u); \
     } (void) 0
-#define SMVM_REFS_ASSERT_IF_REFERENCED(object) SMVM_NAMED_REFS_ASSERT_IF_REFERENCED(object,refs)
+#define SHAREMIND_REFS_ASSERT_IF_REFERENCED(object) SHAREMIND_NAMED_REFS_ASSERT_IF_REFERENCED(object,refs)
 
-#define SMVM_NAMED_REFS_DECLARE_FUNCTIONS(type,name) \
+#define SHAREMIND_NAMED_REFS_DECLARE_FUNCTIONS(type,name) \
     bool type ## _ ## name ## _ref(type * object); \
     void type ## _ ## name ## _unref(type * object);
-#define SMVM_REFS_DECLARE_FUNCTIONS(type) SMVM_NAMED_REFS_DECLARE_FUNCTIONS(type,refs)
+#define SHAREMIND_REFS_DECLARE_FUNCTIONS(type) SHAREMIND_NAMED_REFS_DECLARE_FUNCTIONS(type,refs)
 
-#define SMVM_NAMED_REFS_DEFINE_FUNCTIONS(type,name) \
+#define SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS(type,name) \
     bool type ## _ ## name ## _ref(type * object) { \
         if (((object)->name) >= SIZE_MAX) \
             return false; \
@@ -46,6 +46,6 @@
         assert(((object)->name) > 0u); \
         ((object)->name)--; \
     }
-#define SMVM_REFS_DEFINE_FUNCTIONS(type) SMVM_NAMED_REFS_DEFINE_FUNCTIONS(type,refs)
+#define SHAREMIND_REFS_DEFINE_FUNCTIONS(type) SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS(type,refs)
 
 #endif
