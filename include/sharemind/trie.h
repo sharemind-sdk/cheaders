@@ -29,12 +29,12 @@
 
 #define SHAREMIND_TRIE_DECLARE(name,datatype,inlinePerhaps) \
     SHAREMIND_TRIE_EXTERN_C_BEGIN \
-    struct _ ## name { \
-        struct _ ## name * children[255]; \
+    struct name ## _{ \
+        struct name ## _ * children[255]; \
         unsigned char hasData; \
         datatype data; \
     }; \
-    typedef struct _ ## name name; \
+    typedef struct name ## _ name; \
     inlinePerhaps void name ## _init(name * const t) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy(name * const t) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy_with(name * const t, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \

@@ -37,11 +37,11 @@
 #define SHAREMIND_MAP_KEY_LESS_THAN_DEFINE(name,keytype) \
     inline int name(keytype const k1, keytype const k2) { return k1 < k2; }
 
-#define _SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(keytype_str,keytype) \
+#define SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(keytype_str,keytype) \
     SHAREMIND_MAP_KEY_EQUALS_DEFINE(SHAREMIND_MAP_KEY_EQUALS_ ## keytype_str, keytype) \
     SHAREMIND_MAP_KEY_LESS_THAN_DEFINE(SHAREMIND_MAP_KEY_LESS_THAN_ ## keytype_str, keytype)
 
-#define SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(keytype) _SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(keytype,keytype)
+#define SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(keytype) SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(keytype,keytype)
 
 SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(char)
 _SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(signed_char,signed char)
@@ -83,7 +83,7 @@ _SHAREMIND_MAP_KEY_COMPARATORS_DEFINE(voidptr,void *)
 #define SHAREMIND_MAP_DECLARE(name,keytype,constkeytype,valuetype,inlinePerhaps) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
     struct name ## _item; \
-    typedef struct _ ## name { \
+    typedef struct { \
         size_t size; \
         struct name ## _item * d[65536]; \
     } name; \
