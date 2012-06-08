@@ -19,6 +19,7 @@
 #include <boost/preprocessor/seq/for_each_i.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
+#include "static_assert.h"
 
 
 #define  SHAREMIND_C(a, b) BOOST_PP_CAT(a, b)
@@ -85,7 +86,8 @@
  */
 #define SHAREMIND_ENUM_DEFINE_TOSTRING(name,elems) \
     const char * name ## _toString(name v) { \
-        switch (v) { \
+        SHAREMIND_STATIC_ASSERT(sizeof(name) <= sizeof(int)); \
+        switch ((int) v) { \
             BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_DEFINE_TOSTRING_ELEM,_,elems) \
             default: \
                 return NULL; \
@@ -102,8 +104,9 @@
  * \param[in] elems ((a sequence of tuples with,))((keys and, = optional values))
  */
 #define SHAREMIND_ENUM_CUSTOM_DEFINE_TOSTRING(name,elems) \
+    SHAREMIND_STATIC_ASSERT(sizeof(name) <= sizeof(int)); \
     const char * name ## _toString(name v) { \
-        switch (v) { \
+        switch ((int) v) { \
             BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_CUSTOM_DEFINE_TOSTRING_ELEM,_,elems) \
             default: \
                 return NULL; \
