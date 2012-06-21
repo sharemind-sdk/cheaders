@@ -76,17 +76,20 @@
  * \param[in] name The name of the enum. The name is also used as a prefix to
  *                 the function name.
  */
-#define SHAREMIND_ENUM_DECLARE_TOSTRING(name) const char * name ## _toString(name v) __attribute__ ((warn_unused_result))
+#define SHAREMIND_ENUM_DECLARE_TOSTRING(name) SHAREMIND_ENUM_DECLARE_TOSTRING_CUSTOMNAME(name ## _toString, name)
+#define SHAREMIND_ENUM_DECLARE_TOSTRING_CUSTOMNAME(customName,enumName) const char * customName(enumName v) __attribute__ ((warn_unused_result))
 
 /**
  * \brief Defines a _toString method for an enum.
- * \param[in] name The name of the enum. The name is also used as a prefix to
- *                 the function name.
+ * \param[in] enumName The name of the enum. The name is also used as a prefix to
+ *                     the function name.
  * \param[in] elems (a)(sequence)(of)(enum)(keys)
  */
-#define SHAREMIND_ENUM_DEFINE_TOSTRING(name,elems) \
-    const char * name ## _toString(name v) { \
-        SHAREMIND_STATIC_ASSERT(sizeof(name) <= sizeof(int)); \
+#define SHAREMIND_ENUM_DEFINE_TOSTRING(enumName,elems) \
+    SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(customName ## _toString,enumName,elems)
+#define SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(customName,enumName,elems) \
+    const char * customName(enumName v) { \
+        SHAREMIND_STATIC_ASSERT(sizeof(enumName) <= sizeof(int)); \
         switch ((int) v) { \
             BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_DEFINE_TOSTRING_ELEM,_,elems) \
             default: \
