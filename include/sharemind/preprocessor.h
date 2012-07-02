@@ -86,7 +86,7 @@
  * \param[in] elems (a)(sequence)(of)(enum)(keys)
  */
 #define SHAREMIND_ENUM_DEFINE_TOSTRING(enumName,elems) \
-    SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(customName ## _toString,enumName,elems)
+    SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(enumName ## _toString,enumName,elems)
 #define SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(customName,enumName,elems) \
     const char * customName(enumName v) { \
         SHAREMIND_STATIC_ASSERT(sizeof(enumName) <= sizeof(int)); \
