@@ -36,6 +36,8 @@ typedef union {
     ptrdiff_t ptrdiff[1];
     void * p[1];
     const void * cp[1];
+    void (*fp[1])();
+    void (* const cfp[1])();
 } SharemindCodeBlock;
 
 SHAREMIND_STATIC_ASSERT(sizeof(char) == sizeof(uint8_t));
