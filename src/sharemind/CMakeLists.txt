@@ -12,17 +12,19 @@ PROJECT(SHAREMIND_VM_GLOBALS)
 
 FIND_PACKAGE(Boost REQUIRED)
 
-SET(SHAREMIND_VM_GLOBALS_HEADERS "codeblock.h")
+SET(SHAREMIND_VM_GLOBALS_HEADERS
+    "codeblock.h"
+    "likely.h"
+    "preprocessor.h"
+    "static_assert.h"
+)
 
 SET(SHAREMIND_VM_GLOBALS_HEADERS_P
     "fnv.h"
     "instrset.h"
-    "likely.h"
     "map.h"
     "refs.h"
-    "preprocessor.h"
     "stack.h"
-    "static_assert.h"
     "stringmap.h"
     "trie.h"
     "vector.h")
