@@ -43,6 +43,7 @@ SHAREMIND_STATIC_ASSERT(sizeof(char) == sizeof(uint8_t));
 SHAREMIND_STATIC_ASSERT(sizeof(size_t) <= sizeof(uint64_t));
 SHAREMIND_STATIC_ASSERT(sizeof(ptrdiff_t) <= sizeof(uint64_t));
 SHAREMIND_STATIC_ASSERT(sizeof(void *) <= sizeof(uint64_t));
+SHAREMIND_STATIC_ASSERT(sizeof(void (*)(void)) <= sizeof(uint64_t));
 SHAREMIND_STATIC_ASSERT(sizeof(SharemindCodeBlock) == sizeof(uint64_t));
 
 #ifdef __cplusplus
