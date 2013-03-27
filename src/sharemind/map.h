@@ -28,6 +28,7 @@
 #define SHAREMIND_MAP_EXTERN_C_END
 #endif
 
+#define SHAREMIND_MAP_KEYINIT_REGULAR(unused) (1)
 #define SHAREMIND_MAP_KEYFREE_REGULAR(unused)
 #define SHAREMIND_MAP_KEYCOPY_REGULAR(pDest,src) ((*(pDest)) = (src), 1)
 
@@ -107,7 +108,7 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps int name ## _foreach_with_ ## withname (name * s, int (*f)(constkeytype *, valuetype *, types), types) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_MAP_EXTERN_C_END
 
-#define SHAREMIND_MAP_DEFINE(name,keytype,constkeytype,valuetype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
+#define SHAREMIND_MAP_DEFINE(name,keytype,constkeytype,valuetype,keyhashfunction,keyequals,keylessthan,keyinit,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
     struct name ## _item { \
         keytype key; \
@@ -224,8 +225,8 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
                 if (keylessthan(key, (*l)->key)) \
                     break; \
                 if (keyequals(key, (*l)->key)) { \
-                    keyfree((*l)->key); \
-                    keycopy(&(*l)->key, key); \
+                    if (!keycopy(&(*l)->key, key)) \
+                        return NULL; \
                     return &(*l)->value; \
                 } \
                 l = &(*l)->next; \
@@ -239,7 +240,7 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
             *l = p; \
             return NULL; \
         } \
-        if (!keycopy(&(*l)->key, key)) { \
+        if (!keyinit(&(*l)->key) || !keycopy(&(*l)->key, key)) { \
             myfree(*l); \
             *l = p; \
             return NULL; \

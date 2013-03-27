@@ -33,11 +33,22 @@ SHAREMIND_MAP_EXTERN_C_END
 
 #define SHAREMIND_STRINGMAP_DEFINE(name,valueType,mymalloc,myfree,mystrdup,inlinePerhaps) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
+    inline int name ## _key_init(char ** const pDest) { \
+        (*pDest) = NULL; \
+        return 1; \
+    } \
     inline int name ## _key_copy(char ** const pDest, const char * src) { \
+        char * const oldPtr = (*pDest); \
         (*pDest) = mystrdup(src); \
-        return (*pDest) != NULL; \
+        if (*pDest) { \
+            myfree(oldPtr); \
+            return 1; \
+        } else { \
+            (*pDest) = oldPtr; \
+            return 0; \
+        } \
     } \
     SHAREMIND_MAP_EXTERN_C_END \
-    SHAREMIND_MAP_DEFINE(name,char *,const char * const,valueType,fnv_16a_str(key),SMVM_StringMap_key_equals,SMVM_StringMap_key_less_than,name ## _key_copy,myfree,mymalloc,myfree,inlinePerhaps)
+    SHAREMIND_MAP_DEFINE(name,char *,const char * const,valueType,fnv_16a_str(key),SMVM_StringMap_key_equals,SMVM_StringMap_key_less_than,name ## _key_init,name ## _key_copy,myfree,mymalloc,myfree,inlinePerhaps)
 
 #endif /* SHAREMIND_STRINGMAP_H */
