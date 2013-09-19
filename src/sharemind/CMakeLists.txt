@@ -15,7 +15,6 @@ FIND_PACKAGE(Boost REQUIRED)
 SET(SHAREMIND_VM_GLOBALS_HEADERS
     "codeblock.h"
     "fnv.h"
-    "instrset.h"
     "likely.h"
     "map.h"
     "preprocessor.h"
