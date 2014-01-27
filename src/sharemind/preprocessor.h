@@ -77,7 +77,49 @@
  *                 the function name.
  */
 #define SHAREMIND_ENUM_DECLARE_TOSTRING(name) SHAREMIND_ENUM_DECLARE_TOSTRING_CUSTOMNAME(name ## _toString, name)
+
+/**
+ * \brief Declares a _toString method for an enum with a custom function name.
+ * \param[in] customName The custom name for the function.
+ * \param[in] name The name of the enum. The name is also used as a prefix to
+ *                 the function name.
+ */
 #define SHAREMIND_ENUM_DECLARE_TOSTRING_CUSTOMNAME(customName,enumName) const char * customName(enumName v) __attribute__ ((warn_unused_result))
+
+/**
+ * \brief Defines a _toString method for an enum with an optional prefix and
+ *        suffix.
+ * \param[in] enumName The name of the enum. The name is also used as a prefix to
+ *                     the function name.
+ * \param[in] elems (a)(sequence)(of)(enum)(keys)
+ * \param[in] prefix a string prefix
+ * \param[in] suffix a string suffix
+ */
+#define SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING(enumName,elems,prefix,suffix) \
+    SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(enumName ## _toString,enumName,elems,prefix,suffix)
+
+/**
+ * \brief Defines a _toString method for an enum with an optional prefix, an
+ *        optional suffix and a custom name.
+ * \param[in] customName The custom name for the function.
+ * \param[in] enumName The name of the enum. The name is also used as a prefix to
+ *                     the function name.
+ * \param[in] elems (a)(sequence)(of)(enum)(keys)
+ * \param[in] prefix a string prefix
+ * \param[in] suffix a string suffix
+ */
+#define SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_CUSTOMNAME(customName,enumName,elems,prefix,suffix) \
+    const char * customName(enumName v) { \
+        SHAREMIND_STATIC_ASSERT(sizeof(enumName) <= sizeof(int)); \
+        switch ((int) v) { \
+            BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_ELEM,(prefix)(suffix),elems) \
+            default: \
+                return NULL; \
+        } \
+    }
+#define SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_ELEM(unused,ps,e) \
+    case e: \
+        return SHAREMIND_S(0,ps) SHAREMIND_2S(e) SHAREMIND_S(1,ps);
 
 /**
  * \brief Defines a _toString method for an enum.
@@ -86,19 +128,50 @@
  * \param[in] elems (a)(sequence)(of)(enum)(keys)
  */
 #define SHAREMIND_ENUM_DEFINE_TOSTRING(enumName,elems) \
-    SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(enumName ## _toString,enumName,elems)
+    SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING(enumName,elems,"","")
+
+/**
+ * \brief Defines a _toString method for an enum with a custom name.
+ * \param[in] customName The custom name for the function.
+ * \param[in] enumName The name of the enum. The name is also used as a prefix to
+ *                     the function name.
+ * \param[in] elems (a)(sequence)(of)(enum)(keys)
+ */
 #define SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(customName,enumName,elems) \
+    SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_CUSTOMNAME(costomName,enumName,elems,"","")
+
+/**
+ * \brief Defines a _toString method for an enum.
+ * \param[in] name The name of the enum. The name is also used as a prefix to
+ *                 the function name.
+ * \param[in] elems ((a sequence of tuples with,))((keys and, = optional values))
+ * \param[in] prefix a string prefix
+ * \param[in] suffix a string suffix
+ */
+#define SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING(enumName,elems,prefix,suffix) \
+    SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_CUSTOMNAME(enumName ## _toString,enumName,elems,prefix,suffix)
+
+/**
+ * \brief Defines a _toString method for an enum using a custom function name.
+ * \param[in] customName The custom name for the function.
+ * \param[in] name The name of the enum. The name is also used as a prefix to
+ *                 the function name.
+ * \param[in] elems ((a sequence of tuples with,))((keys and, = optional values))
+ * \param[in] prefix a string prefix
+ * \param[in] suffix a string suffix
+ */
+#define SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_CUSTOMNAME(customName,enumName,elems,prefix,suffix) \
     const char * customName(enumName v) { \
         SHAREMIND_STATIC_ASSERT(sizeof(enumName) <= sizeof(int)); \
         switch ((int) v) { \
-            BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_DEFINE_TOSTRING_ELEM,_,elems) \
+            BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_ELEM,(prefix)(suffix),elems) \
             default: \
                 return NULL; \
         } \
     }
-#define SHAREMIND_ENUM_DEFINE_TOSTRING_ELEM(unused,unused2,e) \
-    case e: \
-        return SHAREMIND_2S(e);
+#define SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_ELEM(unused,ps,e) \
+    case SHAREMIND_T(2,0,e): \
+        return SHAREMIND_S(0,ps) SHAREMIND_2S(SHAREMIND_T(2,0,e)) SHAREMIND_S(1,ps);
 
 /**
  * \brief Defines a _toString method for an enum.
@@ -107,17 +180,6 @@
  * \param[in] elems ((a sequence of tuples with,))((keys and, = optional values))
  */
 #define SHAREMIND_ENUM_CUSTOM_DEFINE_TOSTRING(name,elems) \
-    SHAREMIND_STATIC_ASSERT(sizeof(name) <= sizeof(int)); \
-    const char * name ## _toString(name v) { \
-        switch ((int) v) { \
-            BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_CUSTOM_DEFINE_TOSTRING_ELEM,_,elems) \
-            default: \
-                return NULL; \
-        } \
-    }
-#define SHAREMIND_ENUM_CUSTOM_DEFINE_TOSTRING_ELEM(unused,unused2,e) \
-    case SHAREMIND_T(2,0,e): \
-        return SHAREMIND_2S(SHAREMIND_T(2,0,e));
-
+    SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING(name,elems,"","")
 
 #endif /* SHAREMIND_PREPROCESSOR_H */
