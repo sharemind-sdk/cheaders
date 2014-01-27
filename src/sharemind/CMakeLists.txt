@@ -25,6 +25,9 @@ SET(SHAREMIND_VM_GLOBALS_HEADERS
     "trie.h"
     "vector.h")
 
+ADD_CUSTOM_TARGET("include_SharemindVmGlobals_headers_in_IDE"
+                  SOURCES ${SHAREMIND_VM_GLOBALS_HEADERS})
+
 INSTALL(FILES ${SHAREMIND_VM_GLOBALS_HEADERS}
         DESTINATION "include/sharemind")
 
