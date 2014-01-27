@@ -96,7 +96,7 @@
  * \param[in] suffix a string suffix
  */
 #define SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING(enumName,elems,prefix,suffix) \
-    SHAREMIND_ENUM_DEFINE_TOSTRING_CUSTOMNAME(enumName ## _toString,enumName,elems,prefix,suffix)
+    SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_CUSTOMNAME(enumName ## _toString,enumName,elems,prefix,suffix)
 
 /**
  * \brief Defines a _toString method for an enum with an optional prefix, an
