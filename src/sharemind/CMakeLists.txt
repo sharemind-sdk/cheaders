@@ -17,6 +17,7 @@ SET(SHAREMIND_VM_GLOBALS_HEADERS
     "fnv.h"
     "likely.h"
     "map.h"
+    "mutex.h"
     "preprocessor.h"
     "refs.h"
     "stack.h"
