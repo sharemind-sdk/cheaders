@@ -17,11 +17,7 @@
 
 
 #ifdef __cplusplus
-#define SHAREMIND_VECTOR_EXTERN_C_BEGIN extern "C" {
-#define SHAREMIND_VECTOR_EXTERN_C_END   }
-#else
-#define SHAREMIND_VECTOR_EXTERN_C_BEGIN
-#define SHAREMIND_VECTOR_EXTERN_C_END
+extern "C" {
 #endif
 
 typedef pthread_mutex_t SharemindMutex;
@@ -36,27 +32,6 @@ inline SharemindMutexError SharemindMutex_init(SharemindMutex * mutex) {
     return likely(pthread_mutex_init(mutex, NULL) == 0)
             ? SHAREMIND_MUTEX_OK
             : SHAREMIND_MUTEX_ERROR;
-}
-
-inline SharemindMutexError SharemindMutex_init_recursive(SharemindMutex * mutex) {
-    pthread_mutexattr_t attr;
-    if (pthread_mutexattr_init(&attr) != 0)
-        return SHAREMIND_MUTEX_ERROR;
-
-    SharemindMutexError r;
-    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0) {
-        r = SHAREMIND_MUTEX_ERROR;
-        goto SharemindMutex_init_recursive_end;
-    }
-
-    r = likely(pthread_mutex_init(mutex, &attr) == 0)
-        ? SHAREMIND_MUTEX_OK
-        : SHAREMIND_MUTEX_ERROR;
-
-SharemindMutex_init_recursive_end:
-
-    pthread_mutexattr_destroy(&attr);
-    return r;
 }
 
 inline SharemindMutexError SharemindMutex_destroy(SharemindMutex * mutex) {
@@ -103,5 +78,9 @@ inline SharemindMutexError SharemindMutex_trylock_const(
     return SharemindMutex_trylock((SharemindMutex *) mutex);
 }
 #pragma GCC diagnostic pop
+
+#ifdef __cplusplus
+} /* extern "C" { */
+#endif
 
 #endif /* SHAREMIND_VECTOR_H */

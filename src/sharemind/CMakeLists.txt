@@ -19,6 +19,7 @@ SET(SHAREMIND_VM_GLOBALS_HEADERS
     "map.h"
     "mutex.h"
     "preprocessor.h"
+    "recursivemutex.h"
     "refs.h"
     "stack.h"
     "static_assert.h"
