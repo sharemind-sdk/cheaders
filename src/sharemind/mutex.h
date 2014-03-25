@@ -38,6 +38,27 @@ inline SharemindMutexError SharemindMutex_init(SharemindMutex * mutex) {
             : SHAREMIND_MUTEX_ERROR;
 }
 
+inline SharemindMutexError SharemindMutex_init_recursive(SharemindMutex * mutex) {
+    pthread_mutexattr_t attr;
+    if (pthread_mutexattr_init(&attr) != 0)
+        return SHAREMIND_MUTEX_ERROR;
+
+    SharemindMutexError r;
+    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0) {
+        r = SHAREMIND_MUTEX_ERROR;
+        goto SharemindMutex_init_recursive_end;
+    }
+
+    r = likely(pthread_mutex_init(mutex, &attr) == 0)
+        ? SHAREMIND_MUTEX_OK
+        : SHAREMIND_MUTEX_ERROR;
+
+SharemindMutex_init_recursive_end:
+
+    pthread_mutexattr_destroy(&attr);
+    return r;
+}
+
 inline SharemindMutexError SharemindMutex_destroy(SharemindMutex * mutex) {
     return likely(pthread_mutex_destroy(mutex) == 0)
             ? SHAREMIND_MUTEX_OK
