@@ -47,34 +47,43 @@
         assert(((object)->name) > 0u); \
         ((object)->name)--; \
     }
-#define SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX(type,name,mutex) \
+#define SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX__(type,name,mutex,mutexType) \
     bool type ## _ ## name ## _ref(type * object) { \
-        SharemindMutex_lock(&(object)->mutex); \
+        mutexType ## _lock(&(object)->mutex); \
         if (((object)->name) >= SIZE_MAX) { \
-            SharemindMutex_unlock(&(object)->mutex); \
+            mutexType ## _unlock(&(object)->mutex); \
             return false; \
         } \
         ((object)->name)++; \
-        SharemindMutex_unlock(&(object)->mutex); \
+        mutexType ## _unlock(&(object)->mutex); \
         return true; \
     } \
     void type ## _ ## name ## _unref(type * object) { \
-        SharemindMutex_lock(&(object)->mutex); \
+        mutexType ## _lock(&(object)->mutex); \
         assert(((object)->name) > 0u); \
         ((object)->name)--; \
-        SharemindMutex_unlock(&(object)->mutex); \
+        mutexType ## _unlock(&(object)->mutex); \
     }
 
 #define SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_MUTEX(type,name) \
-    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX(type,name,mutex)
+    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX__(type,name,mutex,SharemindMutex)
+
+#define SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_RECURSIVE_MUTEX(type,name) \
+    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX__(type,name,mutex,SharemindRecursiveMutex)
 
 #define SHAREMIND_REFS_DEFINE_FUNCTIONS(type) \
     SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS(type,refs)
 
 #define SHAREMIND_REFS_DEFINE_FUNCTIONS_WITH_MUTEX(type) \
-    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX(type,refs,mutex)
+    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX__(type,refs,mutex,SharemindMutex)
 
 #define SHAREMIND_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX(type,mutex) \
-    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX(type,refs,mutex)
+    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX__(type,refs,mutex,SharemindMutex)
+
+#define SHAREMIND_REFS_DEFINE_FUNCTIONS_WITH_RECURSIVE_MUTEX(type) \
+    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX__(type,refs,mutex,SharemindRecursiveMutex)
+
+#define SHAREMIND_REFS_DEFINE_FUNCTIONS_WITH_NAMED_RECURSIVE_MUTEX(type,mutex) \
+    SHAREMIND_NAMED_REFS_DEFINE_FUNCTIONS_WITH_NAMED_MUTEX__(type,refs,mutex,SharemindRecursiveMutex)
 
 #endif
