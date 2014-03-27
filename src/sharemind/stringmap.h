@@ -12,6 +12,7 @@
 
 #include "map.h"
 
+#include <stdbool.h>
 #include <string.h>
 #include "fnv.h"
 
@@ -21,11 +22,11 @@
 
 SHAREMIND_MAP_EXTERN_C_BEGIN
 
-inline int SMVM_StringMap_key_equals(const char * k1, const char * k2) {
+inline bool SMVM_StringMap_key_equals(const char * k1, const char * k2) {
     return strcmp(k1, k2) == 0;
 }
 
-inline int SMVM_StringMap_key_less_than(const char * k1, const char * k2) {
+inline bool SMVM_StringMap_key_less_than(const char * k1, const char * k2) {
     return strcmp(k1, k2) < 0;
 }
 
@@ -33,19 +34,19 @@ SHAREMIND_MAP_EXTERN_C_END
 
 #define SHAREMIND_STRINGMAP_DEFINE(name,valueType,mymalloc,myfree,mystrdup,inlinePerhaps) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
-    inline int name ## _key_init(char ** const pDest) { \
+    inline bool name ## _key_init(char ** const pDest) { \
         (*pDest) = NULL; \
-        return 1; \
+        return true; \
     } \
-    inline int name ## _key_copy(char ** const pDest, const char * src) { \
+    inline bool name ## _key_copy(char ** const pDest, const char * src) { \
         char * const oldPtr = (*pDest); \
         (*pDest) = mystrdup(src); \
         if (*pDest) { \
             myfree(oldPtr); \
-            return 1; \
+            return true; \
         } else { \
             (*pDest) = oldPtr; \
-            return 0; \
+            return false; \
         } \
     } \
     SHAREMIND_MAP_EXTERN_C_END \

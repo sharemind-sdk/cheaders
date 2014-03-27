@@ -11,6 +11,7 @@
 #define SHAREMIND_VECTOR_H
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include "likely.h"
@@ -39,18 +40,18 @@
     inlinePerhaps void name ## _init(name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy(name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy_with(name * const r, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps int name ## _resize(name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
+    inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
     inlinePerhaps datatype * name ## _push(name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _pop(name * const r) __attribute__ ((nonnull(1))); \
     inlinePerhaps datatype * name ## _get_pointer(name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps datatype const * name ## _get_const_pointer(const name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps int name ## _foreach(name * r, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach(name * r, bool (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_VECTOR_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,inlinePerhaps) \
     SHAREMIND_VECTOR_EXTERN_C_BEGIN \
-    inlinePerhaps int name ## _foreach_with_ ## withname (name * r, int (*f)(datatype *, types), types) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach_with_ ## withname (name * r, bool (*f)(datatype *, types), types) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_VECTOR_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc,inlinePerhaps) \
@@ -71,19 +72,19 @@
             (*destroyer)(&r->data[i]); \
         myfree(r->data); \
     } \
-    inlinePerhaps int name ## _resize(name * const r, const size_t newSize) { \
+    inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) { \
         assert(r); \
         if (unlikely(r->size == newSize)) \
-            return 1; \
+            return true; \
         if (unlikely(newSize > SIZE_MAX / sizeof(datatype))) \
-            return 0; \
+            return false; \
         datatype * const d = (datatype *) myrealloc(r->data, newSize * sizeof(datatype)); \
         if (unlikely(!d)) \
             if (unlikely(newSize != 0u)) \
-                return 0; \
+                return false; \
         r->data = d; \
         r->size = newSize; \
-        return 1; \
+        return true; \
     } \
     inlinePerhaps datatype * name ## _push(name * const r) { \
         assert(r); \
@@ -112,13 +113,13 @@
             return NULL; \
         return &r->data[i]; \
     } \
-    inlinePerhaps int name ## _foreach(name * r, int (*f)(datatype *)) { \
+    inlinePerhaps bool name ## _foreach(name * r, bool (*f)(datatype *)) { \
         assert(r); \
         assert(f); \
         for (size_t i = 0u; i < r->size; i++) \
             if (!((*f)(&r->data[i]))) \
-                return 0; \
-        return 1; \
+                return false; \
+        return true; \
     } \
     inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) { \
         assert(r); \
@@ -130,13 +131,13 @@
 
 #define SHAREMIND_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
     SHAREMIND_VECTOR_EXTERN_C_BEGIN \
-    inlinePerhaps int name ## _foreach_with_ ## withname (name * r, int (*f)(datatype *, types), params) { \
+    inlinePerhaps bool name ## _foreach_with_ ## withname (name * r, bool (*f)(datatype *, types), params) { \
         assert(r); \
         assert(f); \
         for (size_t i = 0u; i < r->size; i++) \
             if (!((*f)(&r->data[i], args))) \
-                return 0; \
-        return 1; \
+                return false; \
+        return true; \
     } \
     SHAREMIND_VECTOR_EXTERN_C_END
 

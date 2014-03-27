@@ -38,14 +38,14 @@
     inlinePerhaps void name ## _init(name * const t) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy(name * const t) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy_with(name * const t, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, int * newValue) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, bool * newValue) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps datatype * name ## _find(name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps int name ## _foreach(name * const t, int (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach(name * const t, bool (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_TRIE_EXTERN_C_END
 
 #define SHAREMIND_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
     SHAREMIND_VECTOR_EXTERN_C_BEGIN \
-    inlinePerhaps int name ## _foreach_with_ ## withname (name * t, int (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach_with_ ## withname (name * t, bool (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_VECTOR_EXTERN_C_END
 
 #define SHAREMIND_TRIE_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
@@ -77,7 +77,7 @@
             } \
         } \
     } \
-    inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, int * newValue) { \
+    inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, bool * newValue) { \
         assert(t); \
         assert(key); \
         name ** next; \
@@ -101,7 +101,7 @@
             if (*key == '\0') { \
                 (*next)->hasData = 1u; \
                 if (newValue) \
-                    *newValue = 1; \
+                    *newValue = true; \
                 return &(*next)->data; \
             } \
         } \
@@ -117,33 +117,33 @@
                 return NULL; \
         } \
     } \
-    inlinePerhaps int name ## _foreach(name * const t, int (*f)(datatype *)) { \
+    inlinePerhaps bool name ## _foreach(name * const t, bool (*f)(datatype *)) { \
         assert(t); \
         assert(f); \
         if (t->hasData) \
             if (!((*f)(&t->data))) \
-                return 0; \
+                return false; \
         for (size_t i = 0; i < 255; i++) \
             if (t->children[i]) \
                 if (!name ## _foreach(t->children[i], f)) \
-                    return 0; \
-        return 1; \
+                    return false; \
+        return true; \
     } \
     SHAREMIND_TRIE_EXTERN_C_END
 
 #define SHAREMIND_TRIE_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
     SHAREMIND_TRIE_EXTERN_C_BEGIN \
-    inlinePerhaps int name ## _foreach_with_ ## withname (name * t, int (*f)(datatype *, types), params) { \
+    inlinePerhaps bool name ## _foreach_with_ ## withname (name * t, bool (*f)(datatype *, types), params) { \
         assert(t); \
         assert(f); \
         if (t->hasData) \
             if (!((*f)(&t->data, args))) \
-                return 0; \
+                return false; \
         for (size_t i = 0; i < 255; i++) \
             if (t->children[i]) \
                 if (!name ## _foreach_with_ ## withname(t->children[i], f, args)) \
-                    return 0; \
-        return 1; \
+                    return false; \
+        return true; \
     } \
     SHAREMIND_TRIE_EXTERN_C_END
 

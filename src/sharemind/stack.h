@@ -10,6 +10,7 @@
 #ifndef SHAREMIND_STACK_H
 #define SHAREMIND_STACK_H
 
+#include <stdbool.h>
 #include "likely.h"
 
 
@@ -39,7 +40,7 @@
     inlinePerhaps datatype * name ## _push (name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _pop (name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps datatype * name ## _top (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps int name ## _empty (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps bool name ## _empty (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps void name ## _foreach (name * s, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_STACK_EXTERN_C_END
 
@@ -105,7 +106,7 @@
         assert(d); \
         return &d->value; \
     } \
-    inlinePerhaps int name ## _empty (name * s) { \
+    inlinePerhaps bool name ## _empty (name * s) { \
         assert(s); \
         return s->d == NULL; \
     } \
