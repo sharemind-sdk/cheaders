@@ -24,9 +24,11 @@
 #ifdef __cplusplus
 #define SHAREMIND_MAP_EXTERN_C_BEGIN extern "C" {
 #define SHAREMIND_MAP_EXTERN_C_END   }
+#define SHAREMIND_MAP_ALLOC_CAST(type) ((type))
 #else
 #define SHAREMIND_MAP_EXTERN_C_BEGIN
 #define SHAREMIND_MAP_EXTERN_C_END
+#define SHAREMIND_MAP_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_MAP_KEYINIT_REGULAR(unused) (1)
@@ -236,7 +238,7 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         } else { \
             p = NULL; \
         } \
-        *l = (struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
+        *l = SHAREMIND_MAP_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(**l)); \
         if (!(*l)) { \
             *l = p; \
             return NULL; \

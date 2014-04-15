@@ -25,9 +25,11 @@
 #ifdef __cplusplus
 #define SHAREMIND_VECTOR_EXTERN_C_BEGIN extern "C" {
 #define SHAREMIND_VECTOR_EXTERN_C_END   }
+#define SHAREMIND_VECTOR_ALLOC_CAST(type) ((type))
 #else
 #define SHAREMIND_VECTOR_EXTERN_C_BEGIN
 #define SHAREMIND_VECTOR_EXTERN_C_END
+#define SHAREMIND_VECTOR_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_VECTOR_DECLARE(name,datatype,extradata,inlinePerhaps) \
@@ -78,7 +80,7 @@
             return true; \
         if (unlikely(newSize > SIZE_MAX / sizeof(datatype))) \
             return false; \
-        datatype * const d = (datatype *) myrealloc(r->data, newSize * sizeof(datatype)); \
+        datatype * const d = SHAREMIND_VECTOR_ALLOC_CAST(datatype *) myrealloc(r->data, newSize * sizeof(*d)); \
         if (unlikely(!d)) \
             if (unlikely(newSize != 0u)) \
                 return false; \

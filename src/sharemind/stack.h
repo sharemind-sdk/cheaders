@@ -22,9 +22,11 @@
 #ifdef __cplusplus
 #define SHAREMIND_STACK_EXTERN_C_BEGIN extern "C" {
 #define SHAREMIND_STACK_EXTERN_C_END   }
+#define SHAREMIND_STACK_ALLOC_CAST(type) ((type))
 #else
 #define SHAREMIND_STACK_EXTERN_C_BEGIN
 #define SHAREMIND_STACK_EXTERN_C_END
+#define SHAREMIND_STACK_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_STACK_DECLARE(name,datatype,extradata,inlinePerhaps) \
@@ -86,7 +88,7 @@
     } \
     inlinePerhaps datatype * name ## _push (name * s) { \
         assert(s); \
-        struct name ## _item * n = (struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
+        struct name ## _item * const n = SHAREMIND_STACK_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(*n)); \
         if (unlikely(!n)) \
             return NULL; \
         n->prev = s->d; \

@@ -24,9 +24,11 @@
 #ifdef __cplusplus
 #define SHAREMIND_SIMPLESET_EXTERN_C_BEGIN extern "C" {
 #define SHAREMIND_SIMPLESET_EXTERN_C_END   }
+#define SHAREMIND_SIMPLESET_ALLOC_CAST(type) ((type))
 #else
 #define SHAREMIND_SIMPLESET_EXTERN_C_BEGIN
 #define SHAREMIND_SIMPLESET_EXTERN_C_END
+#define SHAREMIND_SIMPLESET_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_SIMPLESET_DECLARE(name,datatype,inlinePerhaps) \
@@ -81,7 +83,7 @@
         } else { \
             p = NULL; \
         } \
-        *l = (struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
+        *l = SHAREMIND_SIMPLESET_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(**l)); \
         if (!(*l)) { \
             *l = p; \
             return false; \

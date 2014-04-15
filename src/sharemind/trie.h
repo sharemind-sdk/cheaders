@@ -22,9 +22,11 @@
 #ifdef __cplusplus
 #define SHAREMIND_TRIE_EXTERN_C_BEGIN extern "C" {
 #define SHAREMIND_TRIE_EXTERN_C_END   }
+#define SHAREMIND_TRIE_ALLOC_CAST(type) ((type))
 #else
 #define SHAREMIND_TRIE_EXTERN_C_BEGIN
 #define SHAREMIND_TRIE_EXTERN_C_END
+#define SHAREMIND_TRIE_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_TRIE_DECLARE(name,datatype,inlinePerhaps) \
@@ -93,7 +95,7 @@
                 break; \
         } \
         for (;; next = &(*next)->children[*((const unsigned char *) key)]) { \
-            (*next) = (name *) mymalloc(sizeof(name)); \
+            (*next) = SHAREMIND_TRIE_ALLOC_CAST(name *) mymalloc(sizeof(**next)); \
             if (!*next) \
                 return NULL; \
             name ## _init(*next); \
