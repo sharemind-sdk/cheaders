@@ -7,7 +7,7 @@
 # code is subject to the appropriate license agreement.
 #
 
-CMAKE_MINIMUM_REQUIRED(VERSION "2.8")
+CMAKE_MINIMUM_REQUIRED(VERSION "2.8.12")
 PROJECT(SHAREMIND_VM_GLOBALS "C")
 
 FIND_PACKAGE(Boost REQUIRED)
