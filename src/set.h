@@ -106,6 +106,12 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const *, types), types) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_SET_EXTERN_C_END
 
+#define SHAREMIND_SET_DECLARE_FOREACH_WITH_INLINE(prefix,name,withname,params) \
+    SHAREMIND_SET_EXTERN_C_BEGIN \
+    prefix name ## _foreach_with_ ## withname(name const * s, params) \
+            __attribute__ ((nonnull(1, 2))); \
+    SHAREMIND_SET_EXTERN_C_END
+
 #define SHAREMIND_SET_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
     struct name ## _item { \
@@ -270,6 +276,22 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
             } \
         } \
         return true; \
+    } \
+    SHAREMIND_SET_EXTERN_C_END
+
+#define SHAREMIND_SET_DEFINE_FOREACH_WITH_INLINE(prefix,name,withname,params,doneResult,...) \
+    SHAREMIND_SET_EXTERN_C_BEGIN \
+    prefix name ## _foreach_with_ ## withname(name const * s, params) { \
+        assert(s); \
+        for (size_t i = 0u; i < 65536u; i++) { \
+            struct name ## _item * item = s->d[i]; \
+            while (item) { \
+                struct name ## _item * next = item->next; \
+                __VA_ARGS__; \
+                item = next; \
+            } \
+        } \
+        return (doneResult); \
     } \
     SHAREMIND_SET_EXTERN_C_END
 
