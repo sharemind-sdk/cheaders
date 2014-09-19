@@ -103,7 +103,7 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_SET_DECLARE_FOREACH_WITH(name,keytype,withname,types,inlinePerhaps) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname(name * s, bool (*f)(keytype const *, types), types) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const *, types), types) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_SET_EXTERN_C_END
 
 #define SHAREMIND_SET_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
@@ -257,7 +257,7 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_SET_DEFINE_FOREACH_WITH(name,keytype,withname,types,params,args,inlinePerhaps) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname(name * s, bool (*f)(keytype const *, types), params) { \
+    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const *, types), params) { \
         assert(s); \
         assert(f); \
         for (size_t i = 0u; i < 65536u; i++) { \
