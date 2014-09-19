@@ -167,11 +167,10 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         for (size_t i = 0; i < 65536; i++) { \
             struct name ## _item * item = s->d[i]; \
             while (item) { \
-                struct name ## _item * next = item->next; \
                 if (!index) \
                     return &item->value; \
                 index--; \
-                item = next; \
+                item = item->next; \
             } \
         } \
         return NULL; \
@@ -181,11 +180,10 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         for (size_t i = 0; i < 65536; i++) { \
             struct name ## _item * item = s->d[i]; \
             while (item) { \
-                struct name ## _item * next = item->next; \
                 if (!index) \
                     return &item->value; \
                 index--; \
-                item = next; \
+                item = item->next; \
             } \
         } \
         return NULL; \
