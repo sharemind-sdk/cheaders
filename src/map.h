@@ -96,14 +96,12 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps void name ## _destroy_with (name * s, void (*destroyer)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1))); \
     inlinePerhaps constkeytype * name ## _key_at (const name * s, size_t index) __attribute__ ((nonnull(1))); \
     inlinePerhaps valuetype * name ## _value_at (name * s, size_t index) __attribute__ ((nonnull(1))); \
-    inlinePerhaps valuetype const * name ## _const_value_at (const name * s, size_t index) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _foreach (name * s, bool (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void (name * s, void (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps valuetype * name ## _get_or_insert (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _remove (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _remove_with (name * s, constkeytype key, void (*destroyer)(valuetype *)) __attribute__ ((nonnull(1))); \
-    inlinePerhaps valuetype * name ## _get (name * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps valuetype const * name ## _get_const (const name * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
+    inlinePerhaps valuetype * name ## _get (name const * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
     SHAREMIND_MAP_EXTERN_C_END
 
 #define SHAREMIND_MAP_DECLARE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,inlinePerhaps) \
@@ -169,19 +167,6 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         return NULL; \
     } \
     inlinePerhaps valuetype * name ## _value_at (name * s, size_t index) { \
-        assert(s); \
-        for (size_t i = 0; i < 65536; i++) { \
-            struct name ## _item * item = s->d[i]; \
-            while (item) { \
-                if (!index) \
-                    return &item->value; \
-                index--; \
-                item = item->next; \
-            } \
-        } \
-        return NULL; \
-    } \
-    inlinePerhaps valuetype const * name ## _const_value_at (const name * s, size_t index) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) { \
             struct name ## _item * item = s->d[i]; \
@@ -297,7 +282,7 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         } \
         return false; \
     } \
-    inlinePerhaps valuetype * name ## _get (name * s, constkeytype key) { \
+    inlinePerhaps valuetype * name ## _get (name const * s, constkeytype key) { \
         assert(s); \
         uint16_t hash = (uint16_t) (keyhashfunction); \
         struct name ## _item * l = s->d[hash]; \
@@ -309,21 +294,7 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
             l = l->next; \
         } \
         return NULL; \
-    } \
-    inlinePerhaps valuetype const * name ## _get_const (const name * s, constkeytype key) { \
-        assert(s); \
-        uint16_t hash = (uint16_t) (keyhashfunction); \
-        struct name ## _item * l = s->d[hash]; \
-        while (l) { \
-            if (keyequals(key, l->key)) \
-                return &l->value; \
-            if (keylessthan(key, l->key)) \
-                return NULL; \
-            l = l->next; \
-        } \
-        return NULL; \
-    } \
-    SHAREMIND_MAP_EXTERN_C_END
+    }
 
 #define SHAREMIND_MAP_DEFINE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,params,args,inlinePerhaps) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
