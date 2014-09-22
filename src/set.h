@@ -286,7 +286,7 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         for (size_t i = 0u; i < 65536u; i++) { \
             struct name ## _item * item = s->d[i]; \
             while (item) { \
-                struct name ## _item * next = item->next; \
+                struct name ## _item * const next = item->next; \
                 __VA_ARGS__; \
                 item = next; \
             } \
