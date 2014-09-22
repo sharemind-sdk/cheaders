@@ -101,6 +101,12 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps bool name ## _remove(name * s, keytype const key) __attribute__ ((nonnull(1))); \
     SHAREMIND_SET_EXTERN_C_END
 
+#define SHAREMIND_SET_DECLARE_DESTROY_WITH_INLINE(name,withname,params,inlinePerhaps) \
+    SHAREMIND_SET_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _destroy_with_ ## withname( \
+            name * s params) __attribute__ ((nonnull(1))); \
+    SHAREMIND_SET_EXTERN_C_END
+
 #define SHAREMIND_SET_DECLARE_FOREACH_WITH(name,keytype,withname,types,inlinePerhaps) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const *, types), types) __attribute__ ((nonnull(1, 2))); \
@@ -258,6 +264,24 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
             l = *prevPtr; \
         } \
         return false; \
+    } \
+    SHAREMIND_SET_EXTERN_C_END
+
+#define SHAREMIND_SET_DEFINE_DESTROY_WITH_INLINE(name,withname,keytype,params,myfree,inlinePerhaps,...) \
+    SHAREMIND_SET_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _destroy_with_ ## withname( \
+            name * s params) \
+    { \
+        assert(s); \
+        for (size_t i = 0u; i < 65536u; i++) { \
+            while (s->d[i]) { \
+                struct name ## _item * next = s->d[i]->next; \
+                keytype * const item = &s->d[i]->key; \
+                __VA_ARGS__; \
+                myfree(s->d[i]); \
+                s->d[i] = next; \
+            } \
+        } \
     } \
     SHAREMIND_SET_EXTERN_C_END
 
