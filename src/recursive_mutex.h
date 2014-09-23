@@ -31,18 +31,18 @@ inline SharemindRecursiveMutexError SharemindRecursiveMutex_init(
 {
     pthread_mutexattr_t attr;
     if (pthread_mutexattr_init(&attr) != 0)
-        return SHAREMIND_MUTEX_ERROR;
+        return SHAREMIND_RECURSIVE_MUTEX_ERROR;
 
     SharemindRecursiveMutexError r;
     /* If you get undeclared errors on this, define _XOPEN_SOURCE >= 600: */
     if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0) {
-        r = SHAREMIND_MUTEX_ERROR;
+        r = SHAREMIND_RECURSIVE_MUTEX_ERROR;
         goto SharemindRecursiveMutex_init_recursive_end;
     }
 
     r = likely(pthread_mutex_init(&mutex->inner, &attr) == 0)
-        ? SHAREMIND_MUTEX_OK
-        : SHAREMIND_MUTEX_ERROR;
+        ? SHAREMIND_RECURSIVE_MUTEX_OK
+        : SHAREMIND_RECURSIVE_MUTEX_ERROR;
 
 SharemindRecursiveMutex_init_recursive_end:
 
