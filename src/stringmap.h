@@ -39,15 +39,7 @@ SHAREMIND_MAP_EXTERN_C_END
         return true; \
     } \
     inline bool name ## _key_copy(char ** const pDest, const char * src) { \
-        char * const oldPtr = (*pDest); \
-        (*pDest) = mystrdup(src); \
-        if (*pDest) { \
-            myfree(oldPtr); \
-            return true; \
-        } else { \
-            (*pDest) = oldPtr; \
-            return false; \
-        } \
+        return ((*pDest) = mystrdup(src)); \
     } \
     SHAREMIND_MAP_EXTERN_C_END \
     SHAREMIND_MAP_DEFINE(name,char *,const char * const,valueType,fnv_16a_str(key),SMVM_StringMap_key_equals,SMVM_StringMap_key_less_than,name ## _key_init,name ## _key_copy,myfree,mymalloc,myfree,inlinePerhaps)
