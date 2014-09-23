@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "extern_c.h"
 #include "likely.h"
 
 
@@ -23,17 +24,13 @@
 */
 
 #ifdef __cplusplus
-#define SHAREMIND_VECTOR_EXTERN_C_BEGIN extern "C" {
-#define SHAREMIND_VECTOR_EXTERN_C_END   }
 #define SHAREMIND_VECTOR_ALLOC_CAST(type) ((type))
 #else
-#define SHAREMIND_VECTOR_EXTERN_C_BEGIN
-#define SHAREMIND_VECTOR_EXTERN_C_END
 #define SHAREMIND_VECTOR_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_VECTOR_DECLARE(name,datatype,extradata,inlinePerhaps) \
-    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     typedef struct { \
         size_t size; \
         datatype * data; \
@@ -49,15 +46,15 @@
     inlinePerhaps datatype const * name ## _get_const_pointer(const name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps bool name ## _foreach(name * r, bool (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SHAREMIND_VECTOR_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,inlinePerhaps) \
-    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _foreach_with_ ## withname (name * r, bool (*f)(datatype *, types), types) __attribute__ ((nonnull(1, 2))); \
-    SHAREMIND_VECTOR_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc,inlinePerhaps) \
-    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const r) { \
         assert(r); \
         r->size = 0u; \
@@ -129,10 +126,10 @@
         for (size_t i = 0u; i < r->size; i++) \
             (*f)(&r->data[i]); \
     } \
-    SHAREMIND_VECTOR_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
-    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _foreach_with_ ## withname (name * r, bool (*f)(datatype *, types), params) { \
         assert(r); \
         assert(f); \
@@ -141,6 +138,6 @@
                 return false; \
         return true; \
     } \
-    SHAREMIND_VECTOR_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_VECTOR_H */

@@ -12,13 +12,11 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "extern_c.h"
 #include "static_assert.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+SHAREMIND_EXTERN_C_BEGIN
 
 typedef union {
     uint64_t uint64[1];
@@ -46,8 +44,6 @@ SHAREMIND_STATIC_ASSERT(sizeof(void *) <= sizeof(uint64_t));
 SHAREMIND_STATIC_ASSERT(sizeof(void (*)(void)) <= sizeof(uint64_t));
 SHAREMIND_STATIC_ASSERT(sizeof(SharemindCodeBlock) == sizeof(uint64_t));
 
-#ifdef __cplusplus
-} /* extern "C" { */
-#endif
+SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_CODEBLOCK_H */

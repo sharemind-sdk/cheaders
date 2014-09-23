@@ -11,6 +11,7 @@
 #define SHAREMIND_STACK_H
 
 #include <stdbool.h>
+#include "extern_c.h"
 #include "likely.h"
 
 
@@ -20,17 +21,13 @@
 */
 
 #ifdef __cplusplus
-#define SHAREMIND_STACK_EXTERN_C_BEGIN extern "C" {
-#define SHAREMIND_STACK_EXTERN_C_END   }
 #define SHAREMIND_STACK_ALLOC_CAST(type) ((type))
 #else
-#define SHAREMIND_STACK_EXTERN_C_BEGIN
-#define SHAREMIND_STACK_EXTERN_C_END
 #define SHAREMIND_STACK_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_STACK_DECLARE(name,datatype,extradata,inlinePerhaps) \
-    SHAREMIND_STACK_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _item; \
     typedef struct { \
         struct name ## _item * d; \
@@ -44,10 +41,10 @@
     inlinePerhaps datatype * name ## _top (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps bool name ## _empty (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
     inlinePerhaps void name ## _foreach (name * s, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SHAREMIND_STACK_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_STACK_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
-    SHAREMIND_STACK_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _item { \
         datatype value; \
         struct name ## _item * prev; \
@@ -120,6 +117,6 @@
             d = d->prev; \
         } \
     } \
-    SHAREMIND_STACK_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_STACK_H */

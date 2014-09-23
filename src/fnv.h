@@ -27,11 +27,10 @@
 #endif /* __cplusplus */
 
 #include <stdint.h>
+#include "extern_c.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+SHAREMIND_EXTERN_C_BEGIN
 
 /**
   \brief Generates a 64 bit Fowler/Noll/Vo FNV-1a hash for the given buffer.
@@ -117,9 +116,6 @@ inline uint16_t fnv_16a_str(register const char * str) {
     return (uint16_t) (hval ^ (hval >> 16));
 }
 
-
-#ifdef __cplusplus
-} /* extern "C" { */
-#endif
+SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_FNV_H */

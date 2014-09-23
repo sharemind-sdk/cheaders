@@ -11,6 +11,7 @@
 #define SHAREMIND_TRIE_H
 
 #include <assert.h>
+#include "extern_c.h"
 #include "likely.h"
 
 
@@ -20,17 +21,13 @@
 */
 
 #ifdef __cplusplus
-#define SHAREMIND_TRIE_EXTERN_C_BEGIN extern "C" {
-#define SHAREMIND_TRIE_EXTERN_C_END   }
 #define SHAREMIND_TRIE_ALLOC_CAST(type) ((type))
 #else
-#define SHAREMIND_TRIE_EXTERN_C_BEGIN
-#define SHAREMIND_TRIE_EXTERN_C_END
 #define SHAREMIND_TRIE_ALLOC_CAST(type)
 #endif
 
 #define SHAREMIND_TRIE_DECLARE(name,datatype,inlinePerhaps) \
-    SHAREMIND_TRIE_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _{ \
         struct name ## _ * children[255]; \
         unsigned char hasData; \
@@ -43,15 +40,15 @@
     inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, bool * newValue) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps datatype * name ## _find(name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps bool name ## _foreach(name * const t, bool (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    SHAREMIND_TRIE_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
-    SHAREMIND_VECTOR_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _foreach_with_ ## withname (name * t, bool (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
-    SHAREMIND_VECTOR_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_TRIE_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \
-    SHAREMIND_TRIE_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const t) { \
         assert(t); \
         for (size_t i = 0u; i < 255u; i++) \
@@ -131,10 +128,10 @@
                     return false; \
         return true; \
     } \
-    SHAREMIND_TRIE_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_TRIE_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
-    SHAREMIND_TRIE_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _foreach_with_ ## withname (name * t, bool (*f)(datatype *, types), params) { \
         assert(t); \
         assert(f); \
@@ -147,6 +144,6 @@
                     return false; \
         return true; \
     } \
-    SHAREMIND_TRIE_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_TRIE_H */

@@ -10,12 +10,11 @@
 #ifndef SHAREMIND_RECURSIVE_MUTEX_H
 #define SHAREMIND_RECURSIVE_MUTEX_H
 
+#include "extern_c.h"
 #include "mutex.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+SHAREMIND_EXTERN_C_BEGIN
 
 struct SharemindRecursiveMutex_ { SharemindMutex inner; };
 typedef struct SharemindRecursiveMutex_ SharemindRecursiveMutex;
@@ -81,8 +80,6 @@ inline SharemindRecursiveMutexError SharemindRecursiveMutex_trylock_const(
 { return SharemindRecursiveMutex_trylock((SharemindRecursiveMutex *) mutex); }
 #pragma GCC diagnostic pop
 
-#ifdef __cplusplus
-} /* extern "C" { */
-#endif
+SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_RECURSIVE_MUTEX_H */

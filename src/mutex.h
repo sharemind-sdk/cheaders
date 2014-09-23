@@ -13,12 +13,11 @@
 #include <assert.h>
 #include <pthread.h>
 #include <stddef.h>
+#include "extern_c.h"
 #include "likely.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+SHAREMIND_EXTERN_C_BEGIN
 
 typedef pthread_mutex_t SharemindMutex;
 
@@ -73,8 +72,6 @@ inline SharemindMutexError SharemindMutex_trylock_const(
 { return SharemindMutex_trylock((SharemindMutex *) mutex); }
 #pragma GCC diagnostic pop
 
-#ifdef __cplusplus
-} /* extern "C" { */
-#endif
+SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_VECTOR_H */

@@ -14,6 +14,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "comma.h"
+#include "extern_c.h"
 #include "likely.h"
 
 
@@ -23,12 +24,8 @@
 */
 
 #ifdef __cplusplus
-#define SHAREMIND_SET_EXTERN_C_BEGIN extern "C" {
-#define SHAREMIND_SET_EXTERN_C_END   }
 #define SHAREMIND_SET_ALLOC_CAST(type) ((type))
 #else
-#define SHAREMIND_SET_EXTERN_C_BEGIN
-#define SHAREMIND_SET_EXTERN_C_END
 #define SHAREMIND_SET_ALLOC_CAST(type)
 #endif
 
@@ -85,7 +82,7 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE(uint_least64_t)
 SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_SET_DECLARE(name,keytype,inlinePerhaps) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _item; \
     typedef struct { \
         size_t size; \
@@ -102,27 +99,27 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps keytype const * name ## _insertAtHint(name * s, keytype const key, void * const hint) __attribute__ ((nonnull(1,3))); \
     inlinePerhaps keytype const * name ## _insertNew(name * s, keytype const key) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _remove(name * s, keytype const key) __attribute__ ((nonnull(1))); \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DECLARE_DESTROY_WITH_INLINE(name,withname,params,inlinePerhaps) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy_with_ ## withname( \
             name * s params) __attribute__ ((nonnull(1))); \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DECLARE_FOREACH_WITH(name,keytype,withname,types,inlinePerhaps) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const * types) types) __attribute__ ((nonnull(1, 2))); \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DECLARE_FOREACH_WITH_INLINE(prefix,name,withname,params) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     prefix name ## _foreach_with_ ## withname(name const * s params) \
             __attribute__ ((nonnull(1))); \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _item { \
         keytype key; \
         struct name ## _item * next; \
@@ -267,10 +264,10 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         } \
         return false; \
     } \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DEFINE_DESTROY_WITH_INLINE(name,withname,keytype,params,decls,myfree,inlinePerhaps,...) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy_with_ ## withname( \
             name * s params) \
     { \
@@ -286,10 +283,10 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
             } \
         } \
     } \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DEFINE_FOREACH_WITH(name,keytype,withname,types,params,args,inlinePerhaps) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const * types) params) { \
         assert(s); \
         assert(f); \
@@ -304,10 +301,10 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         } \
         return true; \
     } \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DEFINE_FOREACH_WITH_INLINE(prefix,name,withname,params,decls,doneResult,...) \
-    SHAREMIND_SET_EXTERN_C_BEGIN \
+    SHAREMIND_EXTERN_C_BEGIN \
     prefix name ## _foreach_with_ ## withname(name const * s params) { \
         assert(s); \
         decls \
@@ -321,6 +318,6 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         } \
         return (doneResult); \
     } \
-    SHAREMIND_SET_EXTERN_C_END
+    SHAREMIND_EXTERN_C_END
 
 #endif /* SHAREMIND_SET_H */
