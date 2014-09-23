@@ -98,7 +98,10 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps bool name ## _contains(const name * s, keytype const key) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _foreach(name * s, bool (*f)(keytype const *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void(name * s, void (*f)(keytype const *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps keytype const * name ## _replace_or_insert(name * s, keytype const key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void * name ## _insertHint(name * s, keytype const key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps keytype const * name ## _insertAtHint(name * s, keytype const key, void * const hint) __attribute__ ((nonnull(1,3))); \
+    inlinePerhaps keytype const * name ## _insertNew(name * s, keytype const key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps keytype const * name ## _replace_or_insert(name * s, keytype const key) __attribute__ ((deprecated,nonnull(1))); \
     inlinePerhaps bool name ## _remove(name * s, keytype const key) __attribute__ ((nonnull(1))); \
     SHAREMIND_SET_EXTERN_C_END
 
@@ -206,6 +209,44 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
                 item = next; \
             } \
         } \
+    } \
+    inlinePerhaps void * name ## _insertHint(name * s, keytype const key) { \
+        assert(s); \
+        if (s->size == SIZE_MAX) \
+            return NULL; \
+        struct name ## _item ** l = &s->d[(uint16_t) (keyhashfunction)]; \
+        while ((*l) && !(keylessthan(key, (*l)->key))) { \
+            if (keyequals(key, (*l)->key)) \
+                return NULL; \
+            l = &(*l)->next; \
+        } \
+        return l; \
+    } \
+    inlinePerhaps keytype const * name ## _insertAtHint(name * s, \
+                                                        keytype const key, \
+                                                        void * const hint) \
+    { \
+        assert(s); \
+        assert(hint); \
+        struct name ## _item * newItem = \
+                SHAREMIND_SET_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
+        if (!newItem) \
+            return NULL; \
+        if (!keycopy(&newItem->key, key)) { \
+            myfree(newItem); \
+            return NULL; \
+        } \
+        struct name ## _item ** l = (struct name ## _item **) hint; \
+        newItem->next = (*l); \
+        (*l) = newItem; \
+        s->size++; \
+        return &newItem->key; \
+    } \
+    inlinePerhaps keytype const * name ## _insertNew(name * s, keytype const key) { \
+        assert(s); \
+        void * const hint = name ## _insertHint(s, key); \
+        assert(hint); \
+        return name ## _insertAtHint(s, key, hint);\
     } \
     inlinePerhaps keytype const * name ## _replace_or_insert(name * s, keytype const key) { \
         assert(s); \
