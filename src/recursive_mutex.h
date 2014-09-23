@@ -7,8 +7,8 @@
  * code is subject to the appropriate license agreement.
  */
 
-#ifndef SHAREMIND_RECURSIVEMUTEX_H
-#define SHAREMIND_RECURSIVEMUTEX_H
+#ifndef SHAREMIND_RECURSIVE_MUTEX_H
+#define SHAREMIND_RECURSIVE_MUTEX_H
 
 #include "mutex.h"
 
@@ -17,12 +17,14 @@
 extern "C" {
 #endif
 
-struct SharemindRecursiveMutex_ {
-    SharemindMutex inner;
-};
+struct SharemindRecursiveMutex_ { SharemindMutex inner; };
 typedef struct SharemindRecursiveMutex_ SharemindRecursiveMutex;
 
-typedef SharemindMutexError SharemindRecursiveMutexError;
+enum SharemindRecursiveMutexError_ {
+    SHAREMIND_RECURSIVE_MUTEX_OK = 0,
+    SHAREMIND_RECURSIVE_MUTEX_ERROR
+};
+typedef enum SharemindRecursiveMutexError_ SharemindRecursiveMutexError;
 
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_init(
         SharemindRecursiveMutex * mutex)
@@ -50,51 +52,37 @@ SharemindRecursiveMutex_init_recursive_end:
 
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_destroy(
         SharemindRecursiveMutex * mutex)
-{
-    return (SharemindRecursiveMutexError) SharemindMutex_destroy(&mutex->inner);
-}
+{ return (SharemindRecursiveMutexError) SharemindMutex_destroy(&mutex->inner); }
 
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_lock(
         SharemindRecursiveMutex * mutex)
-{
-    return (SharemindRecursiveMutexError) SharemindMutex_lock(&mutex->inner);
-}
+{ return (SharemindRecursiveMutexError) SharemindMutex_lock(&mutex->inner); }
 
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_unlock(
         SharemindRecursiveMutex * mutex)
-{
-    return (SharemindRecursiveMutexError) SharemindMutex_unlock(&mutex->inner);
-}
+{ return (SharemindRecursiveMutexError) SharemindMutex_unlock(&mutex->inner); }
 
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_trylock(
         SharemindRecursiveMutex * mutex)
-{
-    return (SharemindRecursiveMutexError) SharemindMutex_trylock(&mutex->inner);
-}
+{ return (SharemindRecursiveMutexError) SharemindMutex_trylock(&mutex->inner); }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_lock_const(
         const SharemindRecursiveMutex * mutex)
-{
-    return SharemindRecursiveMutex_lock((SharemindRecursiveMutex *) mutex);
-}
+{ return SharemindRecursiveMutex_lock((SharemindRecursiveMutex *) mutex); }
 
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_unlock_const(
         const SharemindRecursiveMutex * mutex)
-{
-    return SharemindRecursiveMutex_unlock((SharemindRecursiveMutex *) mutex);
-}
+{ return SharemindRecursiveMutex_unlock((SharemindRecursiveMutex *) mutex); }
 
 inline SharemindRecursiveMutexError SharemindRecursiveMutex_trylock_const(
         const SharemindRecursiveMutex * mutex)
-{
-    return SharemindRecursiveMutex_trylock((SharemindRecursiveMutex *) mutex);
-}
+{ return SharemindRecursiveMutex_trylock((SharemindRecursiveMutex *) mutex); }
 #pragma GCC diagnostic pop
 
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif
 
-#endif /* SHAREMIND_RECURSIVEMUTEX_H */
+#endif /* SHAREMIND_RECURSIVE_MUTEX_H */
