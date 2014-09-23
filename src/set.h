@@ -101,7 +101,6 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps void * name ## _insertHint(name * s, keytype const key) __attribute__ ((nonnull(1))); \
     inlinePerhaps keytype const * name ## _insertAtHint(name * s, keytype const key, void * const hint) __attribute__ ((nonnull(1,3))); \
     inlinePerhaps keytype const * name ## _insertNew(name * s, keytype const key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps keytype const * name ## _replace_or_insert(name * s, keytype const key) __attribute__ ((deprecated,nonnull(1))); \
     inlinePerhaps bool name ## _remove(name * s, keytype const key) __attribute__ ((nonnull(1))); \
     SHAREMIND_SET_EXTERN_C_END
 
@@ -247,45 +246,6 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         void * const hint = name ## _insertHint(s, key); \
         assert(hint); \
         return name ## _insertAtHint(s, key, hint);\
-    } \
-    inlinePerhaps keytype const * name ## _replace_or_insert(name * s, keytype const key) { \
-        assert(s); \
-        if (s->size == SIZE_MAX) \
-            return NULL; \
-        uint16_t hash = (uint16_t) (keyhashfunction); \
-        struct name ## _item ** l = &s->d[hash]; \
-        struct name ## _item * p; \
-        if (*l) { \
-            do { \
-                if (keylessthan(key, (*l)->key)) \
-                    break; \
-                if (keyequals(key, (*l)->key)) { \
-                    keytype const oldKey = (*l)->key; \
-                    if (!keycopy(&(*l)->key, key)) { \
-                        (*l)->key = oldKey; \
-                        return NULL; \
-                    } \
-                    return &(*l)->key; \
-                } \
-                l = &(*l)->next; \
-            } while (*l); \
-            p = *l; \
-        } else { \
-            p = NULL; \
-        } \
-        *l = SHAREMIND_SET_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(**l)); \
-        if (!(*l)) { \
-            *l = p; \
-            return NULL; \
-        } \
-        if (!keycopy(&(*l)->key, key)) { \
-            myfree(*l); \
-            *l = p; \
-            return NULL; \
-        } \
-        (*l)->next = p; \
-        s->size++; \
-        return &(*l)->key; \
     } \
     inlinePerhaps bool name ## _remove(name * s, keytype const key) { \
         assert(s); \
