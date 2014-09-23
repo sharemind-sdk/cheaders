@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "comma.h"
 #include "likely.h"
 
 
@@ -109,13 +110,13 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_SET_DECLARE_FOREACH_WITH(name,keytype,withname,types,inlinePerhaps) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const *, types), types) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const * types) types) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_SET_EXTERN_C_END
 
 #define SHAREMIND_SET_DECLARE_FOREACH_WITH_INLINE(prefix,name,withname,params) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
-    prefix name ## _foreach_with_ ## withname(name const * s, params) \
-            __attribute__ ((nonnull(1, 2))); \
+    prefix name ## _foreach_with_ ## withname(name const * s params) \
+            __attribute__ ((nonnull(1))); \
     SHAREMIND_SET_EXTERN_C_END
 
 #define SHAREMIND_SET_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
@@ -267,17 +268,18 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     } \
     SHAREMIND_SET_EXTERN_C_END
 
-#define SHAREMIND_SET_DEFINE_DESTROY_WITH_INLINE(name,withname,keytype,params,myfree,inlinePerhaps,...) \
+#define SHAREMIND_SET_DEFINE_DESTROY_WITH_INLINE(name,withname,keytype,params,decls,myfree,inlinePerhaps,...) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy_with_ ## withname( \
             name * s params) \
     { \
         assert(s); \
+        decls \
         for (size_t i = 0u; i < 65536u; i++) { \
             while (s->d[i]) { \
                 struct name ## _item * next = s->d[i]->next; \
                 keytype * const item = &s->d[i]->key; \
-                __VA_ARGS__; \
+                { (void) item; __VA_ARGS__ } \
                 myfree(s->d[i]); \
                 s->d[i] = next; \
             } \
@@ -287,14 +289,14 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_SET_DEFINE_FOREACH_WITH(name,keytype,withname,types,params,args,inlinePerhaps) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const *, types), params) { \
+    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const * types) params) { \
         assert(s); \
         assert(f); \
         for (size_t i = 0u; i < 65536u; i++) { \
             struct name ## _item * item = s->d[i]; \
             while (item) { \
                 struct name ## _item * next = item->next; \
-                if (!((*f)((keytype const *) &item->key, args))) \
+                if (!((*f)((keytype const *) &item->key args))) \
                     return false; \
                 item = next; \
             } \
@@ -303,15 +305,16 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     } \
     SHAREMIND_SET_EXTERN_C_END
 
-#define SHAREMIND_SET_DEFINE_FOREACH_WITH_INLINE(prefix,name,withname,params,doneResult,...) \
+#define SHAREMIND_SET_DEFINE_FOREACH_WITH_INLINE(prefix,name,withname,params,decls,doneResult,...) \
     SHAREMIND_SET_EXTERN_C_BEGIN \
-    prefix name ## _foreach_with_ ## withname(name const * s, params) { \
+    prefix name ## _foreach_with_ ## withname(name const * s params) { \
         assert(s); \
+        decls \
         for (size_t i = 0u; i < 65536u; i++) { \
             struct name ## _item * item = s->d[i]; \
             while (item) { \
                 struct name ## _item * const next = item->next; \
-                __VA_ARGS__; \
+                { (void) item; __VA_ARGS__ } \
                 item = next; \
             } \
         } \
