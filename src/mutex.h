@@ -62,21 +62,15 @@ inline SharemindMutexError SharemindMutex_trylock(SharemindMutex * mutex) {
 #pragma GCC diagnostic ignored "-Wcast-qual"
 inline SharemindMutexError SharemindMutex_lock_const(
         const SharemindMutex * mutex)
-{
-    return SharemindMutex_lock((SharemindMutex *) mutex);
-}
+{ return SharemindMutex_lock((SharemindMutex *) mutex); }
 
 inline SharemindMutexError SharemindMutex_unlock_const(
         const SharemindMutex * mutex)
-{
-    return SharemindMutex_unlock((SharemindMutex *) mutex);
-}
+{ return SharemindMutex_unlock((SharemindMutex *) mutex); }
 
 inline SharemindMutexError SharemindMutex_trylock_const(
         const SharemindMutex * mutex)
-{
-    return SharemindMutex_trylock((SharemindMutex *) mutex);
-}
+{ return SharemindMutex_trylock((SharemindMutex *) mutex); }
 #pragma GCC diagnostic pop
 
 #ifdef __cplusplus
