@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "comma.h"
 #include "likely.h"
 
 
@@ -94,8 +95,8 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps void name ## _init (name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy (name * s) __attribute__ ((nonnull(1))); \
     inlinePerhaps void name ## _destroy_with (name * s, void (*destroyer)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1))); \
-    inlinePerhaps constkeytype * name ## _key_at (const name * s, size_t index) __attribute__ ((nonnull(1))); \
-    inlinePerhaps valuetype * name ## _value_at (name * s, size_t index) __attribute__ ((nonnull(1))); \
+    inlinePerhaps constkeytype * name ## _key_at (name const * s, size_t index) __attribute__ ((nonnull(1))); \
+    inlinePerhaps valuetype * name ## _value_at (name const * s, size_t index) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _foreach (name * s, bool (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void (name * s, void (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps valuetype * name ## _get_or_insert (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
@@ -106,13 +107,13 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_MAP_DECLARE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,inlinePerhaps) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname (name * s, bool (*f)(constkeytype *, valuetype *, types), types) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach_with_ ## withname (name * s, bool (*f)(constkeytype *, valuetype * types) types) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_MAP_EXTERN_C_END
 
 #define SHAREMIND_MAP_DECLARE_FOREACH_WITH_INLINE(prefix,name,withname,params) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
-    prefix name ## _foreach_with_ ## withname (name * s, params) \
-            __attribute__ ((nonnull(1, 2))); \
+    prefix name ## _foreach_with_ ## withname (name * s params) \
+            __attribute__ ((nonnull(1))); \
     SHAREMIND_MAP_EXTERN_C_END
 
 #define SHAREMIND_MAP_DEFINE(name,keytype,constkeytype,valuetype,keyhashfunction,keyequals,keylessthan,keyinit,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
@@ -152,7 +153,7 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
             } \
         } \
     } \
-    inlinePerhaps constkeytype * name ## _key_at (const name * s, size_t index) { \
+    inlinePerhaps constkeytype * name ## _key_at (name const * s, size_t index) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) { \
             struct name ## _item * item = s->d[i]; \
@@ -166,7 +167,7 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         } \
         return NULL; \
     } \
-    inlinePerhaps valuetype * name ## _value_at (name * s, size_t index) { \
+    inlinePerhaps valuetype * name ## _value_at (name const * s, size_t index) { \
         assert(s); \
         for (size_t i = 0; i < 65536; i++) { \
             struct name ## _item * item = s->d[i]; \
@@ -298,14 +299,14 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_MAP_DEFINE_FOREACH_WITH(name,constkeytype,valuetype,withname,types,params,args,inlinePerhaps) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname (name * s, bool (*f)(constkeytype *, valuetype *, types), params) { \
+    inlinePerhaps bool name ## _foreach_with_ ## withname (name * s, bool (*f)(constkeytype *, valuetype *, types) params) { \
         assert(s); \
         assert(f); \
         for (size_t i = 0; i < 65536; i++) { \
             struct name ## _item * item = s->d[i]; \
             while (item) { \
                 struct name ## _item * next = item->next; \
-                if (!((*f)((constkeytype *) &item->key, &item->value, args))) \
+                if (!((*f)((constkeytype *) &item->key, &item->value args))) \
                     return false; \
                 item = next; \
             } \
@@ -314,15 +315,16 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     } \
     SHAREMIND_MAP_EXTERN_C_END
 
-#define SHAREMIND_MAP_DEFINE_FOREACH_WITH_INLINE(prefix,name,withname,params,doneResult,...) \
+#define SHAREMIND_MAP_DEFINE_FOREACH_WITH_INLINE(prefix,name,withname,params,decls,doneResult,...) \
     SHAREMIND_MAP_EXTERN_C_BEGIN \
-    prefix name ## _foreach_with_ ## withname(name * s, params) { \
+    prefix name ## _foreach_with_ ## withname(name * s params) { \
         assert(s); \
+        decls \
         for (size_t i = 0u; i < 65536u; i++) { \
             struct name ## _item * item = s->d[i]; \
             while (item) { \
                 struct name ## _item * const next = item->next; \
-                __VA_ARGS__; \
+                { (void) item; __VA_ARGS__ } \
                 item = next; \
             } \
         } \
