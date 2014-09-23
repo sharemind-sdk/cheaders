@@ -99,7 +99,10 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps valuetype * name ## _value_at (name const * s, size_t index) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _foreach (name * s, bool (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
     inlinePerhaps void name ## _foreach_void (name * s, void (*f)(constkeytype *, valuetype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps valuetype * name ## _get_or_insert (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps void * name ## _insertHint(name * s, constkeytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps valuetype * name ## _insertAtHint(name * s, constkeytype key, void * const hint) __attribute__ ((nonnull(1,3))); \
+    inlinePerhaps valuetype * name ## _insertNew(name * s, constkeytype key) __attribute__ ((nonnull(1))); \
+    inlinePerhaps valuetype * name ## _get_or_insert (name * s, constkeytype key) __attribute__ ((deprecated,nonnull(1))); \
     inlinePerhaps bool name ## _remove (name * s, constkeytype key) __attribute__ ((nonnull(1))); \
     inlinePerhaps bool name ## _remove_with (name * s, constkeytype key, void (*destroyer)(valuetype *)) __attribute__ ((nonnull(1))); \
     inlinePerhaps valuetype * name ## _get (name const * s, constkeytype key) __attribute__ ((nonnull(1), warn_unused_result)); \
@@ -205,6 +208,44 @@ SHAREMIND_MAP_KEY_COMPARATORS_DEFINE_(voidptr,void *)
                 item = next; \
             } \
         } \
+    } \
+    inlinePerhaps void * name ## _insertHint(name * s, constkeytype key) { \
+        assert(s); \
+        if (s->size == SIZE_MAX) \
+            return NULL; \
+        struct name ## _item ** l = &s->d[(uint16_t) (keyhashfunction)]; \
+        while ((*l) && !(keylessthan(key, (*l)->key))) { \
+            if (keyequals(key, (*l)->key)) \
+                return NULL; \
+            l = &(*l)->next; \
+        } \
+        return l; \
+    } \
+    inlinePerhaps valuetype * name ## _insertAtHint(name * s, \
+                                                    constkeytype key, \
+                                                    void * const hint) \
+    { \
+        assert(s); \
+        assert(hint); \
+        struct name ## _item * newItem = \
+                SHAREMIND_MAP_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
+        if (!newItem) \
+            return NULL; \
+        if (!keycopy(&newItem->key, key)) { \
+            myfree(newItem); \
+            return NULL; \
+        } \
+        struct name ## _item ** l = (struct name ## _item **) hint; \
+        newItem->next = (*l); \
+        (*l) = newItem; \
+        s->size++; \
+        return &newItem->value; \
+    } \
+    inlinePerhaps valuetype * name ## _insertNew(name * s, constkeytype key) { \
+        assert(s); \
+        void * const hint = name ## _insertHint(s, key); \
+        assert(hint); \
+        return name ## _insertAtHint(s, key, hint);\
     } \
     inlinePerhaps valuetype * name ## _get_or_insert (name * s, constkeytype key) { \
         assert(s); \
