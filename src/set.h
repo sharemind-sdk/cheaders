@@ -81,41 +81,49 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE(uint_least32_t)
 SHAREMIND_SET_KEY_COMPARATORS_DEFINE(uint_least64_t)
 SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
 
-#define SHAREMIND_SET_DECLARE(name,keytype,inlinePerhaps) \
+#define SHAREMIND_SET_DECLARE_BODY(name) \
     SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _item; \
     typedef struct { \
         size_t size; \
         struct name ## _item * d[65536]; \
     } name; \
-    inlinePerhaps void name ## _init(name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy(name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy_with(name * s, void (*destroyer)(keytype const *)) __attribute__ ((nonnull(1))); \
-    inlinePerhaps keytype const * name ## _at(const name * s, size_t index) __attribute__ ((nonnull(1))); \
-    inlinePerhaps bool name ## _contains(const name * s, keytype const key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps bool name ## _foreach(name * s, bool (*f)(keytype const *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps void name ## _foreach_void(name * s, void (*f)(keytype const *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps void * name ## _insertHint(name * s, keytype const key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps keytype const * name ## _insertAtHint(name * s, keytype const key, void * const hint) __attribute__ ((nonnull(1,3))); \
-    inlinePerhaps keytype const * name ## _insertNew(name * s, keytype const key) __attribute__ ((nonnull(1))); \
-    inlinePerhaps bool name ## _remove(name * s, keytype const key) __attribute__ ((nonnull(1))); \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_SET_DECLARE_DESTROY_WITH_INLINE(name,withname,params,inlinePerhaps) \
+#define SHAREMIND_SET_DECLARE_FUNCTIONS(name,keytype,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _init(name * s) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps void name ## _destroy(name * s) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps void name ## _destroy_with(name * s, void (*destroyer)(keytype const *)) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps keytype const * name ## _at(const name * s, size_t index) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps bool name ## _contains(const name * s, keytype const key) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps bool name ## _foreach(name * s, bool (*f)(keytype const *)) __attribute__ ((nonnull(1, 2) __VA_ARGS__)); \
+    inlinePerhaps void name ## _foreach_void(name * s, void (*f)(keytype const *)) __attribute__ ((nonnull(1, 2) __VA_ARGS__)); \
+    inlinePerhaps void * name ## _insertHint(name * s, keytype const key) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps keytype const * name ## _insertAtHint(name * s, keytype const key, void * const hint) __attribute__ ((nonnull(1,3) __VA_ARGS__)); \
+    inlinePerhaps keytype const * name ## _insertNew(name * s, keytype const key) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps bool name ## _remove(name * s, keytype const key) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_SET_DECLARE(name,keytype,inlinePerhaps,...) \
+    SHAREMIND_SET_DECLARE_BODY(name) \
+    SHAREMIND_SET_DECLARE_FUNCTIONS(name,keytype,inlinePerhaps,__VA_ARGS__)
+
+#define SHAREMIND_SET_DECLARE_DESTROY_WITH_INLINE(name,withname,params,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy_with_ ## withname( \
-            name * s params) __attribute__ ((nonnull(1))); \
+            name * s params) __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_SET_DECLARE_FOREACH_WITH(name,keytype,withname,types,inlinePerhaps) \
+#define SHAREMIND_SET_DECLARE_FOREACH_WITH(name,keytype,withname,types,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const * types) types) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach_with_ ## withname(name const * s, bool (*f)(keytype const * types) types) __attribute__ ((nonnull(1, 2) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_SET_DECLARE_FOREACH_WITH_INLINE(prefix,name,withname,params) \
+#define SHAREMIND_SET_DECLARE_FOREACH_WITH_INLINE(prefix,name,withname,params,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     prefix name ## _foreach_with_ ## withname(name const * s params) \
-            __attribute__ ((nonnull(1))); \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_SET_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps) \
@@ -265,6 +273,14 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         return false; \
     } \
     SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_SET_DECLARE_DEFINE_FUNCTIONS(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps,...) \
+    SHAREMIND_SET_DECLARE_FUNCTIONS(name,keytype,inlinePerhaps,__VA_ARGS__) \
+    SHAREMIND_SET_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps)
+
+#define SHAREMIND_SET_DECLARE_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps,...) \
+    SHAREMIND_SET_DECLARE(name,keytype,inlinePerhaps,__VA_ARGS__) \
+    SHAREMIND_SET_DEFINE(name,keytype,keyhashfunction,keyequals,keylessthan,keycopy,keyfree,mymalloc,myfree,inlinePerhaps)
 
 #define SHAREMIND_SET_DEFINE_DESTROY_WITH_INLINE(name,withname,keytype,params,decls,myfree,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
