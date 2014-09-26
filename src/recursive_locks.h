@@ -11,6 +11,7 @@
 #define SHAREMIND_RECURSIVE_LOCKS_H
 
 #include "abort.h"
+#include "extern_c.h"
 #include "likely.h"
 #include "recursive_mutex.h"
 
@@ -35,35 +36,46 @@
 #define SHAREMIND_RECURSIVE_LOCK_DEINIT(className) \
     SHAREMIND_NAMED_RECURSIVE_LOCK_DEINIT(className, mutex)
 
-#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE__(CN,f,FunName) \
-    void CN ## _ ## f ## FunName(CN * c) \
-            __attribute__ ((nonnull(1))); \
-    void CN ## _ ## f ## Const ## FunName(CN const * c) \
-            __attribute__ ((nonnull(1)))
-#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN,FunName) \
-    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE__(CN,lock,FunName); \
-    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE__(CN,unlock,FunName)
-#define SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN) \
-    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN,)
+#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE__(CN,inlinePerhaps,f,FunName,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void CN ## _ ## f ## FunName(CN * c) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    inlinePerhaps void CN ## _ ## f ## Const ## FunName(CN const * c) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,FunName,...) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE__(CN,inlinePerhaps,lock,FunName,__VA_ARGS__) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE__(CN,inlinePerhaps,unlock,FunName,__VA_ARGS__)
+#define SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,...) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,__VA_ARGS__)
 
-#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE__(CN,f,FunName,mutexName) \
-    void CN ## _ ## f ## FunName(CN * c) { \
+#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE__(CN,inlinePerhaps,f,FunName,mutexName) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void CN ## _ ## f ## FunName(CN * c) { \
         assert(c); \
         if (unlikely(SharemindRecursiveMutex_ ## f(&c->mutexName) \
             != SHAREMIND_RECURSIVE_MUTEX_OK)) \
             SHAREMIND_ABORT("SNRLFD1"); \
     } \
-    void CN ## _ ## f ## Const ## FunName(CN const * c) { \
+    inlinePerhaps void CN ## _ ## f ## Const ## FunName(CN const * c) { \
         assert(c); \
         if (unlikely(SharemindRecursiveMutex_ ## f ## _const(&c->mutexName) \
             != SHAREMIND_RECURSIVE_MUTEX_OK)) \
             SHAREMIND_ABORT("SNRLFD2"); \
-    }
-#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN,FunName,mutexName) \
-    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE__(CN,lock,FunName,mutexName) \
-    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE__(CN,unlock,FunName,mutexName)
-#define SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN) \
-    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN,,mutex)
+    } \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps,FunName,mutexName) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE__(CN,inlinePerhaps,lock,FunName,mutexName) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE__(CN,inlinePerhaps,unlock,FunName,mutexName)
+#define SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps,,mutex)
+
+#define SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE_DEFINE(CN,inlinePerhaps,FunName,mutexName,...) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,FunName,__VA_ARGS__) \
+    SHAREMIND_NAMED_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps,FunName,mutexName)
+#define SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DECLARE_DEFINE(CN,inlinePerhaps,...) \
+    SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,__VA_ARGS__) \
+    SHAREMIND_RECURSIVE_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps)
 
 #endif /* SHAREMIND_RECURSIVE_LOCKS_H */
 
