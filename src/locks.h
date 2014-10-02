@@ -14,6 +14,7 @@
 #include "extern_c.h"
 #include "likely.h"
 #include "mutex.h"
+#include "wrap.h"
 
 
 #define SHAREMIND_NAMED_LOCK_DEFINE(mutexName) SharemindMutex mutexName
@@ -41,10 +42,10 @@
             __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,FunName,...) \
-    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE__(CN,inlinePerhaps,lock,FunName,__VA_ARGS__) \
-    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE__(CN,inlinePerhaps,unlock,FunName,__VA_ARGS__)
+    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE__(CN,inlinePerhaps,lock,FunName,SHAREMIND_WRAP(__VA_ARGS__)) \
+    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE__(CN,inlinePerhaps,unlock,FunName,SHAREMIND_WRAP(__VA_ARGS__))
 #define SHAREMIND_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,...) \
-    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE(CN,,inlinePerhaps,__VA_ARGS__)
+    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE(CN,,inlinePerhaps,,SHAREMIND_WRAP(__VA_ARGS__))
 
 #define SHAREMIND_NAMED_LOCK_FUNCTIONS_DEFINE__(CN,inlinePerhaps,f,FunName,mutexName) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -68,10 +69,10 @@
     SHAREMIND_NAMED_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps,,mutex)
 
 #define SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE_DEFINE(CN,inlinePerhaps,FunName,mutexName,...) \
-    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,FunName,__VA_ARGS__) \
+    SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,FunName,SHAREMIND_WRAP(__VA_ARGS__)) \
     SHAREMIND_NAMED_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps,FunName,mutexName)
 #define SHAREMIND_LOCK_FUNCTIONS_DECLARE_DEFINE(CN,inlinePerhaps,...) \
-    SHAREMIND_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,__VA_ARGS__) \
+    SHAREMIND_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,SHAREMIND_WRAP(__VA_ARGS__)) \
     SHAREMIND_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps)
 
 #endif /* SHAREMIND_LOCKS_H */
