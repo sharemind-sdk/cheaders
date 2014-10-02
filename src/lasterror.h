@@ -12,6 +12,7 @@
 
 #include <assert.h>
 #include "extern_c.h"
+#include "likely.h"
 #include "wrap.h"
 
 
