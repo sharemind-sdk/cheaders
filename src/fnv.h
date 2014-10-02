@@ -96,7 +96,7 @@ inline uint32_t fnv_32a_str(register const char * str) {
 
 /**
   \brief Generates a 16-bit hash based on the 32 bit Fowler/Noll/Vo FNV-1a hash for the given buffer.
-  \param[in] str string to hash
+  \param[in] buf buffer to hash
   \returns 16 bit hash value
 */
 inline uint16_t fnv_16a_buf(register const void * buf, register size_t len) {
