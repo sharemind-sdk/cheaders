@@ -122,6 +122,12 @@
                                     0 > strcmp)
 
 
+#define SHAREMIND_STRINGMAP_DECLARE_emplaceAtHint(name,inlinePerhaps,...) \
+    SHAREMIND_MAP_DECLARE_emplaceAtHint(name, inlinePerhaps, __VA_ARGS__)
+#define SHAREMIND_STRINGMAP_DEFINE_emplaceAtHint(name,inlinePerhaps) \
+    SHAREMIND_MAP_DEFINE_emplaceAtHint(name, inlinePerhaps)
+
+
 #define SHAREMIND_STRINGMAP_DECLARE_insertAtHint(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _keyCopy(char ** dest, const char * src) \
