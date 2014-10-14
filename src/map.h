@@ -329,6 +329,29 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     } \
     SHAREMIND_EXTERN_C_END
 
+#define SHAREMIND_MAP_DECLARE_emplaceAtHint(name,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _emplaceAtHint(name * s, \
+                                              struct name ## _detail * detail, \
+                                              void * const hint) \
+            __attribute__ ((nonnull(1,2,3) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_MAP_DEFINE_emplaceAtHint(name,inlinePerhaps) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _emplaceAtHint(name * s, \
+                                              struct name ## _detail * detail, \
+                                              void * const hint) \
+    { \
+        assert(s); \
+        assert(detail); \
+        assert(hint); \
+        struct name ## _detail ** l = (struct name ## _detail **) hint; \
+        detail->next = (*l); \
+        (*l) = detail; \
+        ++(s->size); \
+    } \
+    SHAREMIND_EXTERN_C_END
+
 #define SHAREMIND_MAP_DECLARE_insertAtHint(name,inlinePerhaps,constkeytype,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps name ## _value * name ## _insertAtHint(name * s, \
@@ -354,10 +377,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
             myfree(newDetail); \
             return NULL; \
         } \
-        struct name ## _detail ** l = (struct name ## _detail **) hint; \
-        newDetail->next = (*l); \
-        (*l) = newDetail; \
-        ++(s->size); \
+        name ## _emplaceAtHint(s, newDetail, hint); \
         return &newDetail->v; \
     } \
     SHAREMIND_EXTERN_C_END
