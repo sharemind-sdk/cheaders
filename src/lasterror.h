@@ -84,7 +84,7 @@
             ClassName * c, \
             codeType error, \
             const char * errorString) \
-            __attribute__ ((nonnull(1,3) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_LASTERROR_PRIVATE_FUNCTIONS_DEFINE(ClassName,inlinePerhaps,codeType,okCode) \
