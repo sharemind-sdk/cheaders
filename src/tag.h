@@ -31,6 +31,7 @@ typedef void (* SharemindTagDestructor)(void *);
     } else (void) 0
 
 #define SHAREMIND_TAG_FUNCTIONS_DECLARE(ClassName,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void * ClassName ## _tag(const ClassName * c) \
             __attribute__ ((nonnull(1) __VA_ARGS__)); \
     inlinePerhaps void * ClassName ## _releaseTag(ClassName * c) \
@@ -50,7 +51,8 @@ typedef void (* SharemindTagDestructor)(void *);
     inlinePerhaps void ClassName ## _setTagDestructor( \
             ClassName * c, \
             SharemindTagDestructor tagDestructor) \
-            __attribute__ ((nonnull(1) __VA_ARGS__))
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_TAG_FUNCTIONS_DEFINE(ClassName,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
