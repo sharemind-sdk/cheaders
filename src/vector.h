@@ -89,9 +89,8 @@
                 SHAREMIND_VECTOR_ALLOC_CAST(datatype *) myrealloc( \
                         r->data, \
                         newSize * sizeof(*d)); \
-        if (unlikely(!d)) \
-            if (unlikely(newSize != 0u)) \
-                return false; \
+        if (unlikely(!d && newSize != 0u)) \
+            return false; \
         r->data = d; \
         r->size = newSize; \
         return true; \
@@ -104,7 +103,7 @@
             name * const r, \
             const size_t newSize) __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-#define SHAREMIND_VECTOR_DEFINE_RESIZE_NO_OCHECK(name,inlinePerhaps,datatype,myrealloc) \
+#define SHAREMIND_VECTOR_DEFINE_RESIZE_NO_OCHECK(name,inlinePerhaps,datatype) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _resize_no_overflow_check(name * const r, \
                                                          const size_t newSize) \
@@ -121,7 +120,7 @@
     inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) \
             __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-#define SHAREMIND_VECTOR_DEFINE_RESIZE(name,inlinePerhaps,datatype,myrealloc) \
+#define SHAREMIND_VECTOR_DEFINE_RESIZE(name,inlinePerhaps,datatype) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) { \
         assert(r); \
