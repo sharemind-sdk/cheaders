@@ -16,68 +16,79 @@
 #include <stdint.h>
 #include "extern_c.h"
 #include "likely.h"
+#include "wrap.h"
 
-
-/**
-  \todo Allow for more fine-grained declarations and definitions (e.g. to
-        specify linking constraints etc).
-*/
 
 #ifdef __cplusplus
-#define SHAREMIND_VECTOR_ALLOC_CAST(type) ((type))
+#define SHAREMIND_VECTOR_ALLOC_CAST(type) (type)
 #else
 #define SHAREMIND_VECTOR_ALLOC_CAST(type)
 #endif
 
-#define SHAREMIND_VECTOR_DECLARE(name,datatype,extradata,inlinePerhaps) \
+#define SHAREMIND_VECTOR_DEFINE_BODY(name,datatype,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     typedef struct { \
         size_t size; \
         datatype * data; \
-        extradata \
+        __VA_ARGS__ \
     } name; \
-    inlinePerhaps void name ## _init(name * const r) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy(name * const r) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy_with(name * const r, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) __attribute__ ((nonnull(1))); \
-    inlinePerhaps datatype * name ## _push(name * const r) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _pop(name * const r) __attribute__ ((nonnull(1))); \
-    inlinePerhaps datatype * name ## _get_pointer(name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps datatype const * name ## _get_const_pointer(const name * const r, size_t i) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps bool name ## _foreach(name * r, bool (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_VECTOR_DECLARE_FOREACH_WITH(name,datatype,withname,types,inlinePerhaps) \
+#define SHAREMIND_VECTOR_DECLARE_INIT(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname (name * r, bool (*f)(datatype *, types), types) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _init(name * const r) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-
-#define SHAREMIND_VECTOR_DEFINE(name,datatype,mymalloc,myfree,myrealloc,inlinePerhaps) \
+#define SHAREMIND_VECTOR_DEFINE_INIT(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const r) { \
         assert(r); \
         r->size = 0u; \
         r->data = NULL; \
     } \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_DESTROY(name,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _destroy(name * const r) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_DESTROY(name,inlinePerhaps,myfree) \
+    SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy(name * const r) { \
         assert(r); \
         myfree(r->data); \
     } \
-    inlinePerhaps void name ## _destroy_with(name * const r, void (*destroyer)(datatype *)) { \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_DESTROY_WITH(name,inlinePerhaps,datatype,decls,myfree,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _destroy(name * r) { \
         assert(r); \
-        assert(destroyer); \
-        for (size_t i = 0u; i < r->size; i++) \
-            (*destroyer)(&r->data[i]); \
+        decls \
+        for (size_t i__ = 0u; i__ < r->size; i__++) { \
+            datatype * const value = &r->data[i__]; \
+            __VA_ARGS__ \
+        } \
         myfree(r->data); \
     } \
-    inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) { \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_FORCE_RESIZE(name,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps bool name ## _force_resize( \
+            name * const r, \
+            const size_t newSize) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_FORCE_RESIZE(name,inlinePerhaps,datatype,myrealloc) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps bool name ## _force_resize(name * const r, \
+                                             const size_t newSize) \
+    { \
         assert(r); \
-        if (unlikely(r->size == newSize)) \
-            return true; \
-        if (unlikely(newSize > SIZE_MAX / sizeof(datatype))) \
-            return false; \
-        datatype * const d = SHAREMIND_VECTOR_ALLOC_CAST(datatype *) myrealloc(r->data, newSize * sizeof(*d)); \
+        datatype * const d = \
+                SHAREMIND_VECTOR_ALLOC_CAST(datatype *) myrealloc( \
+                        r->data, \
+                        newSize * sizeof(*d)); \
         if (unlikely(!d)) \
             if (unlikely(newSize != 0u)) \
                 return false; \
@@ -85,58 +96,176 @@
         r->size = newSize; \
         return true; \
     } \
-    inlinePerhaps datatype * name ## _push(name * const r) { \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_RESIZE_NO_OCHECK(name,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps bool name ## _resize_no_overflow_check( \
+            name * const r, \
+            const size_t newSize) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_RESIZE_NO_OCHECK(name,inlinePerhaps,datatype,myrealloc) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps bool name ## _resize_no_overflow_check(name * const r, \
+                                                         const size_t newSize) \
+    { \
         assert(r); \
-        size_t oldSize = r->size; \
-        size_t newSize = oldSize + 1u; \
-        if (unlikely(newSize == 0u)) \
-            return NULL; \
-        if (unlikely(!name ## _resize(r, newSize))) \
-            return NULL; \
-        return &r->data[oldSize]; \
-    } \
-    inlinePerhaps void name ## _pop(name * const r) { \
-        assert(r); \
-        assert(r->size > 0u); \
-        name ## _resize(r, r->size - 1u); \
-    } \
-    inlinePerhaps datatype * name ## _get_pointer(name * const r, size_t i) { \
-        assert(r); \
-        if (unlikely(i >= r->size)) \
-            return NULL; \
-        return &r->data[i]; \
-    } \
-    inlinePerhaps datatype const * name ## _get_const_pointer(const name * const r, size_t i) { \
-        assert(r); \
-        if (unlikely(i >= r->size)) \
-            return NULL; \
-        return &r->data[i]; \
-    } \
-    inlinePerhaps bool name ## _foreach(name * r, bool (*f)(datatype *)) { \
-        assert(r); \
-        assert(f); \
-        for (size_t i = 0u; i < r->size; i++) \
-            if (!((*f)(&r->data[i]))) \
-                return false; \
-        return true; \
-    } \
-    inlinePerhaps void name ## _foreach_void(name * r, void (*f)(datatype *)) { \
-        assert(r); \
-        assert(f); \
-        for (size_t i = 0u; i < r->size; i++) \
-            (*f)(&r->data[i]); \
+        if (unlikely(r->size == newSize)) \
+            return true; \
+        return name ## _force_resize(r, newSize); \
     } \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_VECTOR_DEFINE_FOREACH_WITH(name,datatype,withname,types,params,args,inlinePerhaps) \
+#define SHAREMIND_VECTOR_DECLARE_RESIZE(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname (name * r, bool (*f)(datatype *, types), params) { \
+    inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_RESIZE(name,inlinePerhaps,datatype,myrealloc) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) { \
         assert(r); \
-        assert(f); \
-        for (size_t i = 0u; i < r->size; i++) \
-            if (!((*f)(&r->data[i], args))) \
-                return false; \
-        return true; \
+        if (unlikely(newSize > SIZE_MAX / sizeof(datatype))) \
+            return false; \
+        return name ## _resize_no_overflow_check(r, newSize); \
+    } \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_PUSH(name,inlinePerhaps,datatype,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps datatype * name ## _push(name * const r) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_PUSH(name,inlinePerhaps,datatype) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps datatype * name ## _push(name * const r) { \
+        assert(r); \
+        const size_t oldSize = r->size; \
+        if (unlikely(SIZE_MAX - sizeof(datatype) * oldSize < sizeof(datatype))) \
+            return NULL; \
+        if (unlikely(!name ## _force_resize(r, oldSize + 1u))) \
+            return NULL; \
+        return &r->data[oldSize]; \
+    } \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_POP(name,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _pop(name * const r) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_POP(name,inlinePerhaps) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _pop(name * const r) { \
+        assert(r); \
+        assert(r->size > 0u); \
+        name ## _force_resize(r, r->size - 1u); \
+    } \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK__(name,inlinePerhaps,datatype,c,cn,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps datatype c * name ## _get_ ## cn ## pointer_nocheck( \
+            name c * const r, \
+            size_t i) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK__(name,inlinePerhaps,datatype,c,cn) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps datatype c * name ## _get_ ## cn ## pointer_nocheck( \
+            name c * const r, \
+            size_t i) \
+    { \
+        assert(r); \
+        return &r->data[i]; \
+    } \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK(name,inlinePerhaps,datatype,...) \
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK__( \
+            name, \
+            SHAREMIND_WRAP(inlinePerhaps), \
+            SHAREMIND_WRAP(datatype),,, \
+            SHAREMIND_WRAP(__VA_ARGS__))
+#define SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK(name,inlinePerhaps,datatype) \
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK__( \
+            name, \
+            SHAREMIND_WRAP(inlinePerhaps), \
+            SHAREMIND_WRAP(datatype),,)
+
+#define SHAREMIND_VECTOR_DECLARE_GET_CONST_POINTER_NOCHECK(name,inlinePerhaps,datatype,...) \
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK__( \
+            name, \
+            SHAREMIND_WRAP(inlinePerhaps), \
+            SHAREMIND_WRAP(datatype), \
+            const, \
+            const_, \
+            SHAREMIND_WRAP(__VA_ARGS__))
+#define SHAREMIND_VECTOR_DEFINE_GET_CONST_POINTER_NOCHECK(name,inlinePerhaps,datatype) \
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK__( \
+            name, \
+            SHAREMIND_WRAP(inlinePerhaps), \
+            SHAREMIND_WRAP(datatype), \
+            const, \
+            const_)
+
+#define SHAREMIND_VECTOR_DECLARE_GET_POINTER__(name,inlinePerhaps,datatype,c,cn,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps datatype c * name ## _get_ ## cn ## pointer( \
+            name c * const r, \
+            size_t i) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_GET_POINTER__(name,inlinePerhaps,datatype,c,cn) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps datatype c * name ## _get_ ## cn ## pointer( \
+            name c * const r, \
+            size_t i) \
+    { \
+        assert(r); \
+        if (unlikely(i >= r->size)) \
+            return NULL; \
+        return &r->data[i]; \
+    } \
+    SHAREMIND_EXTERN_C_END
+
+#define SHAREMIND_VECTOR_DECLARE_GET_POINTER(name,inlinePerhaps,datatype,...) \
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER__(name, \
+                                           SHAREMIND_WRAP(inlinePerhaps), \
+                                           SHAREMIND_WRAP(datatype),,, \
+                                           SHAREMIND_WRAP(__VA_ARGS__))
+#define SHAREMIND_VECTOR_DEFINE_GET_POINTER(name,inlinePerhaps,datatype) \
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER__(name, \
+                                          SHAREMIND_WRAP(inlinePerhaps), \
+                                          SHAREMIND_WRAP(datatype),,)
+
+#define SHAREMIND_VECTOR_DECLARE_GET_CONST_POINTER(name,inlinePerhaps,datatype,...) \
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER__(name, \
+                                           SHAREMIND_WRAP(inlinePerhaps), \
+                                           SHAREMIND_WRAP(datatype), \
+                                           const, \
+                                           const_, \
+                                           SHAREMIND_WRAP(__VA_ARGS__))
+#define SHAREMIND_VECTOR_DEFINE_GET_CONST_POINTER(name,inlinePerhaps,datatype) \
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER__(name, \
+                                          SHAREMIND_WRAP(inlinePerhaps), \
+                                          SHAREMIND_WRAP(datatype), \
+                                          const, \
+                                          const_)
+
+#define SHAREMIND_VECTOR_DECLARE_FOREACH(name,withname,prefix,c,params,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    prefix name ## _ ## withname(name c * r params) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_FOREACH(name,withname,prefix,c,datatype,args,decls,ret,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    prefix name ## _ ## withname(name c * r args) { \
+        assert(r); \
+        decls \
+        for (size_t i__ = 0u; i__ < r->size; i__++) { \
+            datatype * const value = &r->data[i__]; \
+            __VA_ARGS__ \
+        } \
+        return ret; \
     } \
     SHAREMIND_EXTERN_C_END
 
