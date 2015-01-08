@@ -34,6 +34,13 @@
     } name; \
     SHAREMIND_EXTERN_C_END
 
+#define SHAREMIND_VECTOR_FOREACH__(r,datatype,decls,...) \
+    decls \
+    for (size_t i__ = 0u; i__ < r->size; i__++) { \
+        datatype * const value = &r->data[i__]; \
+        __VA_ARGS__ \
+    }
+
 #define SHAREMIND_VECTOR_DECLARE_INIT(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const r) \
@@ -64,11 +71,10 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy(name * r) { \
         assert(r); \
-        decls \
-        for (size_t i__ = 0u; i__ < r->size; i__++) { \
-            datatype * const value = &r->data[i__]; \
-            __VA_ARGS__ \
-        } \
+        SHAREMIND_VECTOR_FOREACH__(r, \
+                                   datatype, \
+                                   decls, \
+                                   SHAREMIND_WRAP(__VA_ARGS__)) \
         myfree(r->data); \
     } \
     SHAREMIND_EXTERN_C_END
@@ -277,11 +283,10 @@
     SHAREMIND_EXTERN_C_BEGIN \
     prefix name ## _ ## withname(name c * r args) { \
         assert(r); \
-        decls \
-        for (size_t i__ = 0u; i__ < r->size; i__++) { \
-            datatype * const value = &r->data[i__]; \
-            __VA_ARGS__ \
-        } \
+        SHAREMIND_VECTOR_FOREACH__(r, \
+                                   datatype, \
+                                   decls, \
+                                   SHAREMIND_WRAP(__VA_ARGS__)) \
         return ret; \
     } \
     SHAREMIND_EXTERN_C_END
