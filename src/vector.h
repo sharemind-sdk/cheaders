@@ -130,7 +130,7 @@
             name * const r, \
             const size_t newSize) __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-#define SHAREMIND_VECTOR_DEFINE_RESIZE_NO_OCHECK(name,inlinePerhaps,datatype) \
+#define SHAREMIND_VECTOR_DEFINE_RESIZE_NO_OCHECK(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _resize_no_overflow_check(name * const r, \
                                                          const size_t newSize) \
@@ -147,11 +147,11 @@
     inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) \
             __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-#define SHAREMIND_VECTOR_DEFINE_RESIZE(name,inlinePerhaps,datatype) \
+#define SHAREMIND_VECTOR_DEFINE_RESIZE(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) { \
         assert(r); \
-        if (unlikely(newSize > SIZE_MAX / sizeof(datatype))) \
+        if (unlikely(newSize > SIZE_MAX / sizeof(*(r->data)))) \
             return false; \
         return name ## _resize_no_overflow_check(r, newSize); \
     } \
