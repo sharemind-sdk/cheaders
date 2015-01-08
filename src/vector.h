@@ -162,6 +162,24 @@
     } \
     SHAREMIND_EXTERN_C_END
 
+#define SHAREMIND_VECTOR_DECLARE_ERASE(name,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _erase(name * const r, size_t const i) \
+            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_ERASE(name,inlinePerhaps) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _erase(name * const r, size_t const i) { \
+        assert(r); \
+        assert(r->size > 0u); \
+        assert(i < r->size); \
+        memmove(&r->data[i], \
+                &r->data[i + 1u], \
+                sizeof(*(r->data)) * (r->size - i - 1u)); \
+        name ## _force_resize(r, r->size - 1u); \
+    } \
+    SHAREMIND_EXTERN_C_END
+
 #define SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK__(name,inlinePerhaps,datatype,c,cn,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps datatype c * name ## _get_ ## cn ## pointer_nocheck( \
