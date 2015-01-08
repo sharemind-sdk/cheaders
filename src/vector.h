@@ -41,6 +41,16 @@
         __VA_ARGS__ \
     }
 
+#define SHAREMIND_VECTOR_REVERSE_FOREACH__(r,datatype,decls,...) \
+    decls \
+    if (r->size > 0u) { \
+        size_t i__ = r->size; \
+        do { \
+            datatype * const value = &r->data[--i__]; \
+            __VA_ARGS__ \
+        } while (i__ > 0u); \
+    }
+
 #define SHAREMIND_VECTOR_DECLARE_INIT(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const r) \
@@ -75,6 +85,17 @@
                                    datatype, \
                                    decls, \
                                    SHAREMIND_WRAP(__VA_ARGS__)) \
+        myfree(r->data); \
+    } \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_REVERSE_DESTROY_WITH(name,inlinePerhaps,datatype,decls,myfree,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps void name ## _destroy(name * r) { \
+        assert(r); \
+        SHAREMIND_VECTOR_REVERSE_FOREACH__(r, \
+                                           datatype, \
+                                           decls, \
+                                           SHAREMIND_WRAP(__VA_ARGS__)) \
         myfree(r->data); \
     } \
     SHAREMIND_EXTERN_C_END
@@ -287,6 +308,17 @@
                                    datatype, \
                                    decls, \
                                    SHAREMIND_WRAP(__VA_ARGS__)) \
+        return ret; \
+    } \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_VECTOR_DEFINE_REVERSE_FOREACH(name,withname,prefix,c,datatype,args,decls,ret,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    prefix name ## _ ## withname(name c * r args) { \
+        assert(r); \
+        SHAREMIND_VECTOR_REVERSE_FOREACH__(r, \
+                                           datatype, \
+                                           decls, \
+                                           SHAREMIND_WRAP(__VA_ARGS__)) \
         return ret; \
     } \
     SHAREMIND_EXTERN_C_END
