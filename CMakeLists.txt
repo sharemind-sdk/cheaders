@@ -8,38 +8,38 @@
 #
 
 CMAKE_MINIMUM_REQUIRED(VERSION "2.8.12")
-PROJECT(SHAREMIND_VM_GLOBALS "C")
-SET(VM_GLOBALS_VERSION "0.1.0.0")
-SET(VM_GLOBALS_COMPAT_VERSION "0.1.0.0")
+PROJECT(SHAREMIND_CHEADERS "C")
+SET(CHEADERS_VERSION "0.1.0.0")
+SET(CHEADERS_COMPAT_VERSION "0.1.0.0")
 
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
 FIND_PACKAGE(Boost REQUIRED)
 
-FILE(GLOB_RECURSE SHAREMIND_VM_GLOBALS_HEADERS
+FILE(GLOB_RECURSE SHAREMIND_CHEADERS_HEADERS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
-ADD_CUSTOM_TARGET("include_SharemindVmGlobals_headers_in_IDE"
-                  SOURCES ${SHAREMIND_VM_GLOBALS_HEADERS})
+ADD_CUSTOM_TARGET("include_SharemindCHeaders_headers_in_IDE"
+                  SOURCES ${SHAREMIND_CHEADERS_HEADERS})
 
-INSTALL(FILES ${SHAREMIND_VM_GLOBALS_HEADERS}
+INSTALL(FILES ${SHAREMIND_CHEADERS_HEADERS}
         DESTINATION "include/sharemind")
 
 # Install cmake files:
-FILE(GLOB_RECURSE sharemind_vmglobals_in_files
+FILE(GLOB_RECURSE sharemind_cheaders_in_files
      "${CMAKE_CURRENT_SOURCE_DIR}/*.in")
-ADD_CUSTOM_TARGET("include_sharemind_vmglobals_in_files_in_IDE"
-                  SOURCES ${sharemind_vmglobals_in_files})
-SET(VM_GLOBALS_INSTALL_DEFINITIONS "")
-SET(VM_GLOBALS_INSTALL_LINK_LIBRARIES "")
-SET(VM_GLOBALS_INSTALL_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
+ADD_CUSTOM_TARGET("include_sharemind_cheaders_in_files_in_IDE"
+                  SOURCES ${sharemind_cheaders_in_files})
+SET(CHEADERS_INSTALL_DEFINITIONS "")
+SET(CHEADERS_INSTALL_LINK_LIBRARIES "")
+SET(CHEADERS_INSTALL_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
 CONFIGURE_FILE(
-    "${CMAKE_CURRENT_SOURCE_DIR}/SharemindVmGlobalsConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/SharemindVmGlobalsConfig.cmake" @ONLY)
+    "${CMAKE_CURRENT_SOURCE_DIR}/SharemindCHeadersConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfig.cmake" @ONLY)
 CONFIGURE_FILE(
-    "${CMAKE_CURRENT_SOURCE_DIR}/SharemindVmGlobalsConfigVersion.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/SharemindVmGlobalsConfigVersion.cmake" @ONLY)
+    "${CMAKE_CURRENT_SOURCE_DIR}/SharemindCHeadersConfigVersion.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfigVersion.cmake" @ONLY)
 INSTALL(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/SharemindVmGlobalsConfig.cmake"
-          "${CMAKE_CURRENT_BINARY_DIR}/SharemindVmGlobalsConfigVersion.cmake"
-    DESTINATION "lib/SharemindVmGlobals")
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfig.cmake"
+          "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfigVersion.cmake"
+    DESTINATION "lib/SharemindCHeaders")
