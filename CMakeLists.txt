@@ -42,7 +42,10 @@ ADD_CUSTOM_TARGET("include_sharemind_cheaders_in_files_in_IDE"
                   SOURCES ${sharemind_cheaders_in_files})
 SET(CHEADERS_INSTALL_DEFINITIONS "")
 SET(CHEADERS_INSTALL_LINK_LIBRARIES "")
-SET(CHEADERS_INSTALL_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
+SET(CHEADERS_INSTALL_INCLUDE_DIRS
+    ${Boost_INCLUDE_DIRS}
+    "${CMAKE_INSTALL_PREFIX}/include"
+)
 CONFIGURE_FILE(
     "${CMAKE_CURRENT_SOURCE_DIR}/SharemindCHeadersConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfig.cmake" @ONLY)
