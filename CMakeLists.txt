@@ -40,7 +40,7 @@ FILE(GLOB_RECURSE sharemind_cheaders_in_files
      "${CMAKE_CURRENT_SOURCE_DIR}/*.in")
 ADD_CUSTOM_TARGET("include_sharemind_cheaders_in_files_in_IDE"
                   SOURCES ${sharemind_cheaders_in_files})
-SET(CHEADERS_INSTALL_DEFINITIONS "")
+SET(CHEADERS_INSTALL_DEFINITIONS "-pthread")
 SET(CHEADERS_INSTALL_LINK_LIBRARIES "-lpthread")
 SET(CHEADERS_INSTALL_INCLUDE_DIRS
     ${Boost_INCLUDE_DIRS}
