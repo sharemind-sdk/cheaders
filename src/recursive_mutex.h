@@ -42,19 +42,13 @@ inline SharemindRecursiveMutexError SharemindRecursiveMutex_init(
     if (pthread_mutexattr_init(&attr) != 0)
         return SHAREMIND_RECURSIVE_MUTEX_ERROR;
 
-    SharemindRecursiveMutexError r;
-    /* If you get undeclared errors on this, define _XOPEN_SOURCE >= 600: */
-    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0) {
-        r = SHAREMIND_RECURSIVE_MUTEX_ERROR;
-        goto SharemindRecursiveMutex_init_recursive_end;
-    }
-
-    r = likely(pthread_mutex_init(&mutex->inner, &attr) == 0)
-        ? SHAREMIND_RECURSIVE_MUTEX_OK
-        : SHAREMIND_RECURSIVE_MUTEX_ERROR;
-
-SharemindRecursiveMutex_init_recursive_end:
-
+    SharemindRecursiveMutexError const r =
+        /* If you get undeclared errors on this, define _XOPEN_SOURCE >= 600: */
+            (likely(pthread_mutexattr_settype(&attr,
+                                              PTHREAD_MUTEX_RECURSIVE) == 0)
+             || likely(pthread_mutex_init(&mutex->inner, &attr) == 0))
+            ? SHAREMIND_RECURSIVE_MUTEX_OK
+            : SHAREMIND_RECURSIVE_MUTEX_ERROR;
     pthread_mutexattr_destroy(&attr);
     return r;
 }
