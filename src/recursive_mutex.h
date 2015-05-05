@@ -46,7 +46,7 @@ inline SharemindRecursiveMutexError SharemindRecursiveMutex_init(
         /* If you get undeclared errors on this, define _XOPEN_SOURCE >= 600: */
             (likely(pthread_mutexattr_settype(&attr,
                                               PTHREAD_MUTEX_RECURSIVE) == 0)
-             || likely(pthread_mutex_init(&mutex->inner, &attr) == 0))
+             && likely(pthread_mutex_init(&mutex->inner, &attr) == 0))
             ? SHAREMIND_RECURSIVE_MUTEX_OK
             : SHAREMIND_RECURSIVE_MUTEX_ERROR;
     pthread_mutexattr_destroy(&attr);
