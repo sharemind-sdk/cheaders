@@ -37,9 +37,11 @@
     SHAREMIND_NAMED_LOCK_INIT(className, mutex)
 
 #define SHAREMIND_NAMED_LOCK_DEINIT(className,mutexName) \
-    if (unlikely(SharemindMutex_destroy(&className->mutexName))) { \
-        SHAREMIND_ABORT("SNLD"); \
-    } else (void) 0
+    do { \
+        int const r = SharemindMutex_destroy(&className->mutexName); \
+        if (unlikely(r)) \
+            SHAREMIND_ABORT("SNLD %d", r); \
+    } while(0)
 #define SHAREMIND_LOCK_DEINIT(className) \
     SHAREMIND_NAMED_LOCK_DEINIT(className, mutex)
 
@@ -60,13 +62,15 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void CN ## _ ## f ## FunName(CN * c) { \
         assert(c); \
-        if (unlikely(SharemindMutex_ ## f(&c->mutexName))) \
-            SHAREMIND_ABORT("SNLFD1"); \
+        int const r = SharemindMutex_ ## f(&c->mutexName); \
+        if (unlikely(r)) \
+            SHAREMIND_ABORT("SNLFD1 %d", r); \
     } \
     inlinePerhaps void CN ## _ ## f ## Const ## FunName(CN const * c) { \
         assert(c); \
-        if (unlikely(SharemindMutex_ ## f ## _const(&c->mutexName))) \
-            SHAREMIND_ABORT("SNLFD2"); \
+        int const r = SharemindMutex_ ## f ## _const(&c->mutexName); \
+        if (unlikely(r)) \
+            SHAREMIND_ABORT("SNLFD2 %d", r); \
     } \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_NAMED_LOCK_FUNCTIONS_DEFINE(CN,inlinePerhaps,FunName,mutexName) \
