@@ -20,6 +20,7 @@
 #ifndef SHAREMIND_LOCKS_H
 #define SHAREMIND_LOCKS_H
 
+#include <assert.h>
 #include "abort.h"
 #include "extern_c.h"
 #include "likely.h"
@@ -31,14 +32,12 @@
 #define SHAREMIND_LOCK_DECLARE_FIELDS SHAREMIND_NAMED_LOCK_DEFINE(mutex)
 
 #define SHAREMIND_NAMED_LOCK_INIT(className,mutexName) \
-    (SharemindMutex_init(&className->mutexName) == SHAREMIND_MUTEX_OK)
+    (SharemindMutex_init(&className->mutexName) == 0)
 #define SHAREMIND_LOCK_INIT(className) \
     SHAREMIND_NAMED_LOCK_INIT(className, mutex)
 
 #define SHAREMIND_NAMED_LOCK_DEINIT(className,mutexName) \
-    if (unlikely(SharemindMutex_destroy(&className->mutexName) \
-                 != SHAREMIND_MUTEX_OK)) \
-    { \
+    if (unlikely(SharemindMutex_destroy(&className->mutexName))) { \
         SHAREMIND_ABORT("SNLD"); \
     } else (void) 0
 #define SHAREMIND_LOCK_DEINIT(className) \
@@ -61,14 +60,12 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void CN ## _ ## f ## FunName(CN * c) { \
         assert(c); \
-        if (unlikely(SharemindMutex_ ## f(&c->mutexName) \
-            != SHAREMIND_MUTEX_OK)) \
+        if (unlikely(SharemindMutex_ ## f(&c->mutexName))) \
             SHAREMIND_ABORT("SNLFD1"); \
     } \
     inlinePerhaps void CN ## _ ## f ## Const ## FunName(CN const * c) { \
         assert(c); \
-        if (unlikely(SharemindMutex_ ## f ## _const(&c->mutexName) \
-            != SHAREMIND_MUTEX_OK)) \
+        if (unlikely(SharemindMutex_ ## f ## _const(&c->mutexName))) \
             SHAREMIND_ABORT("SNLFD2"); \
     } \
     SHAREMIND_EXTERN_C_END

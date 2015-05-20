@@ -20,7 +20,6 @@
 #ifndef SHAREMIND_MUTEX_H
 #define SHAREMIND_MUTEX_H
 
-#include <assert.h>
 #include <pthread.h>
 #include <stddef.h>
 #include "extern_c.h"
@@ -29,55 +28,36 @@
 
 SHAREMIND_EXTERN_C_BEGIN
 
-typedef pthread_mutex_t SharemindMutex;
+typedef struct SharemindMutex_ {
+    pthread_mutex_t inner;
+} SharemindMutex;
 
-enum SharemindMutexError_ {
-    SHAREMIND_MUTEX_OK = 0,
-    SHAREMIND_MUTEX_ERROR
-};
-typedef enum SharemindMutexError_ SharemindMutexError;
+inline int SharemindMutex_init(SharemindMutex * mutex)
+{ return pthread_mutex_init(&mutex->inner, NULL); }
 
-inline SharemindMutexError SharemindMutex_init(SharemindMutex * mutex) {
-    return likely(pthread_mutex_init(mutex, NULL) == 0)
-            ? SHAREMIND_MUTEX_OK
-            : SHAREMIND_MUTEX_ERROR;
-}
+inline int SharemindMutex_destroy(SharemindMutex * mutex)
+{ return pthread_mutex_destroy(&mutex->inner); }
 
-inline SharemindMutexError SharemindMutex_destroy(SharemindMutex * mutex) {
-    return likely(pthread_mutex_destroy(mutex) == 0)
-            ? SHAREMIND_MUTEX_OK
-            : SHAREMIND_MUTEX_ERROR;
-}
+inline int SharemindMutex_lock(SharemindMutex * mutex)
+{ return pthread_mutex_lock(&mutex->inner); }
 
-inline SharemindMutexError SharemindMutex_lock(SharemindMutex * mutex) {
-    return likely(pthread_mutex_lock(mutex) == 0)
-            ? SHAREMIND_MUTEX_OK
-            : SHAREMIND_MUTEX_ERROR;
-}
+inline int SharemindMutex_unlock(SharemindMutex * mutex)
+{ return pthread_mutex_unlock(&mutex->inner); }
 
-inline SharemindMutexError SharemindMutex_unlock(SharemindMutex * mutex) {
-    return likely(pthread_mutex_unlock(mutex) == 0)
-            ? SHAREMIND_MUTEX_OK
-            : SHAREMIND_MUTEX_ERROR;
-}
-
-inline SharemindMutexError SharemindMutex_trylock(SharemindMutex * mutex) {
-    return likely(pthread_mutex_trylock(mutex) == 0)
-            ? SHAREMIND_MUTEX_OK
-            : SHAREMIND_MUTEX_ERROR;
-}
+inline int SharemindMutex_trylock(SharemindMutex * mutex)
+{ return pthread_mutex_trylock(&mutex->inner); }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
-inline SharemindMutexError SharemindMutex_lock_const(
+inline int SharemindMutex_lock_const(
         const SharemindMutex * mutex)
 { return SharemindMutex_lock((SharemindMutex *) mutex); }
 
-inline SharemindMutexError SharemindMutex_unlock_const(
+inline int SharemindMutex_unlock_const(
         const SharemindMutex * mutex)
 { return SharemindMutex_unlock((SharemindMutex *) mutex); }
 
-inline SharemindMutexError SharemindMutex_trylock_const(
+inline int SharemindMutex_trylock_const(
         const SharemindMutex * mutex)
 { return SharemindMutex_trylock((SharemindMutex *) mutex); }
 #pragma GCC diagnostic pop

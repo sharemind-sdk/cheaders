@@ -20,6 +20,7 @@
 #ifndef SHAREMIND_RECURSIVE_LOCKS_H
 #define SHAREMIND_RECURSIVE_LOCKS_H
 
+#include <assert.h>
 #include "abort.h"
 #include "extern_c.h"
 #include "likely.h"
@@ -33,15 +34,12 @@
     SHAREMIND_NAMED_RECURSIVE_LOCK_DEFINE(mutex)
 
 #define SHAREMIND_NAMED_RECURSIVE_LOCK_INIT(className,mutexName) \
-    (likely(SharemindRecursiveMutex_init(&className->mutexName) \
-            == SHAREMIND_RECURSIVE_MUTEX_OK))
+    (likely(SharemindRecursiveMutex_init(&className->mutexName) == 0))
 #define SHAREMIND_RECURSIVE_LOCK_INIT(className) \
     SHAREMIND_NAMED_RECURSIVE_LOCK_INIT(className, mutex)
 
 #define SHAREMIND_NAMED_RECURSIVE_LOCK_DEINIT(className,mutexName) \
-    if (unlikely(SharemindRecursiveMutex_destroy(&className->mutexName) \
-                 != SHAREMIND_RECURSIVE_MUTEX_OK)) \
-    { \
+    if (unlikely(SharemindRecursiveMutex_destroy(&className->mutexName))){\
         SHAREMIND_ABORT("SNRLD"); \
     } else (void) 0
 #define SHAREMIND_RECURSIVE_LOCK_DEINIT(className) \
@@ -64,14 +62,12 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void CN ## _ ## f ## FunName(CN * c) { \
         assert(c); \
-        if (unlikely(SharemindRecursiveMutex_ ## f(&c->mutexName) \
-            != SHAREMIND_RECURSIVE_MUTEX_OK)) \
+        if (unlikely(SharemindRecursiveMutex_ ## f(&c->mutexName))) \
             SHAREMIND_ABORT("SNRLFD1"); \
     } \
     inlinePerhaps void CN ## _ ## f ## Const ## FunName(CN const * c) { \
         assert(c); \
-        if (unlikely(SharemindRecursiveMutex_ ## f ## _const(&c->mutexName) \
-            != SHAREMIND_RECURSIVE_MUTEX_OK)) \
+        if (unlikely(SharemindRecursiveMutex_ ## f ## _const(&c->mutexName))) \
             SHAREMIND_ABORT("SNRLFD2"); \
     } \
     SHAREMIND_EXTERN_C_END

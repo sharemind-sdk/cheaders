@@ -20,66 +20,53 @@
 #ifndef SHAREMIND_RECURSIVE_MUTEX_H
 #define SHAREMIND_RECURSIVE_MUTEX_H
 
+#include <pthread.h>
 #include "extern_c.h"
-#include "mutex.h"
+#include "likely.h"
 
 
 SHAREMIND_EXTERN_C_BEGIN
 
-struct SharemindRecursiveMutex_ { SharemindMutex inner; };
-typedef struct SharemindRecursiveMutex_ SharemindRecursiveMutex;
+typedef struct SharemindRecursiveMutex_ {
+    pthread_mutex_t inner;
+} SharemindRecursiveMutex;
 
-enum SharemindRecursiveMutexError_ {
-    SHAREMIND_RECURSIVE_MUTEX_OK = 0,
-    SHAREMIND_RECURSIVE_MUTEX_ERROR
-};
-typedef enum SharemindRecursiveMutexError_ SharemindRecursiveMutexError;
-
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_init(
+inline int SharemindRecursiveMutex_init(
         SharemindRecursiveMutex * mutex)
 {
     pthread_mutexattr_t attr;
-    if (pthread_mutexattr_init(&attr) != 0)
-        return SHAREMIND_RECURSIVE_MUTEX_ERROR;
-
-    SharemindRecursiveMutexError const r =
-        /* If you get undeclared errors on this, define _XOPEN_SOURCE >= 600: */
-            (likely(pthread_mutexattr_settype(&attr,
-                                              PTHREAD_MUTEX_RECURSIVE) == 0)
-             && likely(pthread_mutex_init(&mutex->inner, &attr) == 0))
-            ? SHAREMIND_RECURSIVE_MUTEX_OK
-            : SHAREMIND_RECURSIVE_MUTEX_ERROR;
+    int r;
+    if ((r = pthread_mutexattr_init(&attr)))
+        return r;
+    if (!(r = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE)))
+        r = pthread_mutex_init(&mutex->inner, &attr);
     pthread_mutexattr_destroy(&attr);
     return r;
 }
 
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_destroy(
-        SharemindRecursiveMutex * mutex)
-{ return (SharemindRecursiveMutexError) SharemindMutex_destroy(&mutex->inner); }
+inline int SharemindRecursiveMutex_destroy(SharemindRecursiveMutex * mutex)
+{ return pthread_mutex_destroy(&mutex->inner); }
 
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_lock(
-        SharemindRecursiveMutex * mutex)
-{ return (SharemindRecursiveMutexError) SharemindMutex_lock(&mutex->inner); }
+inline int SharemindRecursiveMutex_lock(SharemindRecursiveMutex * mutex)
+{ return pthread_mutex_lock(&mutex->inner); }
 
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_unlock(
-        SharemindRecursiveMutex * mutex)
-{ return (SharemindRecursiveMutexError) SharemindMutex_unlock(&mutex->inner); }
+inline int SharemindRecursiveMutex_unlock(SharemindRecursiveMutex * mutex)
+{ return pthread_mutex_unlock(&mutex->inner); }
 
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_trylock(
-        SharemindRecursiveMutex * mutex)
-{ return (SharemindRecursiveMutexError) SharemindMutex_trylock(&mutex->inner); }
+inline int SharemindRecursiveMutex_trylock(SharemindRecursiveMutex * mutex)
+{ return pthread_mutex_trylock(&mutex->inner); }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_lock_const(
+inline int SharemindRecursiveMutex_lock_const(
         const SharemindRecursiveMutex * mutex)
 { return SharemindRecursiveMutex_lock((SharemindRecursiveMutex *) mutex); }
 
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_unlock_const(
+inline int SharemindRecursiveMutex_unlock_const(
         const SharemindRecursiveMutex * mutex)
 { return SharemindRecursiveMutex_unlock((SharemindRecursiveMutex *) mutex); }
 
-inline SharemindRecursiveMutexError SharemindRecursiveMutex_trylock_const(
+inline int SharemindRecursiveMutex_trylock_const(
         const SharemindRecursiveMutex * mutex)
 { return SharemindRecursiveMutex_trylock((SharemindRecursiveMutex *) mutex); }
 #pragma GCC diagnostic pop
