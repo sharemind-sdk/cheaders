@@ -36,7 +36,7 @@
 #define be64toh(x) (OSSwapBigToHostInt64((x)))
 #define le64toh(x) (OSSwapLittleToHostInt64((x)))
 
-#elif __FreeBSD__
+#elif defined(__FreeBSD__) && __FreeBSD__
 
 #ifndef _BSD_SOURCE
 #define _BSD_SOURCE
