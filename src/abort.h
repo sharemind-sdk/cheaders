@@ -28,18 +28,18 @@
     do { \
         fprintf(stderr, " in %s:%d\n", __FILE__, __LINE__); \
         abort(); \
-    } while (false)
+    } while ((0))
 #else
 #define SHAREMIND_ABORT__ \
     do { \
         abort(); \
-    } while (false)
+    } while ((0))
 #endif
 
 #define SHAREMIND_ABORT(...) \
     do { \
         fprintf(stderr, __VA_ARGS__); \
         SHAREMIND_ABORT__; \
-    } while (false)
+    } while ((0))
 
 #endif /* SHAREMIND_ABORT_H */

@@ -34,7 +34,7 @@
     do { \
         (className)->lastError = (okCode); \
         (className)->lastErrorStaticString = NULL; \
-    } while(0)
+    } while((0))
 
 #define SHAREMIND_LASTERROR_PUBLIC_FUNCTIONS_DECLARE(ClassName,inlinePerhaps,codeType,...) \
     SHAREMIND_EXTERN_C_BEGIN \

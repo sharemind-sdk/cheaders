@@ -41,7 +41,7 @@
         int const r = SharemindMutex_destroy(&className->mutexName); \
         if (unlikely(r)) \
             SHAREMIND_ABORT("SNLD %d", r); \
-    } while(0)
+    } while((0))
 #define SHAREMIND_LOCK_DEINIT(className) \
     SHAREMIND_NAMED_LOCK_DEINIT(className, mutex)
 

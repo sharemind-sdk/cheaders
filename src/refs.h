@@ -30,15 +30,15 @@
 #define SHAREMIND_REFS_DECLARE_FIELDS SHAREMIND_NAMED_REFS_DECLARE_FIELDS(refs)
 
 #define SHAREMIND_NAMED_REFS_INIT(object,name) \
-    if (1) { \
+    do { \
         ((object)->name) = 0u; \
-    } (void) 0
+    } while ((0))
 #define SHAREMIND_REFS_INIT(object) SHAREMIND_NAMED_REFS_INIT(object,refs)
 
 #define SHAREMIND_NAMED_REFS_ASSERT_IF_REFERENCED(object,name) \
-    if (1) { \
+    do { \
         assert(((object)->name) <= 0u); \
-    } (void) 0
+    } while ((0))
 #define SHAREMIND_REFS_ASSERT_IF_REFERENCED(object) SHAREMIND_NAMED_REFS_ASSERT_IF_REFERENCED(object,refs)
 
 #define SHAREMIND_NAMED_REFS_DECLARE_FUNCTIONS(type,name) \

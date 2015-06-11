@@ -33,12 +33,13 @@ typedef void (* SharemindTagDestructor)(void *);
     do { \
         (c)->tag = NULL; \
         (c)->tagDestructor = NULL; \
-    } while(0)
+    } while ((0))
 
 #define SHAREMIND_TAG_DESTROY(c) \
-    if ((c)->tagDestructor && (c)->tag) { \
-        (c)->tagDestructor((c)->tag); \
-    } else (void) 0
+    do { \
+        if ((c)->tagDestructor && (c)->tag) \
+            (c)->tagDestructor((c)->tag); \
+    } while ((0))
 
 #define SHAREMIND_TAG_FUNCTIONS_DECLARE(ClassName,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
