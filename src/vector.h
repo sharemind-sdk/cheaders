@@ -37,35 +37,35 @@
 
 #define SHAREMIND_VECTOR_DECLARE_BODY(name,datatype) \
     SHAREMIND_EXTERN_C_BEGIN \
-    typedef datatype name ## __value_type; \
-    struct name ## __body; \
-    typedef struct name ## __body name; \
+    typedef datatype name ## _value_type; \
+    struct name ## _body; \
+    typedef struct name ## _body name; \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DEFINE_BODY(name,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    struct name ## __body { \
+    struct name ## _body { \
         size_t size; \
-        name ## __value_type * data; \
+        name ## _value_type * data; \
         __VA_ARGS__ \
     }; \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_VECTOR_FOREACH__(name,r,decls,...) \
+#define SHAREMIND_VECTOR_FOREACH_(name,r,decls,...) \
     decls \
-    for (size_t i__ = 0u; i__ < r->size; i__++) { \
-        name ## __value_type * const value = &r->data[i__]; \
+    for (size_t i_ = 0u; i_ < r->size; i_++) { \
+        name ## _value_type * const value = &r->data[i_]; \
         __VA_ARGS__ \
     }
 
-#define SHAREMIND_VECTOR_REVERSE_FOREACH__(name,r,decls,...) \
+#define SHAREMIND_VECTOR_REVERSE_FOREACH_(name,r,decls,...) \
     decls \
     if (r->size > 0u) { \
-        size_t i__ = r->size; \
+        size_t i_ = r->size; \
         do { \
-            name ## __value_type * const value = &r->data[--i__]; \
+            name ## _value_type * const value = &r->data[--i_]; \
             __VA_ARGS__ \
-        } while (i__ > 0u); \
+        } while (i_ > 0u); \
     }
 
 #define SHAREMIND_VECTOR_DECLARE_INIT(name,inlinePerhaps,...) \
@@ -98,10 +98,10 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy(name * r) { \
         assert(r); \
-        SHAREMIND_VECTOR_FOREACH__(name, \
-                                   r, \
-                                   decls, \
-                                   SHAREMIND_WRAP(__VA_ARGS__)) \
+        SHAREMIND_VECTOR_FOREACH_(name, \
+                                  r, \
+                                  decls, \
+                                  SHAREMIND_WRAP(__VA_ARGS__)) \
         myfree(r->data); \
     } \
     SHAREMIND_EXTERN_C_END
@@ -109,10 +109,10 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy(name * r) { \
         assert(r); \
-        SHAREMIND_VECTOR_REVERSE_FOREACH__(name, \
-                                           r, \
-                                           decls, \
-                                           SHAREMIND_WRAP(__VA_ARGS__)) \
+        SHAREMIND_VECTOR_REVERSE_FOREACH_(name, \
+                                          r, \
+                                          decls, \
+                                          SHAREMIND_WRAP(__VA_ARGS__)) \
         myfree(r->data); \
     } \
     SHAREMIND_EXTERN_C_END
@@ -129,8 +129,8 @@
                                              const size_t newSize) \
     { \
         assert(r); \
-        name ## __value_type * const d = \
-                SHAREMIND_VECTOR_ALLOC_CAST(name ## __value_type *) myrealloc( \
+        name ## _value_type * const d = \
+                SHAREMIND_VECTOR_ALLOC_CAST(name ## _value_type *) myrealloc( \
                         r->data, \
                         newSize * sizeof(*d)); \
         if (unlikely(!d && newSize != 0u)) \
@@ -176,16 +176,16 @@
 
 #define SHAREMIND_VECTOR_DECLARE_PUSH(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps name ## __value_type * name ## _push(name * const r) \
+    inlinePerhaps name ## _value_type * name ## _push(name * const r) \
             __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_PUSH(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps name ## __value_type * name ## _push(name * const r) { \
+    inlinePerhaps name ## _value_type * name ## _push(name * const r) { \
         assert(r); \
         const size_t oldSize = r->size; \
-        if (unlikely(SIZE_MAX - sizeof(name ## __value_type) * oldSize \
-                     < sizeof(name ## __value_type))) \
+        if (unlikely(SIZE_MAX - sizeof(name ## _value_type) * oldSize \
+                     < sizeof(name ## _value_type))) \
             return NULL; \
         if (unlikely(!name ## _force_resize(r, oldSize + 1u))) \
             return NULL; \
@@ -225,16 +225,16 @@
     } \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK__(name,inlinePerhaps,c,cn,...) \
+#define SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK_(name,inlinePerhaps,c,cn,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps name ## __value_type c * \
+    inlinePerhaps name ## _value_type c * \
     name ## _get_ ## cn ## pointer_nocheck( \
             name c * const r, \
             size_t i) __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-#define SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK__(name,inlinePerhaps,c,cn) \
+#define SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK_(name,inlinePerhaps,c,cn) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps name ## __value_type c * \
+    inlinePerhaps name ## _value_type c * \
     name ## _get_ ## cn ## pointer_nocheck(name c * const r, size_t i) { \
         assert(r); \
         return &r->data[i]; \
@@ -242,38 +242,38 @@
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK(name,inlinePerhaps,...) \
-    SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK__( \
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK_( \
             name, \
             SHAREMIND_WRAP(inlinePerhaps),,, \
             SHAREMIND_WRAP(__VA_ARGS__))
 #define SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK(name,inlinePerhaps) \
-    SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK__( \
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK_( \
             name, \
             SHAREMIND_WRAP(inlinePerhaps),,)
 
 #define SHAREMIND_VECTOR_DECLARE_GET_CONST_POINTER_NOCHECK(name,inlinePerhaps,...) \
-    SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK__( \
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER_NOCHECK_( \
             name, \
             SHAREMIND_WRAP(inlinePerhaps), \
             const, \
             const_, \
             SHAREMIND_WRAP(__VA_ARGS__))
 #define SHAREMIND_VECTOR_DEFINE_GET_CONST_POINTER_NOCHECK(name,inlinePerhaps) \
-    SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK__( \
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK_( \
             name, \
             SHAREMIND_WRAP(inlinePerhaps), \
             const, \
             const_)
 
-#define SHAREMIND_VECTOR_DECLARE_GET_POINTER__(name,inlinePerhaps,c,cn,...) \
+#define SHAREMIND_VECTOR_DECLARE_GET_POINTER_(name,inlinePerhaps,c,cn,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps name ## __value_type c * name ## _get_ ## cn ## pointer( \
+    inlinePerhaps name ## _value_type c * name ## _get_ ## cn ## pointer( \
             name c * const r, \
             size_t i) __attribute__ ((nonnull(1) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-#define SHAREMIND_VECTOR_DEFINE_GET_POINTER__(name,inlinePerhaps,c,cn) \
+#define SHAREMIND_VECTOR_DEFINE_GET_POINTER_(name,inlinePerhaps,c,cn) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps name ## __value_type c * name ## _get_ ## cn ## pointer( \
+    inlinePerhaps name ## _value_type c * name ## _get_ ## cn ## pointer( \
             name c * const r, \
             size_t i) \
     { \
@@ -285,24 +285,24 @@
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_VECTOR_DECLARE_GET_POINTER(name,inlinePerhaps,...) \
-    SHAREMIND_VECTOR_DECLARE_GET_POINTER__(name, \
-                                           SHAREMIND_WRAP(inlinePerhaps),,, \
-                                           SHAREMIND_WRAP(__VA_ARGS__))
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER_(name, \
+                                          SHAREMIND_WRAP(inlinePerhaps),,, \
+                                          SHAREMIND_WRAP(__VA_ARGS__))
 #define SHAREMIND_VECTOR_DEFINE_GET_POINTER(name,inlinePerhaps) \
-    SHAREMIND_VECTOR_DEFINE_GET_POINTER__(name, \
-                                          SHAREMIND_WRAP(inlinePerhaps),,)
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER_(name, \
+                                         SHAREMIND_WRAP(inlinePerhaps),,)
 
 #define SHAREMIND_VECTOR_DECLARE_GET_CONST_POINTER(name,inlinePerhaps,...) \
-    SHAREMIND_VECTOR_DECLARE_GET_POINTER__(name, \
-                                           SHAREMIND_WRAP(inlinePerhaps), \
-                                           const, \
-                                           const_, \
-                                           SHAREMIND_WRAP(__VA_ARGS__))
-#define SHAREMIND_VECTOR_DEFINE_GET_CONST_POINTER(name,inlinePerhaps) \
-    SHAREMIND_VECTOR_DEFINE_GET_POINTER__(name, \
+    SHAREMIND_VECTOR_DECLARE_GET_POINTER_(name, \
                                           SHAREMIND_WRAP(inlinePerhaps), \
                                           const, \
-                                          const_)
+                                          const_, \
+                                          SHAREMIND_WRAP(__VA_ARGS__))
+#define SHAREMIND_VECTOR_DEFINE_GET_CONST_POINTER(name,inlinePerhaps) \
+    SHAREMIND_VECTOR_DEFINE_GET_POINTER_(name, \
+                                         SHAREMIND_WRAP(inlinePerhaps), \
+                                         const, \
+                                         const_)
 
 #define SHAREMIND_VECTOR_DECLARE_FOREACH(name,withname,prefix,c,params,...) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -313,10 +313,10 @@
     SHAREMIND_EXTERN_C_BEGIN \
     prefix name ## _ ## withname(name c * r args) { \
         assert(r); \
-        SHAREMIND_VECTOR_FOREACH__(name, \
-                                   r, \
-                                   decls, \
-                                   SHAREMIND_WRAP(__VA_ARGS__)) \
+        SHAREMIND_VECTOR_FOREACH_(name, \
+                                  r, \
+                                  decls, \
+                                  SHAREMIND_WRAP(__VA_ARGS__)) \
         return ret; \
     } \
     SHAREMIND_EXTERN_C_END
@@ -324,10 +324,10 @@
     SHAREMIND_EXTERN_C_BEGIN \
     prefix name ## _ ## withname(name c * r args) { \
         assert(r); \
-        SHAREMIND_VECTOR_REVERSE_FOREACH__(name, \
-                                           r, \
-                                           decls, \
-                                           SHAREMIND_WRAP(__VA_ARGS__)) \
+        SHAREMIND_VECTOR_REVERSE_FOREACH_(name, \
+                                          r, \
+                                          decls, \
+                                          SHAREMIND_WRAP(__VA_ARGS__)) \
         return ret; \
     } \
     SHAREMIND_EXTERN_C_END
