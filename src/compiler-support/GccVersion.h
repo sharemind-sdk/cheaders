@@ -20,8 +20,12 @@
 #ifndef SHAREMIND_GCCVERSION_H
 #define SHAREMIND_GCCVERSION_H
 
+#include "detail/CompilerVersionPrelude.h"
 
-#if !defined(__clang__) && defined(__GNUC__)
+
+#if !defined(SHAREMIND_COMPILER_TYPE_) \
+    && !defined(__clang__) && defined(__GNUC__)
+#define SHAREMIND_COMPILER_TYPE_ SHAREMIND_COMPILER_TYPE_GCC_
 #define SHAREMIND_GCC_VERSION \
     (((__GNUC__ * 100) + __GNUC_MINOR__) * 100 + __GNUC_PATCHLEVEL__)
 #endif

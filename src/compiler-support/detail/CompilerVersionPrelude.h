@@ -17,16 +17,21 @@
  * For further information, please contact us at sharemind@cyber.ee.
  */
 
-#ifndef SHAREMIND_CLANGVERSION_H
-#define SHAREMIND_CLANGVERSION_H
+#ifndef SHAREMIND_COMPILERSUPPORT_COMPILERVERSIONPRELUDE_H
+#define SHAREMIND_COMPILERSUPPORT_COMPILERVERSIONPRELUDE_H
 
-#include "detail/CompilerVersionPrelude.h"
+#define SHAREMIND_COMPILER_TYPE_GCC_     1
+#define SHAREMIND_COMPILER_TYPE_CLANG_   2
 
-
-#if !defined(SHAREMIND_COMPILER_TYPE_) && defined(__clang__)
-#define SHAREMIND_COMPILER_TYPE_ SHAREMIND_COMPILER_TYPE_CLANG_
-#define SHAREMIND_CLANG_VERSION \
-    (((__clang_major__ * 100) + __clang_minor__) * 100 + __clang_patchlevel__)
+#if defined(SHAREMIND_FORCE_GCC)
+    #define SHAREMIND_COMPILER_TYPE_ SHAREMIND_COMPILER_TYPE_GCC_
+    #define SHAREMIND_GCC_VERSION SHAREMIND_FORCE_GCC
+#elif defined(SHAREMIND_FORCE_CLANG)
+    #ifdef SHAREMIND_COMPILER_TYPE_
+        #error Multiple SHAREMIND_FORCE_<COMPILER> options defined!
+    #endif
+    #define SHAREMIND_COMPILER_TYPE_ SHAREMIND_COMPILER_TYPE_CLANG_
+    #define SHAREMIND_CLANG_VERSION SHAREMIND_FORCE_CLANG
 #endif
 
-#endif /* SHAREMIND_CLANGVERSION_H */
+#endif
