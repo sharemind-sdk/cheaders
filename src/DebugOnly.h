@@ -22,8 +22,10 @@
 
 #ifndef NDEBUG
 #define SHAREMIND_DEBUG_ONLY(...) __VA_ARGS__
+#define SHAREMIND_NDEBUG_ONLY(...)
 #else
 #define SHAREMIND_DEBUG_ONLY(...)
+#define SHAREMIND_NDEBUG_ONLY(...) __VA_ARGS__
 #endif
 
 #endif /* SHAREMIND_DEBUGONLY_H */
