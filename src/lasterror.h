@@ -39,11 +39,11 @@
 #define SHAREMIND_LASTERROR_PUBLIC_FUNCTIONS_DECLARE(ClassName,inlinePerhaps,codeType,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps codeType ClassName ## _lastError(const ClassName * c) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     inlinePerhaps const char * ClassName ## _lastErrorString( \
-            const ClassName * c) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            const ClassName * c) __attribute__ ((nonnull(1), __VA_ARGS__)); \
     inlinePerhaps void ClassName ## _clearError(ClassName * c) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_LASTERROR_PUBLIC_FUNCTIONS_DEFINE(ClassName,inlinePerhaps,codeType,okCode) \
@@ -94,7 +94,7 @@
             ClassName * c, \
             codeType error, \
             const char * errorString) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_LASTERROR_PRIVATE_FUNCTIONS_DEFINE(ClassName,inlinePerhaps,codeType,okCode) \
@@ -129,7 +129,7 @@
 #define SHAREMIND_LASTERROR_PRIVATE_SHORTCUT_DECLARE(ClassName,Name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void ClassName ## _setError ## Name(ClassName * c) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_LASTERROR_PRIVATE_SHORTCUT_DEFINE(ClassName,Name,inlinePerhaps,code,msg) \

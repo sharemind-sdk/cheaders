@@ -71,7 +71,7 @@
 #define SHAREMIND_VECTOR_DECLARE_INIT(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * const r) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_INIT(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -85,7 +85,7 @@
 #define SHAREMIND_VECTOR_DECLARE_DESTROY(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy(name * const r) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_DESTROY(name,inlinePerhaps,myfree) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -121,7 +121,7 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _force_resize( \
             name * const r, \
-            const size_t newSize) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            const size_t newSize) __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_FORCE_RESIZE(name,inlinePerhaps,myrealloc) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -145,7 +145,7 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _resize_no_overflow_check( \
             name * const r, \
-            const size_t newSize) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            const size_t newSize) __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_RESIZE_NO_OCHECK(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -162,7 +162,7 @@
 #define SHAREMIND_VECTOR_DECLARE_RESIZE(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _resize(name * const r, const size_t newSize) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_RESIZE(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -177,7 +177,7 @@
 #define SHAREMIND_VECTOR_DECLARE_PUSH(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps name ## _value_type * name ## _push(name * const r) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_PUSH(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -196,7 +196,7 @@
 #define SHAREMIND_VECTOR_DECLARE_POP(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _pop(name * const r) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_POP(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -210,7 +210,7 @@
 #define SHAREMIND_VECTOR_DECLARE_ERASE(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _erase(name * const r, size_t const i) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_ERASE(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -230,7 +230,7 @@
     inlinePerhaps name ## _value_type c * \
     name ## _get_ ## cn ## pointer_nocheck( \
             name c * const r, \
-            size_t i) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            size_t i) __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_GET_POINTER_NOCHECK_(name,inlinePerhaps,c,cn) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -269,7 +269,7 @@
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps name ## _value_type c * name ## _get_ ## cn ## pointer( \
             name c * const r, \
-            size_t i) __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            size_t i) __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_GET_POINTER_(name,inlinePerhaps,c,cn) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -307,7 +307,7 @@
 #define SHAREMIND_VECTOR_DECLARE_FOREACH(name,withname,prefix,c,params,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     prefix name ## _ ## withname(name c * r params) \
-            __attribute__ ((nonnull(1) __VA_ARGS__)); \
+            __attribute__ ((nonnull(1), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_VECTOR_DEFINE_FOREACH(name,withname,prefix,c,args,decls,ret,...) \
     SHAREMIND_EXTERN_C_BEGIN \

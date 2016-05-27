@@ -141,7 +141,7 @@
 #define SHAREMIND_STRINGMAP_DECLARE_insertAtHint(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _keyCopy(char ** dest, const char * src) \
-        __attribute__ ((nonnull(1, 2) __VA_ARGS__)); \
+        __attribute__ ((nonnull(1, 2), __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END \
     SHAREMIND_MAP_DECLARE_insertAtHint(name, \
                                        inlinePerhaps, \
