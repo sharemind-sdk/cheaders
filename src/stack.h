@@ -21,6 +21,7 @@
 #define SHAREMIND_STACK_H
 
 #include <stdbool.h>
+#include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
 
@@ -36,21 +37,37 @@
 #define SHAREMIND_STACK_ALLOC_CAST(type)
 #endif
 
-#define SHAREMIND_STACK_DECLARE(name,datatype,extradata,inlinePerhaps) \
+#define SHAREMIND_STACK_DECLARE(name,datatype,extradata,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _item; \
     typedef struct { \
         struct name ## _item * d; \
         extradata \
     } name; \
-    inlinePerhaps void name ## _init (name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy (name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy_with(name * const s, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps datatype * name ## _push (name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _pop (name * s) __attribute__ ((nonnull(1))); \
-    inlinePerhaps datatype * name ## _top (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps bool name ## _empty (name * s) __attribute__ ((nonnull(1), warn_unused_result)); \
-    inlinePerhaps void name ## _foreach (name * s, void (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _init (name * s) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
+    inlinePerhaps void name ## _destroy (name * s) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
+    inlinePerhaps void name ## _destroy_with( \
+            name * const s, \
+            void (*destroyer)(datatype *)) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2),) \
+                            __VA_ARGS__)); \
+    inlinePerhaps datatype * name ## _push (name * s) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
+    inlinePerhaps void name ## _pop (name * s) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
+    inlinePerhaps datatype * name ## _top (name * s) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) \
+                            warn_unused_result, \
+                            __VA_ARGS__)); \
+    inlinePerhaps bool name ## _empty (name * s) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) \
+                            warn_unused_result, \
+                            __VA_ARGS__)); \
+    inlinePerhaps void name ## _foreach (name * s, void (*f)(datatype *)) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2),) \
+                            __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_STACK_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \

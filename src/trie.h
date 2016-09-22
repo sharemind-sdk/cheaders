@@ -21,6 +21,7 @@
 #define SHAREMIND_TRIE_H
 
 #include <assert.h>
+#include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
 
@@ -36,7 +37,7 @@
 #define SHAREMIND_TRIE_ALLOC_CAST(type)
 #endif
 
-#define SHAREMIND_TRIE_DECLARE(name,datatype,inlinePerhaps) \
+#define SHAREMIND_TRIE_DECLARE(name,datatype,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _{ \
         struct name ## _ * children[255]; \
@@ -44,17 +45,35 @@
         datatype data; \
     }; \
     typedef struct name ## _ name; \
-    inlinePerhaps void name ## _init(name * const t) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy(name * const t) __attribute__ ((nonnull(1))); \
-    inlinePerhaps void name ## _destroy_with(name * const t, void (*destroyer)(datatype *)) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps datatype * name ## _get_or_insert(name * t, const char * key, bool * newValue) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps datatype * name ## _find(name * t, const char * key) __attribute__ ((nonnull(1, 2))); \
-    inlinePerhaps bool name ## _foreach(name * const t, bool (*f)(datatype *)) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps void name ## _init(name * const t) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1)), __VA_ARGS__)); \
+    inlinePerhaps void name ## _destroy(name * const t) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1)), __VA_ARGS__)); \
+    inlinePerhaps void name ## _destroy_with(name * const t, \
+                                             void (*destroyer)(datatype *)) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2)), \
+                            __VA_ARGS__)); \
+    inlinePerhaps datatype * name ## _get_or_insert(name * t, \
+                                                    const char * key, \
+                                                    bool * newValue) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2)), \
+                            __VA_ARGS__)); \
+    inlinePerhaps datatype * name ## _find(name * t, const char * key) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2)), \
+                            __VA_ARGS__)); \
+    inlinePerhaps bool name ## _foreach(name * const t, bool (*f)(datatype *)) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2)), \
+                            __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
-#define SHAREMIND_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps) \
+#define SHAREMIND_TRIE_DECLARE_FOREACH_WITH(name,datatype,withname,types,params,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _foreach_with_ ## withname (name * t, bool (*f)(datatype *, types), params) __attribute__ ((nonnull(1, 2))); \
+    inlinePerhaps bool name ## _foreach_with_ ## withname ( \
+            name * t, \
+            bool (*f)(datatype *, types), \
+            params) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2)), \
+                            __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_TRIE_DEFINE(name,datatype,mymalloc,myfree,inlinePerhaps) \

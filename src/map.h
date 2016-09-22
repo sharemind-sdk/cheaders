@@ -25,6 +25,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "apocalyptic_safety.h"
+#include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
 
@@ -154,7 +155,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 #define SHAREMIND_MAP_DECLARE_init(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _init(name * s) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_init(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -169,7 +170,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 #define SHAREMIND_MAP_DECLARE_destroy(name,inlinePerhaps,params,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _destroy(name * s params) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_destroy(name,inlinePerhaps,params,myfree,...) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -194,7 +195,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps name ## _value * name ## _get(name const * s, \
                                                 constkeytype key) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_get(name,inlinePerhaps,constkeytype,keyhash,keyequals,keyless) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -218,7 +219,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 #define SHAREMIND_MAP_DECLARE_at(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps name ## _value * name ## _at(name const * s, size_t index) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_at(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -241,7 +242,8 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 
 #define SHAREMIND_MAP_DECLARE_foreach_detail(prefix,name,params,...) \
     SHAREMIND_EXTERN_C_BEGIN \
-    prefix(name * s params) __attribute__ ((nonnull(1), __VA_ARGS__)); \
+    prefix(name * s params) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_foreach_detail(prefix,name,params,decls,doneResult,...) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -268,7 +270,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         inlinePerhaps bool name ## _foreach, \
         name, \
         SHAREMIND_COMMA bool (*f)(name ## _value *), \
-        SHAREMIND_COMMA nonnull(2), __VA_ARGS__)
+        SHAREMIND_COMMA SHAREMIND_NDEBUG_ONLY(nonnull(2),) __VA_ARGS__)
 #define SHAREMIND_MAP_DEFINE_foreach(name,inlinePerhaps) \
     SHAREMIND_MAP_DEFINE_foreach_detail( \
         inlinePerhaps bool name ## _foreach, \
@@ -283,7 +285,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         inlinePerhaps void name ## _foreachVoid, \
         name, \
         SHAREMIND_COMMA void (*f)(name ## _value *), \
-        SHAREMIND_COMMA nonnull(2), __VA_ARGS__)
+        SHAREMIND_COMMA SHAREMIND_NDEBUG_ONLY(nonnull(2),) __VA_ARGS__)
 #define SHAREMIND_MAP_DEFINE_foreachVoid(name,inlinePerhaps) \
     SHAREMIND_MAP_DEFINE_foreach_detail( \
         inlinePerhaps void name ## _foreachVoid, \
@@ -296,7 +298,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         inlinePerhaps bool name ## _foreachWith ## WithName, \
         name, \
         SHAREMIND_COMMA bool (*f)(name ## _value *) SHAREMIND_COMMA params, \
-        SHAREMIND_COMMA nonnull(2), __VA_ARGS__)
+        SHAREMIND_COMMA SHAREMIND_NDEBUG_ONLY(nonnull(2),) __VA_ARGS__)
 #define SHAREMIND_MAP_DEFINE_foreachWith(name,inlinePerhaps,WithName,params,...) \
     SHAREMIND_MAP_DEFINE_foreach_detail( \
         inlinePerhaps bool name ## _foreachWith ## WithName, \
@@ -311,7 +313,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         inlinePerhaps void name ## _foreachVoidWith ## WithName, \
         name, \
         SHAREMIND_COMMA void (*f)(name ## _value *) SHAREMIND_COMMA params, \
-        SHAREMIND_COMMA nonnull(2), __VA_ARGS__)
+        SHAREMIND_COMMA SHAREMIND_NDEBUG_ONLY(nonnull(2),) __VA_ARGS__)
 #define SHAREMIND_MAP_DEFINE_foreachVoidWith(name,inlinePerhaps,WithName,params,...) \
     SHAREMIND_MAP_DEFINE_foreach_detail( \
         inlinePerhaps void name ## _foreachVoidWith ## WithName, \
@@ -322,7 +324,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 #define SHAREMIND_MAP_DECLARE_insertHint(name,inlinePerhaps,constkeytype,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void * name ## _insertHint(name * s, constkeytype key) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_insertHint(name,inlinePerhaps,constkeytype,keyhash,keyequals,keyless) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -344,7 +346,8 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     inlinePerhaps void name ## _emplaceAtHint(name * s, \
                                               struct name ## _detail * detail, \
                                               void * const hint) \
-            __attribute__ ((nonnull(1,2,3), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1,2,3),) \
+                            __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_emplaceAtHint(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -367,7 +370,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     inlinePerhaps name ## _value * name ## _insertAtHint(name * s, \
                                                          constkeytype key, \
                                                          void * const hint) \
-            __attribute__ ((nonnull(1,3), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1,3),) __VA_ARGS__));\
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_insertAtHint(name,inlinePerhaps,constkeytype,keycopy,mymalloc,myfree) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -396,7 +399,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps name ## _value * name ## _insertNew(name * s, \
                                                       constkeytype key) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_insertNew(name,inlinePerhaps,constkeytype) \
     SHAREMIND_EXTERN_C_BEGIN \
@@ -414,7 +417,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 #define SHAREMIND_MAP_DECLARE_remove(name,inlinePerhaps,constkeytype,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _remove(name * s, constkeytype key) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_MAP_DEFINE_remove(name,inlinePerhaps,constkeytype,keyhash,keyequals,keyless,myfree,...) \
     SHAREMIND_EXTERN_C_BEGIN \

@@ -22,8 +22,10 @@
 
 #include "map.h"
 
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
+#include "DebugOnly.h"
 #include "extern_c.h"
 #include "fnv.h"
 #include "wrap.h"
@@ -141,7 +143,7 @@
 #define SHAREMIND_STRINGMAP_DECLARE_insertAtHint(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _keyCopy(char ** dest, const char * src) \
-        __attribute__ ((nonnull(1, 2), __VA_ARGS__)); \
+        __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1, 2),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END \
     SHAREMIND_MAP_DECLARE_insertAtHint(name, \
                                        inlinePerhaps, \
@@ -149,8 +151,11 @@
                                        __VA_ARGS__)
 #define SHAREMIND_STRINGMAP_DEFINE_insertAtHint(name,inlinePerhaps,mystrdup,mymalloc,myfree) \
     SHAREMIND_EXTERN_C_BEGIN \
-    inlinePerhaps bool name ## _keyCopy(char ** dest, const char * src) \
-    { return ((*dest) = mystrdup(src)); } \
+    inlinePerhaps bool name ## _keyCopy(char ** dest, const char * src) { \
+        assert(dest); \
+        assert(src); \
+        return ((*dest) = mystrdup(src)); \
+    } \
     SHAREMIND_EXTERN_C_END \
     SHAREMIND_MAP_DEFINE_insertAtHint(name, \
                                       inlinePerhaps, \

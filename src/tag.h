@@ -20,6 +20,7 @@
 #ifndef SHAREMIND_LIBMODAPI_TAG_H
 #define SHAREMIND_LIBMODAPI_TAG_H
 
+#include "DebugOnly.h"
 #include "extern_c.h"
 
 
@@ -44,25 +45,25 @@ typedef void (* SharemindTagDestructor)(void *);
 #define SHAREMIND_TAG_FUNCTIONS_DECLARE(ClassName,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void * ClassName ## _tag(const ClassName * c) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     inlinePerhaps void * ClassName ## _releaseTag(ClassName * c) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     inlinePerhaps void ClassName ## _destroyTag(ClassName * c) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     inlinePerhaps SharemindTagDestructor ClassName ## _tagDestructor( \
             const ClassName * c) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     inlinePerhaps void ClassName ## _setTagWithDestructor( \
             ClassName * c, \
             void * tag, \
             SharemindTagDestructor tagDestructor) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     inlinePerhaps void ClassName ## _setTag(ClassName * c, void * tag) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     inlinePerhaps void ClassName ## _setTagDestructor( \
             ClassName * c, \
             SharemindTagDestructor tagDestructor) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_TAG_FUNCTIONS_DEFINE(ClassName,inlinePerhaps) \

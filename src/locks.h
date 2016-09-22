@@ -22,6 +22,7 @@
 
 #include <assert.h>
 #include "abort.h"
+#include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
 #include "mutex.h"
@@ -48,9 +49,9 @@
 #define SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE_(CN,inlinePerhaps,f,FunName,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void CN ## _ ## f ## FunName(CN * c) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     inlinePerhaps void CN ## _ ## f ## Const ## FunName(CN const * c) \
-            __attribute__ ((nonnull(1), __VA_ARGS__)); \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
 #define SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE(CN,inlinePerhaps,FunName,...) \
     SHAREMIND_NAMED_LOCK_FUNCTIONS_DECLARE_(CN,inlinePerhaps,lock,FunName,SHAREMIND_WRAP(__VA_ARGS__)) \
