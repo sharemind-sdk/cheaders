@@ -170,15 +170,22 @@
 #define SHAREMIND_STRINGMAP_DEFINE_insertNew(name,inlinePerhaps) \
     SHAREMIND_MAP_DEFINE_insertNew(name,inlinePerhaps,const char *)
 
+#define SHAREMIND_STRINGMAP_DECLARE_take(name,inlinePerhaps,...) \
+    SHAREMIND_MAP_DECLARE_take(name,inlinePerhaps,const char *,__VA_ARGS__)
+#define SHAREMIND_STRINGMAP_DEFINE_take(name,inlinePerhaps) \
+    SHAREMIND_MAP_DEFINE_take(name, \
+                              inlinePerhaps, \
+                              const char *, \
+                              fnv_16a_str(key), \
+                              0 == strcmp, \
+                              0 > strcmp)
+
 #define SHAREMIND_STRINGMAP_DECLARE_remove(name,inlinePerhaps,...) \
     SHAREMIND_MAP_DECLARE_remove(name,inlinePerhaps,const char *,__VA_ARGS__)
 #define SHAREMIND_STRINGMAP_DEFINE_remove(name,inlinePerhaps,valuetype,myfree,...) \
     SHAREMIND_MAP_DEFINE_remove(name, \
                                 inlinePerhaps, \
                                 const char *, \
-                                fnv_16a_str(key), \
-                                0 == strcmp, \
-                                0 > strcmp, \
                                 myfree, \
                                 { \
                                    valuetype * const value = &v->value; \

@@ -142,13 +142,14 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         keytype key; \
         valuetype value; \
     } name ## _value; \
-    struct name ## _detail { \
+    struct name ## _detail_ { \
         name ## _value v; \
-        struct name ## _detail * next; \
+        struct name ## _detail_ * next; \
     }; \
+    typedef struct name ## _detail_ name ## _detail; \
     typedef struct { \
         size_t size; \
-        struct name ## _detail * d[65536u]; \
+        name ## _detail * d[65536u]; \
     } name; \
     SHAREMIND_EXTERN_C_END
 
@@ -178,7 +179,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         assert(s); \
         for (size_t i = 0u; i < 65536u; ++i) { \
             while (s->d[i]) { \
-                struct name ## _detail * next = s->d[i]->next; \
+                name ## _detail * next = s->d[i]->next; \
                 { \
                     name ## _value * const v = &s->d[i]->v; \
                     __VA_ARGS__ \
@@ -204,7 +205,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     { \
         assert(s); \
         uint16_t hash = (uint16_t) (keyhash); \
-        struct name ## _detail * l = s->d[hash]; \
+        name ## _detail * l = s->d[hash]; \
         while (l) { \
             if (keyequals(key, l->v.key)) \
                 return &l->v; \
@@ -227,7 +228,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         assert(s); \
         if (index < s->size) { \
             for (size_t i = 0u; i < 65536u; ++i) { \
-                struct name ## _detail * detail = s->d[i]; \
+                name ## _detail * detail = s->d[i]; \
                 while (detail) { \
                     if (!index) \
                         return &detail->v; \
@@ -251,7 +252,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         assert(s); \
         decls \
         for (size_t i = 0u; i < 65536u; ++i) { \
-            struct name ## _detail * detail = s->d[i]; \
+            name ## _detail * detail = s->d[i]; \
             while (detail) { \
                 { \
                     name ## _value * const v = &detail->v; \
@@ -331,7 +332,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     inlinePerhaps void * name ## _insertHint(name * s, constkeytype key) { \
         assert(s); \
         SHAREMIND_SIZET_NUM_OBJECTS_GUARD(assert(s->size < SIZE_MAX);) \
-        struct name ## _detail ** l = &s->d[(uint16_t) (keyhash)]; \
+        name ## _detail ** l = &s->d[(uint16_t) (keyhash)]; \
         while ((*l) && !(keyless(key, (*l)->v.key))) { \
             if (keyequals(key, (*l)->v.key)) \
                 return NULL; \
@@ -344,7 +345,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 #define SHAREMIND_MAP_DECLARE_emplaceAtHint(name,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _emplaceAtHint(name * s, \
-                                              struct name ## _detail * detail, \
+                                              name ## _detail * detail, \
                                               void * const hint) \
             __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1,2,3),) \
                             __VA_ARGS__)); \
@@ -352,13 +353,13 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
 #define SHAREMIND_MAP_DEFINE_emplaceAtHint(name,inlinePerhaps) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps void name ## _emplaceAtHint(name * s, \
-                                              struct name ## _detail * detail, \
+                                              name ## _detail * detail, \
                                               void * const hint) \
     { \
         assert(s); \
         assert(detail); \
         assert(hint); \
-        struct name ## _detail ** l = (struct name ## _detail **) hint; \
+        name ## _detail ** l = (name ## _detail **) hint; \
         detail->next = (*l); \
         (*l) = detail; \
         ++(s->size); \
@@ -381,9 +382,9 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         assert(s); \
         assert(hint); \
         SHAREMIND_SIZET_NUM_OBJECTS_GUARD(assert(s->size < SIZE_MAX);) \
-        struct name ## _detail * newDetail = \
-                SHAREMIND_MAP_ALLOC_CAST(struct name ## _detail *) \
-                        mymalloc(sizeof(struct name ## _detail)); \
+        name ## _detail * newDetail = \
+                SHAREMIND_MAP_ALLOC_CAST(name ## _detail *) \
+                        mymalloc(sizeof(name ## _detail)); \
         if (!newDetail) \
             return NULL; \
         if (!keycopy(&newDetail->v.key, key)) { \
@@ -414,36 +415,52 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
     } \
     SHAREMIND_EXTERN_C_END
 
+#define SHAREMIND_MAP_DECLARE_take(name,inlinePerhaps,constkeytype,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps name ## _detail * name ## _take(name * s, constkeytype key) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_MAP_DEFINE_take(name,inlinePerhaps,constkeytype,keyhash,keyequals,keyless) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps name ## _detail * name ## _take(name * s, constkeytype key) { \
+        assert(s); \
+        uint16_t hash = (uint16_t) (keyhash); \
+        name ## _detail ** prevPtr = &s->d[hash]; \
+        name ## _detail * l = *prevPtr; \
+        while (l) { \
+            if (keyequals(key, l->v.key)) { \
+                *prevPtr = l->next; \
+                --(s->size); \
+                return l; \
+            } \
+            if (keyless(key, l->v.key)) \
+                return NULL; \
+            prevPtr = &l->next; \
+            l = *prevPtr; \
+        } \
+        return NULL; \
+    } \
+    SHAREMIND_EXTERN_C_END
+
 #define SHAREMIND_MAP_DECLARE_remove(name,inlinePerhaps,constkeytype,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _remove(name * s, constkeytype key) \
             __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
     SHAREMIND_EXTERN_C_END
-#define SHAREMIND_MAP_DEFINE_remove(name,inlinePerhaps,constkeytype,keyhash,keyequals,keyless,myfree,...) \
+#define SHAREMIND_MAP_DEFINE_remove(name,inlinePerhaps,constkeytype,myfree,...)\
     SHAREMIND_EXTERN_C_BEGIN \
     inlinePerhaps bool name ## _remove(name * s, constkeytype key) { \
         assert(s); \
-        uint16_t hash = (uint16_t) (keyhash); \
-        struct name ## _detail ** prevPtr = &s->d[hash]; \
-        struct name ## _detail * l = *prevPtr; \
-        while (l) { \
-            if (keyequals(key, l->v.key)) { \
-                *prevPtr = l->next; \
-                --(s->size); \
-                { \
-                    name ## _value * const v = &l->v; \
-                    __VA_ARGS__ \
-                    (void) v; \
-                } \
-                myfree(l); \
-                return true; \
-            } \
-            if (keyless(key, l->v.key)) \
-                return false; \
-            prevPtr = &l->next; \
-            l = *prevPtr; \
+        name ## _detail * const d = name ## _take(s, key); \
+        if (!d) \
+            return false;  \
+        { \
+            name ## _value * const v = &d->v; \
+            __VA_ARGS__ \
+            (void) v; \
         } \
-        return false; \
+        myfree(d); \
+        return true; \
     } \
     SHAREMIND_EXTERN_C_END
 
