@@ -38,8 +38,7 @@ ADD_CUSTOM_TARGET("include_SharemindCHeaders_headers_in_IDE"
                   SOURCES ${SHAREMIND_CHEADERS_HEADERS})
 
 INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-        DESTINATION "include/sharemind"
-        COMPONENT "dev")
+        DESTINATION "include/sharemind")
 
 # Install cmake files:
 FILE(GLOB_RECURSE sharemind_cheaders_in_files
@@ -61,22 +60,20 @@ CONFIGURE_FILE(
 INSTALL(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfig.cmake"
           "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfigVersion.cmake"
-    DESTINATION "lib/SharemindCHeaders"
-    COMPONENT "dev")
+    DESTINATION "lib/SharemindCHeaders")
 
 
 # Packaging:
 SET(CPACK_PACKAGE_VENDOR "Cybernetica AS")
 SET(CPACK_PACKAGE_CONTACT "Sharemind packaging <sharemind-packaging@cyber.ee>")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C development headers for Sharemind")
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_DEBIAN_PACKAGE_NAME "libsharemind-cheaders-dev")
 SET(CPACK_DEBIAN_PACKAGE_RELEASE "cyber1")
 SET(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
-SET(CPACK_DEB_COMPONENT_INSTALL "ON")
-SET(CPACK_COMPONENT_dev_DESCRIPTION "C development headers for Sharemind")
-SET(CPACK_DEBIAN_dev_PACKAGE_DEPENDS
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS
     "libboost-dev (>= 1.5.5), libc6-dev (>= 2.19), libgcc-4.8-dev | libgcc-4.9-dev | libgcc-5-dev | libgcc-6-dev | libgcc-7-dev")
-SET(CPACK_DEBIAN_dev_PACKAGE_SECTION "libdevel")
-SET(CPACK_DEBIAN_dev_PACKAGE_ARCHITECTURE "any")
+SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
+SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "any")
 SET(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
 INCLUDE(CPack)
