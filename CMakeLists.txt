@@ -74,6 +74,5 @@ SET(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS
     "libboost-dev (>= 1.5.5), libc6-dev (>= 2.19), libgcc-4.8-dev | libgcc-4.9-dev | libgcc-5-dev | libgcc-6-dev | libgcc-7-dev")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
-SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "any")
 SET(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
 INCLUDE(CPack)
