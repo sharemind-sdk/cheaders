@@ -28,6 +28,7 @@
 #include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
+#include "null.h"
 
 
 /**
@@ -164,7 +165,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         assert(s); \
         s->size = 0u; \
         for (size_t i = 0u; i < 65536u; ++i) \
-            s->d[i] = NULL; \
+            s->d[i] = SHAREMIND_NULL; \
     } \
     SHAREMIND_EXTERN_C_END
 
@@ -210,10 +211,10 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
             if (keyequals(key, l->v.key)) \
                 return &l->v; \
             if (keyless(key, l->v.key)) \
-                return NULL; \
+                return SHAREMIND_NULL; \
             l = l->next; \
         } \
-        return NULL; \
+        return SHAREMIND_NULL; \
     } \
     SHAREMIND_EXTERN_C_END
 
@@ -237,7 +238,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
                 } \
             } \
         } \
-        return NULL; \
+        return SHAREMIND_NULL; \
     } \
     SHAREMIND_EXTERN_C_END
 
@@ -335,7 +336,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         name ## _detail ** l = &s->d[(uint16_t) (keyhash)]; \
         while ((*l) && !(keyless(key, (*l)->v.key))) { \
             if (keyequals(key, (*l)->v.key)) \
-                return NULL; \
+                return SHAREMIND_NULL; \
             l = &(*l)->next; \
         } \
         return l; \
@@ -386,10 +387,10 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
                 SHAREMIND_MAP_ALLOC_CAST(name ## _detail *) \
                         mymalloc(sizeof(name ## _detail)); \
         if (!newDetail) \
-            return NULL; \
+            return SHAREMIND_NULL; \
         if (!keycopy(&newDetail->v.key, key)) { \
             myfree(newDetail); \
-            return NULL; \
+            return SHAREMIND_NULL; \
         } \
         name ## _emplaceAtHint(s, newDetail, hint); \
         return &newDetail->v; \
@@ -434,11 +435,11 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
                 return l; \
             } \
             if (keyless(key, l->v.key)) \
-                return NULL; \
+                return SHAREMIND_NULL; \
             prevPtr = &l->next; \
             l = *prevPtr; \
         } \
-        return NULL; \
+        return SHAREMIND_NULL; \
     } \
     SHAREMIND_EXTERN_C_END
 

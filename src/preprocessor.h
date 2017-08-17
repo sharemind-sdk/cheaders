@@ -30,6 +30,7 @@
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <stddef.h>
+#include "null.h"
 #include "static_assert.h"
 
 
@@ -125,7 +126,7 @@
         switch ((int) v) { \
             BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_ELEM,(prefix)(suffix),elems) \
             default: \
-                return NULL; \
+                return SHAREMIND_NULL; \
         } \
     }
 #define SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_ELEM(unused,ps,e) \
@@ -177,7 +178,7 @@
         switch ((int) v) { \
             BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_ELEM,(prefix)(suffix),elems) \
             default: \
-                return NULL; \
+                return SHAREMIND_NULL; \
         } \
     }
 #define SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_ELEM(unused,ps,e) \

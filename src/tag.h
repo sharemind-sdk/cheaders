@@ -22,6 +22,7 @@
 
 #include "DebugOnly.h"
 #include "extern_c.h"
+#include "null.h"
 
 
 typedef void (* SharemindTagDestructor)(void *);
@@ -32,8 +33,8 @@ typedef void (* SharemindTagDestructor)(void *);
 
 #define SHAREMIND_TAG_INIT(c) \
     do { \
-        (c)->tag = NULL; \
-        (c)->tagDestructor = NULL; \
+        (c)->tag = SHAREMIND_NULL; \
+        (c)->tagDestructor = SHAREMIND_NULL; \
     } while ((0))
 
 #define SHAREMIND_TAG_DESTROY(c) \
@@ -79,7 +80,7 @@ typedef void (* SharemindTagDestructor)(void *);
         assert(c); \
         ClassName ## _lock(c); \
         void * const tag = c->tag; \
-        c->tag = NULL; \
+        c->tag = SHAREMIND_NULL; \
         ClassName ## _unlock(c); \
         return tag; \
     } \
@@ -87,7 +88,7 @@ typedef void (* SharemindTagDestructor)(void *);
         assert(c); \
         ClassName ## _lock(c); \
         SHAREMIND_TAG_DESTROY(c); \
-        c->tag = NULL; \
+        c->tag = SHAREMIND_NULL; \
         ClassName ## _unlock(c); \
     } \
     inlinePerhaps SharemindTagDestructor ClassName ## _tagDestructor( \

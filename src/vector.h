@@ -27,6 +27,7 @@
 #include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
+#include "null.h"
 #include "wrap.h"
 
 
@@ -79,7 +80,7 @@
     inlinePerhaps void name ## _init(name * const r) { \
         assert(r); \
         r->size = 0u; \
-        r->data = NULL; \
+        r->data = SHAREMIND_NULL; \
     } \
     SHAREMIND_EXTERN_C_END
 
@@ -189,9 +190,9 @@
         const size_t oldSize = r->size; \
         if (unlikely(SIZE_MAX - sizeof(name ## _value_type) * oldSize \
                      < sizeof(name ## _value_type))) \
-            return NULL; \
+            return SHAREMIND_NULL; \
         if (unlikely(!name ## _force_resize(r, oldSize + 1u))) \
-            return NULL; \
+            return SHAREMIND_NULL; \
         return &r->data[oldSize]; \
     } \
     SHAREMIND_EXTERN_C_END
@@ -284,7 +285,7 @@
     { \
         assert(r); \
         if (unlikely(i >= r->size)) \
-            return NULL; \
+            return SHAREMIND_NULL; \
         return &r->data[i]; \
     } \
     SHAREMIND_EXTERN_C_END

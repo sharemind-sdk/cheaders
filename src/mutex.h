@@ -24,6 +24,7 @@
 #include <stddef.h>
 #include "extern_c.h"
 #include "likely.h"
+#include "null.h"
 
 
 SHAREMIND_EXTERN_C_BEGIN
@@ -33,7 +34,7 @@ typedef struct SharemindMutex_ {
 } SharemindMutex;
 
 inline int SharemindMutex_init(SharemindMutex * mutex)
-{ return pthread_mutex_init(&mutex->inner, NULL); }
+{ return pthread_mutex_init(&mutex->inner, SHAREMIND_NULL); }
 
 inline int SharemindMutex_destroy(SharemindMutex * mutex)
 { return pthread_mutex_destroy(&mutex->inner); }

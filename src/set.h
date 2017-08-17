@@ -27,6 +27,7 @@
 #include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
+#include "null.h"
 
 
 /**
@@ -174,7 +175,7 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         assert(s); \
         s->size = 0u; \
         for (size_t i = 0u; i < 65536u; i++) \
-            s->d[i] = NULL; \
+            s->d[i] = SHAREMIND_NULL; \
     } \
     inlinePerhaps void name ## _destroy(name * s) { \
         assert(s); \
@@ -211,7 +212,7 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
                 item = next; \
             } \
         } \
-        return NULL; \
+        return SHAREMIND_NULL; \
     } \
     inlinePerhaps bool name ## _contains(const name * s, keytype const key) { \
         assert(s); \
@@ -255,11 +256,11 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
     inlinePerhaps void * name ## _insertHint(name * s, keytype const key) { \
         assert(s); \
         if (s->size == SIZE_MAX) \
-            return NULL; \
+            return SHAREMIND_NULL; \
         struct name ## _item ** l = &s->d[(uint16_t) (keyhashfunction)]; \
         while ((*l) && !(keylessthan(key, (*l)->key))) { \
             if (keyequals(key, (*l)->key)) \
-                return NULL; \
+                return SHAREMIND_NULL; \
             l = &(*l)->next; \
         } \
         return l; \
@@ -273,10 +274,10 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         struct name ## _item * newItem = \
                 SHAREMIND_SET_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
         if (!newItem) \
-            return NULL; \
+            return SHAREMIND_NULL; \
         if (!keycopy(&newItem->key, key)) { \
             myfree(newItem); \
-            return NULL; \
+            return SHAREMIND_NULL; \
         } \
         struct name ## _item ** l = (struct name ## _item **) hint; \
         newItem->next = (*l); \

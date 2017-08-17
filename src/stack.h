@@ -24,6 +24,7 @@
 #include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
+#include "null.h"
 
 
 /**
@@ -78,7 +79,7 @@
     }; \
     inlinePerhaps void name ## _init (name * s) { \
         assert(s); \
-        s->d = NULL; \
+        s->d = SHAREMIND_NULL; \
     } \
     inlinePerhaps void name ## _destroy (name * s) { \
         assert(s); \
@@ -114,7 +115,7 @@
         assert(s); \
         struct name ## _item * const n = SHAREMIND_STACK_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(*n)); \
         if (unlikely(!n)) \
-            return NULL; \
+            return SHAREMIND_NULL; \
         n->prev = s->d; \
         s->d = n; \
         return &n->value; \
@@ -134,7 +135,7 @@
     } \
     inlinePerhaps bool name ## _empty (name * s) { \
         assert(s); \
-        return s->d == NULL; \
+        return s->d == SHAREMIND_NULL; \
     } \
     inlinePerhaps void name ## _foreach (name * s, void (*f)(datatype *)) { \
         assert(s); \

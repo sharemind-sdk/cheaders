@@ -24,6 +24,7 @@
 #include "DebugOnly.h"
 #include "extern_c.h"
 #include "likely.h"
+#include "null.h"
 #include "wrap.h"
 
 
@@ -34,7 +35,7 @@
 #define SHAREMIND_LASTERROR_INIT(className,okCode) \
     do { \
         (className)->lastError = (okCode); \
-        (className)->lastErrorStaticString = NULL; \
+        (className)->lastErrorStaticString = SHAREMIND_NULL; \
     } while((0))
 
 #define SHAREMIND_LASTERROR_PUBLIC_FUNCTIONS_DECLARE(ClassName,inlinePerhaps,codeType,...) \
@@ -64,7 +65,7 @@
         const char * r; \
         ClassName ## _lockConst(c); \
         if (unlikely(c->lastError == (okCode))) { \
-            r = NULL; \
+            r = SHAREMIND_NULL; \
         } else { \
             assert(c->lastErrorStaticString); \
             r = c->lastErrorStaticString; \
