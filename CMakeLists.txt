@@ -17,18 +17,16 @@
 # For further information, please contact us at sharemind@cyber.ee.
 #
 
-CMAKE_MINIMUM_REQUIRED(VERSION "2.8.12")
-PROJECT(SHAREMIND_CHEADERS "C")
-
-SET(CPACK_PACKAGE_VERSION_MAJOR "0")
-SET(CPACK_PACKAGE_VERSION_MINOR "1")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CHEADERS_VERSION
-    "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}.0")
-SET(CHEADERS_COMPAT_VERSION "0.1.0.0")
+CMAKE_MINIMUM_REQUIRED(VERSION "3.0.0")
+PROJECT(SharemindCHeaders VERSION "0.1.0" LANGUAGES "C")
 
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
+
+FIND_PACKAGE(SharemindCMakeHelpers REQUIRED)
+
+SharemindSetProjectVersion()
+SET(SharemindCHeaders_COMPAT_VERSION "${SharemindCHeaders_VERSION}")
 
 FIND_PACKAGE(Boost REQUIRED)
 
@@ -38,41 +36,29 @@ ADD_CUSTOM_TARGET("include_SharemindCHeaders_headers_in_IDE"
                   SOURCES ${SHAREMIND_CHEADERS_HEADERS})
 
 INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-        DESTINATION "include/sharemind")
+        DESTINATION "include/sharemind"
+        COMPONENT "dev")
+
 
 # Install cmake files:
-FILE(GLOB_RECURSE sharemind_cheaders_in_files
-     "${CMAKE_CURRENT_SOURCE_DIR}/*.in")
-ADD_CUSTOM_TARGET("include_sharemind_cheaders_in_files_in_IDE"
-                  SOURCES ${sharemind_cheaders_in_files})
-SET(CHEADERS_INSTALL_DEFINITIONS "-pthread")
-SET(CHEADERS_INSTALL_LINK_LIBRARIES "-lpthread")
-SET(CHEADERS_INSTALL_INCLUDE_DIRS
+SET(SharemindCHeaders_INSTALL_DEFINITIONS "-pthread")
+SET(SharemindCHeaders_INSTALL_LINK_LIBRARIES "-lpthread")
+SET(SharemindCHeaders_INSTALL_INCLUDE_DIRS
     ${Boost_INCLUDE_DIRS}
     "${CMAKE_INSTALL_PREFIX}/include"
 )
-CONFIGURE_FILE(
-    "${CMAKE_CURRENT_SOURCE_DIR}/SharemindCHeadersConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfig.cmake" @ONLY)
-CONFIGURE_FILE(
-    "${CMAKE_CURRENT_SOURCE_DIR}/SharemindCHeadersConfigVersion.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfigVersion.cmake" @ONLY)
-INSTALL(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfig.cmake"
-          "${CMAKE_CURRENT_BINARY_DIR}/SharemindCHeadersConfigVersion.cmake"
-    DESTINATION "lib/SharemindCHeaders")
+SharemindUseCMakeFindFiles()
 
 
 # Packaging:
-SET(CPACK_PACKAGE_VENDOR "Cybernetica AS")
-SET(CPACK_PACKAGE_CONTACT "Sharemind packaging <sharemind-packaging@cyber.ee>")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C development headers for Sharemind")
-SET(CPACK_GENERATOR "DEB")
-SET(CPACK_DEBIAN_PACKAGE_NAME "libsharemind-cheaders-dev")
-SET(CPACK_DEBIAN_PACKAGE_RELEASE "cyber1")
-SET(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "libboost-dev (>= 1.5.5), libc6-dev (>= 2.19), libgcc-4.8-dev | libgcc-4.9-dev | libgcc-5-dev | libgcc-6-dev | libgcc-7-dev")
-SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
-SET(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
-INCLUDE(CPack)
+SharemindSetupPackaging()
+SharemindAddComponentPackage("dev"
+    NAME "libsharemind-cheaders-dev"
+    DESCRIPTION "C development headers for Sharemind"
+    DEB_SECTION "libdevel"
+    DEB_DEPENDS
+        "libboost-dev (>= 1.5.5)"
+        "libc6-dev (>= 2.19)"
+        "libgcc-4.8-dev | libgcc-4.9-dev | libgcc-5-dev | libgcc-6-dev | libgcc-7-dev"
+)
+SharemindPackagingFinalize()
