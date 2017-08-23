@@ -36,12 +36,6 @@
         specify linking constraints etc).
 */
 
-#ifdef __cplusplus
-#define SHAREMIND_MAP_ALLOC_CAST(type) ((type))
-#else
-#define SHAREMIND_MAP_ALLOC_CAST(type)
-#endif
-
 #define SHAREMIND_MAP_KEY_INIT_DECLARE(name,keytype) \
     inline bool name(keytype * const dest)
 #define SHAREMIND_MAP_KEY_INIT_DEFINE(name,keytype) \
@@ -384,8 +378,7 @@ SHAREMIND_MAP_KEYOPS_DECLARE_DEFINE_(voidptr,void *)
         assert(hint); \
         SHAREMIND_SIZET_NUM_OBJECTS_GUARD(assert(s->size < SIZE_MAX);) \
         name ## _detail * newDetail = \
-                SHAREMIND_MAP_ALLOC_CAST(name ## _detail *) \
-                        mymalloc(sizeof(name ## _detail)); \
+                (name ## _detail *) mymalloc(sizeof(name ## _detail)); \
         if (!newDetail) \
             return SHAREMIND_NULL; \
         if (!keycopy(&newDetail->v.key, key)) { \

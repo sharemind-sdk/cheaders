@@ -35,12 +35,6 @@
         specify linking constraints etc).
 */
 
-#ifdef __cplusplus
-#define SHAREMIND_SET_ALLOC_CAST(type) ((type))
-#else
-#define SHAREMIND_SET_ALLOC_CAST(type)
-#endif
-
 #define SHAREMIND_SET_KEYFREE_REGULAR(unused)
 #define SHAREMIND_SET_KEYCOPY_REGULAR(pDest,src) ((*(pDest)) = (src), true)
 
@@ -272,7 +266,8 @@ SHAREMIND_SET_KEY_COMPARATORS_DEFINE_(voidptr,void *)
         assert(s); \
         assert(hint); \
         struct name ## _item * newItem = \
-                SHAREMIND_SET_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(struct name ## _item)); \
+                (struct name ## _item *) \
+                    mymalloc(sizeof(struct name ## _item)); \
         if (!newItem) \
             return SHAREMIND_NULL; \
         if (!keycopy(&newItem->key, key)) { \

@@ -32,12 +32,6 @@
         specify linking constraints etc).
 */
 
-#ifdef __cplusplus
-#define SHAREMIND_STACK_ALLOC_CAST(type) ((type))
-#else
-#define SHAREMIND_STACK_ALLOC_CAST(type)
-#endif
-
 #define SHAREMIND_STACK_DECLARE(name,datatype,extradata,inlinePerhaps,...) \
     SHAREMIND_EXTERN_C_BEGIN \
     struct name ## _item; \
@@ -113,7 +107,8 @@
     } \
     inlinePerhaps datatype * name ## _push (name * s) { \
         assert(s); \
-        struct name ## _item * const n = SHAREMIND_STACK_ALLOC_CAST(struct name ## _item *) mymalloc(sizeof(*n)); \
+        struct name ## _item * const n = \
+                (struct name ## _item *) mymalloc(sizeof(*n)); \
         if (unlikely(!n)) \
             return SHAREMIND_NULL; \
         n->prev = s->d; \

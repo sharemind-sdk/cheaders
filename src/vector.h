@@ -31,12 +31,6 @@
 #include "wrap.h"
 
 
-#ifdef __cplusplus
-#define SHAREMIND_VECTOR_ALLOC_CAST(type) (type)
-#else
-#define SHAREMIND_VECTOR_ALLOC_CAST(type)
-#endif
-
 #define SHAREMIND_VECTOR_DECLARE_BODY(name,datatype) \
     SHAREMIND_EXTERN_C_BEGIN \
     typedef datatype name ## _value_type; \
@@ -133,9 +127,8 @@
     { \
         assert(r); \
         name ## _value_type * const d = \
-                SHAREMIND_VECTOR_ALLOC_CAST(name ## _value_type *) myrealloc( \
-                        r->data, \
-                        newSize * sizeof(*d)); \
+                (name ## _value_type *) myrealloc(r->data, \
+                                                  newSize * sizeof(*d)); \
         if (unlikely(!d && newSize != 0u)) \
             return false; \
         r->data = d; \
