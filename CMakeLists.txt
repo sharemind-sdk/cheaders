@@ -26,7 +26,6 @@ INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 FIND_PACKAGE(SharemindCMakeHelpers REQUIRED)
 
 SharemindSetProjectVersion()
-SET(SharemindCHeaders_COMPAT_VERSION "${SharemindCHeaders_VERSION}")
 
 FIND_PACKAGE(Boost REQUIRED)
 
@@ -41,13 +40,15 @@ INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
 
 
 # Install cmake files:
-SET(SharemindCHeaders_INSTALL_DEFINITIONS "-pthread")
-SET(SharemindCHeaders_INSTALL_LINK_LIBRARIES "-lpthread")
-SET(SharemindCHeaders_INSTALL_INCLUDE_DIRS
-    ${Boost_INCLUDE_DIRS}
-    "${CMAKE_INSTALL_PREFIX}/include"
+SharemindCreateCMakeFindFiles(
+    DEFINITIONS
+        "-pthread"
+    LIBRARIES
+        "-lpthread"
+    INCLUDE_DIRS
+        "${CMAKE_INSTALL_PREFIX}/include"
+        ${Boost_INCLUDE_DIRS}
 )
-SharemindUseCMakeFindFiles()
 
 
 # Packaging:
