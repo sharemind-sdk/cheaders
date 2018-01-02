@@ -38,20 +38,10 @@
 
 #elif defined(__FreeBSD__) && __FreeBSD__
 
-#ifndef _BSD_SOURCE
-#define _BSD_SOURCE
-#endif
-
 #include <sys/endian.h>
 
 #else
 
-#ifndef _DEFAULT_SOURCE
-#define _DEFAULT_SOURCE
-#endif
-#ifndef _BSD_SOURCE
-#define _BSD_SOURCE
-#endif
 #include <endian.h>
 
 #endif

@@ -43,6 +43,8 @@ INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
 SharemindCreateCMakeFindFiles(
     DEFINITIONS
         "-pthread"
+        "-D_BSD_SOURCE"
+        "-D_DEFAULT_SOURCE"
     LIBRARIES
         "-lpthread"
     INCLUDE_DIRS
