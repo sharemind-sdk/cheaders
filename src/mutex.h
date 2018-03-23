@@ -22,6 +22,7 @@
 
 #include <pthread.h>
 #include <stddef.h>
+#include "casts.h"
 #include "extern_c.h"
 #include "likely.h"
 #include "null.h"
@@ -51,16 +52,16 @@ inline int SharemindMutex_trylock(SharemindMutex * mutex)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 inline int SharemindMutex_lock_const(
-        const SharemindMutex * mutex)
-{ return SharemindMutex_lock((SharemindMutex *) mutex); }
+        SharemindMutex const * mutex)
+{ return SharemindMutex_lock(SHAREMIND_CONST_CAST(SharemindMutex *)(mutex)); }
 
 inline int SharemindMutex_unlock_const(
-        const SharemindMutex * mutex)
-{ return SharemindMutex_unlock((SharemindMutex *) mutex); }
+        SharemindMutex const * mutex)
+{ return SharemindMutex_unlock(SHAREMIND_CONST_CAST(SharemindMutex *)(mutex)); }
 
 inline int SharemindMutex_trylock_const(
-        const SharemindMutex * mutex)
-{ return SharemindMutex_trylock((SharemindMutex *) mutex); }
+        SharemindMutex const * mutex)
+{ return SharemindMutex_trylock(SHAREMIND_CONST_CAST(SharemindMutex *)(mutex));}
 #pragma GCC diagnostic pop
 
 SHAREMIND_EXTERN_C_END
