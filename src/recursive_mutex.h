@@ -21,6 +21,7 @@
 #define SHAREMIND_RECURSIVE_MUTEX_H
 
 #include <pthread.h>
+#include "casts.h"
 #include "extern_c.h"
 #include "likely.h"
 
@@ -59,16 +60,25 @@ inline int SharemindRecursiveMutex_trylock(SharemindRecursiveMutex * mutex)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 inline int SharemindRecursiveMutex_lock_const(
-        const SharemindRecursiveMutex * mutex)
-{ return SharemindRecursiveMutex_lock((SharemindRecursiveMutex *) mutex); }
+        SharemindRecursiveMutex const * mutex)
+{
+    return SharemindRecursiveMutex_lock(
+                SHAREMIND_CONST_CAST(SharemindRecursiveMutex *)(mutex));
+}
 
 inline int SharemindRecursiveMutex_unlock_const(
-        const SharemindRecursiveMutex * mutex)
-{ return SharemindRecursiveMutex_unlock((SharemindRecursiveMutex *) mutex); }
+        SharemindRecursiveMutex const * mutex)
+{
+    return SharemindRecursiveMutex_unlock(
+                SHAREMIND_CONST_CAST(SharemindRecursiveMutex *)(mutex));
+}
 
 inline int SharemindRecursiveMutex_trylock_const(
-        const SharemindRecursiveMutex * mutex)
-{ return SharemindRecursiveMutex_trylock((SharemindRecursiveMutex *) mutex); }
+        SharemindRecursiveMutex const * mutex)
+{
+    return SharemindRecursiveMutex_trylock(
+                SHAREMIND_CONST_CAST(SharemindRecursiveMutex *)(mutex));
+}
 #pragma GCC diagnostic pop
 
 SHAREMIND_EXTERN_C_END
