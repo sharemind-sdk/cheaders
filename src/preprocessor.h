@@ -30,6 +30,7 @@
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <stddef.h>
+#include "casts.h"
 #include "null.h"
 #include "static_assert.h"
 
@@ -51,21 +52,21 @@
  * Make little-endian representations of big-endian input.
  */
 #define SHAREMIND_MAKE_UINT16_LE(b0,b1) \
-     (((uint16_t)(b0) <<  8) | (uint16_t)(b1))
+     ((SHAREMIND_STATIC_CAST(uint16_t)(b0) <<  8) | SHAREMIND_STATIC_CAST(uint16_t)(b1))
 #define SHAREMIND_MAKE_UINT32_LE(b0,b1,b2,b3) \
-    ((((uint32_t) SHAREMIND_MAKE_UINT16_LE(b0,b1)) << 16) | ((uint32_t) SHAREMIND_MAKE_UINT16_LE(b2,b3)))
+    (((SHAREMIND_STATIC_CAST(uint32_t)(SHAREMIND_MAKE_UINT16_LE(b0,b1))) << 16) | (SHAREMIND_STATIC_CAST(uint32_t)(SHAREMIND_MAKE_UINT16_LE(b2,b3))))
 #define SHAREMIND_MAKE_UINT64_LE(b0,b1,b2,b3,b4,b5,b6,b7) \
-    ((((uint64_t) SHAREMIND_MAKE_UINT32_LE(b0,b1,b2,b3)) << 32) | ((uint64_t) SHAREMIND_MAKE_UINT32_LE(b4,b5,b6,b7)))
+    (((SHAREMIND_STATIC_CAST(uint64_t)(SHAREMIND_MAKE_UINT32_LE(b0,b1,b2,b3))) << 32) | (SHAREMIND_STATIC_CAST(uint64_t)(SHAREMIND_MAKE_UINT32_LE(b4,b5,b6,b7))))
 
 /*
  * Make big-endian representations of big-endian input.
  */
 #define SHAREMIND_MAKE_UINT16_BE(b0,b1) \
-     (((uint16_t)(b1) <<  8) | (uint16_t)(b0))
+     ((SHAREMIND_STATIC_CAST(uint16_t)(b1) <<  8) | SHAREMIND_STATIC_CAST(uint16_t)(b0))
 #define SHAREMIND_MAKE_UINT32_BE(b0,b1,b2,b3) \
-    ((((uint32_t) SHAREMIND_MAKE_UINT16_BE(b3,b2)) << 16) | ((uint32_t) SHAREMIND_MAKE_UINT16_BE(b1,b0)))
+    (((SHAREMIND_STATIC_CAST(uint32_t)(SHAREMIND_MAKE_UINT16_BE(b3,b2))) << 16) | (SHAREMIND_STATIC_CAST(uint32_t)(SHAREMIND_MAKE_UINT16_BE(b1,b0))))
 #define SHAREMIND_MAKE_UINT64_BE(b0,b1,b2,b3,b4,b5,b6,b7) \
-    ((((uint64_t) SHAREMIND_MAKE_UINT32_BE(b5,b4,b7,b6)) << 32) | ((uint64_t) SHAREMIND_MAKE_UINT32_BE(b1,b0,b3,b2)))
+    (((SHAREMIND_STATIC_CAST(uint64_t)(SHAREMIND_MAKE_UINT32_BE(b5,b4,b7,b6))) << 32) | (SHAREMIND_STATIC_CAST(uint64_t)(SHAREMIND_MAKE_UINT32_BE(b1,b0,b3,b2))))
 
 /**
  * \brief Defines a simple enum.
@@ -123,7 +124,7 @@
 #define SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_CUSTOMNAME(customName,enumName,elems,prefix,suffix) \
     const char * customName(enumName v) { \
         SHAREMIND_STATIC_ASSERT(sizeof(enumName) <= sizeof(int)); \
-        switch ((int) v) { \
+        switch (SHAREMIND_STATIC_CAST(int)(v)) { \
             BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_DEFINE_CUSTOM_TOSTRING_ELEM,(prefix)(suffix),elems) \
             default: \
                 return SHAREMIND_NULL; \
@@ -175,7 +176,7 @@
 #define SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_CUSTOMNAME(customName,enumName,elems,prefix,suffix) \
     const char * customName(enumName v) { \
         SHAREMIND_STATIC_ASSERT(sizeof(enumName) <= sizeof(int)); \
-        switch ((int) v) { \
+        switch (SHAREMIND_STATIC_CAST(int)(v)) { \
             BOOST_PP_SEQ_FOR_EACH(SHAREMIND_ENUM_CUSTOM_DEFINE_CUSTOM_TOSTRING_ELEM,(prefix)(suffix),elems) \
             default: \
                 return SHAREMIND_NULL; \
