@@ -21,11 +21,9 @@
 #define SHAREMIND_ALIGNTOCACHELINE_H
 
 #include "CacheLineSize.h"
-#include "compiler-support/GccVersion.h"
 
 
-#if defined(__cplusplus) && (__cplusplus >= 201103L) \
-    && (!defined(SHAREMIND_GCC_VERSION) || SHAREMIND_GCC_VERSION >= 40800)
+#if defined(__cplusplus) && (__cplusplus >= 201103L)
     #define SHAREMIND_ALIGN_TO_CACHE_SIZE alignas(SHAREMIND_CACHE_LINE_SIZE)
 #elif !defined(__cplusplus) && defined(__STDC_VERSION__) \
       && (__STDC_VERSION__ >= 201112L)
