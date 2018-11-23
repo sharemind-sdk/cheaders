@@ -37,7 +37,7 @@
 
 #if __STDC_VERSION__ >= 201112L
 
-#define SHAREMIND_STATIC_ASSERT(...) _Static_assert(__VA_ARGS__)
+#define SHAREMIND_STATIC_ASSERT(...) _Static_assert(__VA_ARGS__, #__VA_ARGS__)
 
 #else
 
