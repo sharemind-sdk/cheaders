@@ -23,32 +23,32 @@ PROJECT(SharemindCHeaders VERSION "1.2.0" LANGUAGES "C")
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
-FIND_PACKAGE(SharemindCMakeHelpers 1.3 REQUIRED)
+FIND_PACKAGE(SharemindCMakeHelpers 1.6 REQUIRED)
 
 FIND_PACKAGE(Boost 1.62 REQUIRED)
 
+
+# Find header files:
 FILE(GLOB_RECURSE SHAREMIND_CHEADERS_HEADERS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
 ADD_CUSTOM_TARGET("include_SharemindCHeaders_headers_in_IDE"
                   SOURCES ${SHAREMIND_CHEADERS_HEADERS})
 
+
+# CHeaders:
+SharemindAddInterfaceLibrary(CHeaders)
+TARGET_COMPILE_DEFINITIONS(CHeaders INTERFACE "_BSD_SOURCE" "_DEFAULT_SOURCE")
+TARGET_INCLUDE_DIRECTORIES(CHeaders
+    INTERFACE
+        # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> # TODO
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
+    )
+TARGET_LINK_LIBRARIES(CHeaders INTERFACE Boost::boost pthread)
+TARGET_COMPILE_OPTIONS(CHeaders INTERFACE "-pthread")
 INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
         DESTINATION "include/sharemind"
         COMPONENT "dev")
-
-
-# Install cmake files:
-SharemindCreateCMakeFindFiles(
-    DEFINITIONS
-        "-pthread"
-        "-D_BSD_SOURCE"
-        "-D_DEFAULT_SOURCE"
-    LIBRARIES
-        "-lpthread"
-    INCLUDE_DIRS
-        "${CMAKE_INSTALL_PREFIX}/include"
-        ${Boost_INCLUDE_DIRS}
-)
+SharemindCreateCMakeFindFilesForTarget(CHeaders DEPENDENCIES Boost)
 
 
 # Packaging:
