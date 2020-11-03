@@ -25,7 +25,7 @@ INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
 FIND_PACKAGE(SharemindCMakeHelpers 1.3 REQUIRED)
 
-FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Boost 1.62 REQUIRED)
 
 FILE(GLOB_RECURSE SHAREMIND_CHEADERS_HEADERS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h")
@@ -58,7 +58,7 @@ SharemindAddComponentPackage("dev"
     DESCRIPTION "C development headers for Sharemind"
     DEB_SECTION "libdevel"
     DEB_DEPENDS
-        "libboost-dev (>= 1.5.5)"
+        "libboost-dev (>= 1.62)"
         "libc6-dev (>= 2.19)"
 )
 SharemindPackagingFinalize()
