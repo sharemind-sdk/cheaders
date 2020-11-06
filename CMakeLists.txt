@@ -26,6 +26,7 @@ INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 FIND_PACKAGE(SharemindCMakeHelpers 1.6 REQUIRED)
 
 FIND_PACKAGE(Boost 1.62 REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
 
 
 # Find header files:
@@ -43,12 +44,11 @@ TARGET_INCLUDE_DIRECTORIES(CHeaders
         # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> # TODO
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
     )
-TARGET_LINK_LIBRARIES(CHeaders INTERFACE Boost::boost pthread)
-TARGET_COMPILE_OPTIONS(CHeaders INTERFACE "-pthread")
+TARGET_LINK_LIBRARIES(CHeaders INTERFACE Boost::boost Threads::Threads)
 INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
         DESTINATION "include/sharemind"
         COMPONENT "dev")
-SharemindCreateCMakeFindFilesForTarget(CHeaders DEPENDENCIES Boost)
+SharemindCreateCMakeFindFilesForTarget(CHeaders DEPENDENCIES Boost Threads)
 
 
 # Packaging:
