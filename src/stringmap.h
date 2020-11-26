@@ -27,12 +27,36 @@
 #include <string.h>
 #include "DebugOnly.h"
 #include "extern_c.h"
-#include "fnv.h"
 #include "wrap.h"
 
 
 #define SHAREMIND_STRINGMAP_DECLARE_BODY(name,valuetype) \
     SHAREMIND_MAP_DECLARE_BODY(name,char *,valuetype)
+
+
+#define SHAREMIND_STRINGMAP_DECLARE_strHash(name,inlinePerhaps,...) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps uint16_t name ## _strHash(char const * str) \
+            __attribute__ ((SHAREMIND_NDEBUG_ONLY(nonnull(1),) __VA_ARGS__)); \
+    SHAREMIND_EXTERN_C_END
+#define SHAREMIND_STRINGMAP_DEFINE_strHash(name,inlinePerhaps) \
+    SHAREMIND_EXTERN_C_BEGIN \
+    inlinePerhaps uint16_t name ## _strHash(char const * str) { \
+        assert(str); \
+        /* \
+          Based on Fowler/Noll/Vo FNV-1a hash code in public domain taken from:\
+            http://www.isthe.com/chongo/src/fnv/fnv.h \
+            http://www.isthe.com/chongo/src/fnv/hash_32a.c \
+            http://www.isthe.com/chongo/src/fnv/hash_64a.c \
+        */ \
+        uint32_t hval = UINT32_C(0x811c9dc5); \
+        for (; *str; ++str) { \
+            hval ^= (uint32_t) *((uint8_t const *) str); \
+            hval *= UINT32_C(0x01000193); \
+        } \
+        return (uint16_t) (hval ^ (hval >> 16)); \
+    } \
+    SHAREMIND_EXTERN_C_END
 
 #define SHAREMIND_STRINGMAP_DECLARE_init(name,inlinePerhaps,...) \
     SHAREMIND_MAP_DECLARE_init(name,inlinePerhaps,__VA_ARGS__)
@@ -62,7 +86,7 @@
     SHAREMIND_MAP_DEFINE_get(name, \
                              inlinePerhaps, \
                              const char *, \
-                             fnv_16a_str(key), \
+                             name ## _strHash(key), \
                              0 == strcmp, \
                              0 > strcmp)
 
@@ -129,7 +153,7 @@
     SHAREMIND_MAP_DEFINE_insertHint(name, \
                                     inlinePerhaps, \
                                     const char *, \
-                                    fnv_16a_str(key), \
+                                    name ## _strHash(key), \
                                     0 == strcmp, \
                                     0 > strcmp)
 
@@ -176,7 +200,7 @@
     SHAREMIND_MAP_DEFINE_take(name, \
                               inlinePerhaps, \
                               const char *, \
-                              fnv_16a_str(key), \
+                              name ## _strHash(key), \
                               0 == strcmp, \
                               0 > strcmp)
 
