@@ -25,7 +25,7 @@ INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
 FIND_PACKAGE(SharemindCMakeHelpers 1.6 REQUIRED)
 
-FIND_PACKAGE(Boost 1.62 REQUIRED)
+FIND_PACKAGE(Boost 1.62 CONFIG REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 
 
@@ -44,7 +44,7 @@ TARGET_LINK_LIBRARIES(CHeaders INTERFACE Boost::boost Threads::Threads)
 INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
         DESTINATION "include/sharemind"
         COMPONENT "dev")
-SharemindCreateCMakeFindFilesForTarget(CHeaders DEPENDENCIES Boost Threads)
+SharemindCreateCMakeFindFilesForTarget(CHeaders DEPENDENCIES "Boost CONFIG" Threads)
 
 
 # Packaging:
