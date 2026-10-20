@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Cybernetica
+# Copyright (C) Cybernetica
 #
 # Research/Commercial License Usage
 # Licensees holding a valid Research License or Commercial License
@@ -23,7 +23,7 @@ PROJECT(SharemindCHeaders VERSION "1.3.1" LANGUAGES "C")
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/config.local" OPTIONAL)
 INCLUDE("${CMAKE_CURRENT_BINARY_DIR}/config.local" OPTIONAL)
 
-FIND_PACKAGE(SharemindCMakeHelpers 1.6 REQUIRED)
+FIND_PACKAGE(SharemindCMakeHelpers 1.8 REQUIRED)
 
 FIND_PACKAGE(Boost 1.62 CONFIG REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
